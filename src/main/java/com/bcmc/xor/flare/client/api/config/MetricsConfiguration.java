@@ -9,11 +9,11 @@ import com.codahale.metrics.jcache.JCacheGaugeSet;
 import com.codahale.metrics.jvm.*;
 import com.ryantenney.metrics.spring.config.annotation.EnableMetrics;
 import com.ryantenney.metrics.spring.config.annotation.MetricsConfigurerAdapter;
-import io.github.jhipster.config.JHipsterProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -40,11 +40,18 @@ public class MetricsConfiguration extends MetricsConfigurerAdapter {
     private MetricRegistry metricRegistry = new MetricRegistry();
 
     private HealthCheckRegistry healthCheckRegistry = new HealthCheckRegistry();
+    private Boolean jmxEnabled;
+    private Boolean metricsLogsEnabled;
+    private Long reportFrequency;
 
-    private final JHipsterProperties jHipsterProperties;
 
-    public MetricsConfiguration(JHipsterProperties jHipsterProperties) {
-        this.jHipsterProperties = jHipsterProperties;
+    public MetricsConfiguration(@Value("${jhipster.metrics.jmx.enabled}") Boolean jmxEnabled,
+                                @Value("${jhipster.metrics.logs.enabled}") Boolean metricsLogsEnabled,
+                                @Value("${jhipster.metrics.logs.report-frequency}") Long reportFrequency) {
+
+        this.jmxEnabled = jmxEnabled;
+        this.metricsLogsEnabled = metricsLogsEnabled;
+        this.reportFrequency = reportFrequency;
     }
 
     @Override
@@ -70,12 +77,12 @@ public class MetricsConfiguration extends MetricsConfigurerAdapter {
         metricRegistry.register(PROP_METRIC_REG_JVM_BUFFERS, new BufferPoolMetricSet(ManagementFactory.getPlatformMBeanServer()));
         metricRegistry.register(PROP_METRIC_REG_JVM_ATTRIBUTE_SET, new JvmAttributeGaugeSet());
         metricRegistry.register(PROP_METRIC_REG_JCACHE_STATISTICS, new JCacheGaugeSet());
-        if (jHipsterProperties.getMetrics().getJmx().isEnabled()) {
+        if (jmxEnabled) {
             log.debug("Initializing Metrics JMX reporting");
             JmxReporter jmxReporter = JmxReporter.forRegistry(metricRegistry).build();
             jmxReporter.start();
         }
-        if (jHipsterProperties.getMetrics().getLogs().isEnabled()) {
+        if (metricsLogsEnabled) {
             log.info("Initializing Metrics Log reporting");
             Marker metricsMarker = MarkerFactory.getMarker("metrics");
             final Slf4jReporter reporter = Slf4jReporter.forRegistry(metricRegistry)
@@ -84,7 +91,7 @@ public class MetricsConfiguration extends MetricsConfigurerAdapter {
                 .convertRatesTo(TimeUnit.SECONDS)
                 .convertDurationsTo(TimeUnit.MILLISECONDS)
                 .build();
-            reporter.start(jHipsterProperties.getMetrics().getLogs().getReportFrequency(), TimeUnit.SECONDS);
+            reporter.start(reportFrequency, TimeUnit.SECONDS);
         }
     }
 }

@@ -6,6 +6,7 @@ import com.bcmc.xor.flare.client.api.service.ServerService;
 import com.bcmc.xor.flare.client.api.service.dto.EventDTO;
 import com.bcmc.xor.flare.client.taxii.TaxiiAssociation;
 import com.bcmc.xor.flare.client.util.PaginationUtil;
+import com.bcmc.xor.flare.client.util.ResponseUtil;
 import com.codahale.metrics.annotation.Timed;
 
 import org.slf4j.Logger;

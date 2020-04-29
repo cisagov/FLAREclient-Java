@@ -1,7 +1,6 @@
 package com.bcmc.xor.flare.client.api.security.jwt;
 
 import com.bcmc.xor.flare.client.api.security.AuthoritiesConstants;
-import io.github.jhipster.config.JHipsterProperties;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
@@ -25,10 +24,9 @@ public class JWTFilterTest {
 
     @Before
     public void setup() {
-        JHipsterProperties jHipsterProperties = new JHipsterProperties();
-        tokenProvider = new TokenProvider(jHipsterProperties);
-        ReflectionTestUtils.setField(tokenProvider, "secretKey", "test secret");
-        ReflectionTestUtils.setField(tokenProvider, "tokenValidityInMilliseconds", 60000);
+//        ReflectionTestUtils.setField(tokenProvider, "secretKey", "test secret");
+//        ReflectionTestUtils.setField(tokenProvider, "tokenValidityInMilliseconds", 60000);
+        tokenProvider = new TokenProvider("test secret", 60000, 60000);
         jwtFilter = new JWTFilter(tokenProvider);
         SecurityContextHolder.getContext().setAuthentication(null);
     }

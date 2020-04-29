@@ -1,12 +1,11 @@
 package com.bcmc.xor.flare.client.api.config;
 
-import io.github.jhipster.async.ExceptionHandlingAsyncTaskExecutor;
-import io.github.jhipster.config.JHipsterProperties;
+import com.bcmc.xor.flare.client.error.ExceptionHandlingAsyncTaskExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
@@ -22,12 +21,17 @@ import java.util.concurrent.Executor;
 public class AsyncConfiguration implements AsyncConfigurer {
 
     private static final Logger log = LoggerFactory.getLogger(AsyncConfiguration.class);
+    private Integer corePoolSize;
+    private Integer maxPoolSize;
+    private Integer queueCapacity;
 
-    @Autowired
-    private JHipsterProperties jHipsterProperties;
 
-    public AsyncConfiguration(JHipsterProperties jHipsterProperties) {
-        this.jHipsterProperties = jHipsterProperties;
+    public AsyncConfiguration(@Value("${jhipster.async.core-pool-size}") Integer corePoolSize,
+                              @Value("${jhipster.async.max-pool-size}") Integer maxPoolSize,
+                              @Value("${jhipster.async.queue-capacity}") Integer queueCapacity) {
+        this.corePoolSize = corePoolSize;
+        this.maxPoolSize = maxPoolSize;
+        this.queueCapacity = queueCapacity;
     }
 
     @Override
@@ -35,14 +39,12 @@ public class AsyncConfiguration implements AsyncConfigurer {
     public Executor getAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 
-        executor.setCorePoolSize(jHipsterProperties.getAsync().getCorePoolSize());
-        executor.setMaxPoolSize(jHipsterProperties.getAsync().getMaxPoolSize());
-        executor.setQueueCapacity(jHipsterProperties.getAsync().getQueueCapacity());
+        executor.setCorePoolSize(corePoolSize);
+        executor.setMaxPoolSize(maxPoolSize);
+        executor.setQueueCapacity(queueCapacity);
         executor.setThreadNamePrefix("async-exec-");
         log.debug("Creating Async Task Executor. Core pool size: {}, Max pool size: {}, Queue Capacity: {}",
-            jHipsterProperties.getAsync().getCorePoolSize(),
-            jHipsterProperties.getAsync().getMaxPoolSize(),
-            jHipsterProperties.getAsync().getQueueCapacity());
+            corePoolSize, maxPoolSize, queueCapacity);
         executor.initialize();
         return new ExceptionHandlingAsyncTaskExecutor(executor);
     }

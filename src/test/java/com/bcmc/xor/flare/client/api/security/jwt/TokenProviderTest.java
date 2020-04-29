@@ -1,7 +1,6 @@
 package com.bcmc.xor.flare.client.api.security.jwt;
 
 import com.bcmc.xor.flare.client.api.security.AuthoritiesConstants;
-import io.github.jhipster.config.JHipsterProperties;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.junit.Before;
@@ -23,16 +22,14 @@ public class TokenProviderTest {
     private final Base64.Encoder encoder = Base64.getEncoder();
     private final long ONE_MINUTE = 60000;
     private String secretKey;
-    private JHipsterProperties jHipsterProperties;
     private TokenProvider tokenProvider;
 
     @Before
     public void setup() {
-        jHipsterProperties = Mockito.mock(JHipsterProperties.class);
-        tokenProvider = new TokenProvider(jHipsterProperties);
         secretKey = encoder.encodeToString("e5c9ee274ae87bc031adda32e27fa98b9290da83".getBytes(StandardCharsets.UTF_8));
-        ReflectionTestUtils.setField(tokenProvider, "secretKey", secretKey);
-        ReflectionTestUtils.setField(tokenProvider, "tokenValidityInMilliseconds", ONE_MINUTE);
+//        ReflectionTestUtils.setField(tokenProvider, "secretKey", secretKey);
+//        ReflectionTestUtils.setField(tokenProvider, "tokenValidityInMilliseconds", ONE_MINUTE);
+        tokenProvider = new TokenProvider("e5c9ee274ae87bc031adda32e27fa98b9290da83", ONE_MINUTE, ONE_MINUTE);
     }
 
     @Test

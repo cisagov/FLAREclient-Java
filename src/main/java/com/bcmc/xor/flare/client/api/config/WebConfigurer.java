@@ -3,13 +3,11 @@ package com.bcmc.xor.flare.client.api.config;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.servlet.InstrumentedFilter;
 import com.codahale.metrics.servlets.MetricsServlet;
-import io.github.jhipster.config.JHipsterConstants;
-import io.github.jhipster.config.JHipsterProperties;
-import io.github.jhipster.web.filter.CachingHttpHeadersFilter;
 import io.undertow.UndertowOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.embedded.undertow.UndertowServletWebServerFactory;
 import org.springframework.boot.web.server.MimeMappings;
 import org.springframework.boot.web.server.WebServerFactory;
@@ -48,27 +46,27 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
     private static final Logger log = LoggerFactory.getLogger(WebConfigurer.class);
 
     private final Environment env;
+    private String httpVersion;
 
-    private final JHipsterProperties jHipsterProperties;
 
     private MetricRegistry metricRegistry;
 
-    public WebConfigurer(Environment env, JHipsterProperties jHipsterProperties) {
+    public WebConfigurer(Environment env, @Value("${jhipster.http.version}") String httpVersion) {
 
         this.env = env;
-        this.jHipsterProperties = jHipsterProperties;
+        this.httpVersion = httpVersion;
     }
 
     @Override
     public void onStartup(ServletContext servletContext) {
-        if (env.getActiveProfiles().length != 0) {
-            log.info("Web application configuration, using profiles: {}", (Object[]) env.getActiveProfiles());
-        }
+//        if (env.getActiveProfiles().length != 0) {
+//            log.info("Web application configuration, using profiles: {}", (Object[]) env.getActiveProfiles());
+//        }
         EnumSet<DispatcherType> disps = EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.ASYNC);
         initMetrics(servletContext, disps);
-        if (env.acceptsProfiles(JHipsterConstants.SPRING_PROFILE_PRODUCTION)) {
-            initCachingHttpHeadersFilter(servletContext, disps);
-        }
+//        if (env.acceptsProfiles(JHipsterConstants.SPRING_PROFILE_PRODUCTION)) {
+//            initCachingHttpHeadersFilter(servletContext, disps);
+//        }
         log.info("Web application fully configured");
     }
 
@@ -87,7 +85,7 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
          * See the JHipsterProperties class and your application-*.yml configuration files
          * for more information.
          */
-        if (jHipsterProperties.getHttp().getVersion().equals(JHipsterProperties.Http.Version.V_2_0) &&
+        if ("V_2_0".equals(httpVersion) &&
             server instanceof UndertowServletWebServerFactory) {
 
             ((UndertowServletWebServerFactory) server)
@@ -140,21 +138,21 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
         return extractedPath.substring(0, extractionEndIndex);
     }
 
-    /**
+    /*
      * Initializes the caching HTTP Headers Filter.
      */
-    private void initCachingHttpHeadersFilter(ServletContext servletContext,
-                                              EnumSet<DispatcherType> disps) {
-        log.debug("Registering Caching HTTP Headers Filter");
-        FilterRegistration.Dynamic cachingHttpHeadersFilter =
-            servletContext.addFilter("cachingHttpHeadersFilter",
-                new CachingHttpHeadersFilter(jHipsterProperties));
-
-        cachingHttpHeadersFilter.addMappingForUrlPatterns(disps, true, "/i18n/*");
-        cachingHttpHeadersFilter.addMappingForUrlPatterns(disps, true, "/content/*");
-        cachingHttpHeadersFilter.addMappingForUrlPatterns(disps, true, "/app/*");
-        cachingHttpHeadersFilter.setAsyncSupported(true);
-    }
+//    private void initCachingHttpHeadersFilter(ServletContext servletContext,
+//                                              EnumSet<DispatcherType> disps) {
+//        log.debug("Registering Caching HTTP Headers Filter");
+//        FilterRegistration.Dynamic cachingHttpHeadersFilter =
+//            servletContext.addFilter("cachingHttpHeadersFilter",
+//                new CachingHttpHeadersFilter(jHipsterProperties));
+//
+//        cachingHttpHeadersFilter.addMappingForUrlPatterns(disps, true, "/i18n/*");
+//        cachingHttpHeadersFilter.addMappingForUrlPatterns(disps, true, "/content/*");
+//        cachingHttpHeadersFilter.addMappingForUrlPatterns(disps, true, "/app/*");
+//        cachingHttpHeadersFilter.setAsyncSupported(true);
+//    }
 
     /**
      * Initializes Metrics.
@@ -185,7 +183,7 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = jHipsterProperties.getCors();
+        CorsConfiguration config = new CorsConfiguration();
         if (config.getAllowedOrigins() != null && !config.getAllowedOrigins().isEmpty()) {
             log.debug("Registering CORS filter");
             source.registerCorsConfiguration("/api/**", config);

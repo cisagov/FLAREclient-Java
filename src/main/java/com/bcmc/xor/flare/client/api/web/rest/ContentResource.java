@@ -7,6 +7,7 @@ import com.bcmc.xor.flare.client.api.service.ServerService;
 import com.bcmc.xor.flare.client.taxii.TaxiiAssociation;
 import com.bcmc.xor.flare.client.util.PaginationUtil;
 
+import com.bcmc.xor.flare.client.util.ResponseUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;

@@ -1,9 +1,9 @@
 package com.bcmc.xor.flare.client.api.security.jwt;
 
-import io.github.jhipster.config.JHipsterProperties;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -34,23 +34,32 @@ public class TokenProvider {
 
     private long tokenValidityInMillisecondsForRememberMe;
 
-    private final JHipsterProperties jHipsterProperties;
-
-    public TokenProvider(JHipsterProperties jHipsterProperties) {
-        this.jHipsterProperties = jHipsterProperties;
-    }
-
-    @PostConstruct
-    public void init() {
-        this.secretKey = encoder.encodeToString(jHipsterProperties.getSecurity().getAuthentication().getJwt()
-            .getSecret().getBytes(StandardCharsets.UTF_8));
-
+//    public TokenProvider(JHipsterProperties applicationProperties) {
+//        this.applicationProperties = applicationProperties;
+//    }
+    public TokenProvider(@Value("${flare.security.authentication.jwt.secret}") String secret,
+                         @Value("${flare.security.authentication.jwt.token-validity-in-seconds}")
+                                 long tokenValidityInS,
+                         @Value("${flare.security.authentication.jwt.token-validity-in-seconds-for-remember-me}")
+                                 long tokenValidityInSForRememberMe) {
+        this.secretKey = encoder.encodeToString(secret.getBytes(StandardCharsets.UTF_8));
         this.tokenValidityInMilliseconds =
-            1000 * jHipsterProperties.getSecurity().getAuthentication().getJwt().getTokenValidityInSeconds();
+                1000 * tokenValidityInS;
         this.tokenValidityInMillisecondsForRememberMe =
-            1000 * jHipsterProperties.getSecurity().getAuthentication().getJwt()
-                .getTokenValidityInSecondsForRememberMe();
+                1000 * tokenValidityInSForRememberMe;
     }
+
+//    @PostConstruct
+//    public void init() {
+//        this.secretKey = encoder.encodeToString(applicationProperties.getSecurity().getAuthentication().getJwt()
+//            .getSecret().getBytes(StandardCharsets.UTF_8));
+//
+//        this.tokenValidityInMilliseconds =
+//            1000 * applicationProperties.getSecurity().getAuthentication().getJwt().getTokenValidityInSeconds();
+//        this.tokenValidityInMillisecondsForRememberMe =
+//            1000 * applicationProperties.getSecurity().getAuthentication().getJwt()
+//                .getTokenValidityInSecondsForRememberMe();
+//    }
 
     public String createToken(Authentication authentication, boolean rememberMe) {
         String authorities = authentication.getAuthorities().stream()

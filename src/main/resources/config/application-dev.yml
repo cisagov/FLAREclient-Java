@@ -107,6 +107,7 @@ jhipster:
     mail: # specific JHipster mail property, for standard properties see MailProperties
         from: temp@localhost
         base-url: http://127.0.0.1:8080
+        # Modify according to your server's URL
     metrics: # DropWizard Metrics configuration, used by MetricsConfiguration
         jmx:
             enabled: true

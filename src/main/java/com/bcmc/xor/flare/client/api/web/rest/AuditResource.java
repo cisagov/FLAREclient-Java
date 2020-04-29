@@ -3,6 +3,7 @@ package com.bcmc.xor.flare.client.api.web.rest;
 import com.bcmc.xor.flare.client.api.service.AuditEventService;
 import com.bcmc.xor.flare.client.util.PaginationUtil;
 
+import com.bcmc.xor.flare.client.util.ResponseUtil;
 import org.springframework.boot.actuate.audit.AuditEvent;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

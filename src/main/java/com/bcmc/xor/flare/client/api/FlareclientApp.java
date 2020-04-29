@@ -13,6 +13,7 @@ import org.springframework.core.env.Environment;
 
 import javax.annotation.PostConstruct;
 import java.net.InetAddress;
+import java.util.HashMap;
 import java.util.Map;
 
 @SpringBootApplication
@@ -59,7 +60,7 @@ public class FlareclientApp {
     public static void main(String[] args) {
 
         SpringApplication app = new SpringApplication(FlareclientApp.class);
-        Map<String, Object> properties = DefaultProfileUtil.addDefaultProfile(app);
+        Map<String, Object> properties = new HashMap<>();//DefaultProfileUtil.addDefaultProfile(app);
         app.setDefaultProperties(properties);
         Environment env = app.run(args).getEnvironment();
         String protocol = "http";

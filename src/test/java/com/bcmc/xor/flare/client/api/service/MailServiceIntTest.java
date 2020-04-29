@@ -3,7 +3,6 @@ import com.bcmc.xor.flare.client.api.config.Constants;
 
 import com.bcmc.xor.flare.client.api.FlareclientApp;
 import com.bcmc.xor.flare.client.api.domain.auth.User;
-import io.github.jhipster.config.JHipsterProperties;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,9 +33,6 @@ import static org.mockito.Mockito.*;
 public class MailServiceIntTest {
 
     @Autowired
-    private JHipsterProperties jHipsterProperties;
-
-    @Autowired
     private MessageSource messageSource;
 
     @Autowired
@@ -54,7 +50,7 @@ public class MailServiceIntTest {
     public void setup() {
         MockitoAnnotations.initMocks(this);
         doNothing().when(javaMailSender).send(any(MimeMessage.class));
-        mailService = new MailService(jHipsterProperties, javaMailSender, messageSource, templateEngine);
+        mailService = new MailService(javaMailSender, messageSource, templateEngine, "temp@localhost", "http://127.0.0.1:8080");
     }
 
     @Test
