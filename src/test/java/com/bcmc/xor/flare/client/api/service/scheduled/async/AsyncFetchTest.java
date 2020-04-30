@@ -17,6 +17,7 @@ import com.bcmc.xor.flare.client.taxii.taxii20.Taxii20Association;
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mitre.taxii.messages.xml11.AnyMixedContentType;
@@ -39,6 +40,7 @@ import java.util.UUID;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
+@Ignore
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = FlareclientApp.class)
 public class AsyncFetchTest {

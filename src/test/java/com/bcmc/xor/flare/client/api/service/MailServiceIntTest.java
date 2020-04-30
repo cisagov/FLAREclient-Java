@@ -50,7 +50,7 @@ public class MailServiceIntTest {
     public void setup() {
         MockitoAnnotations.initMocks(this);
         doNothing().when(javaMailSender).send(any(MimeMessage.class));
-        mailService = new MailService(javaMailSender, messageSource, templateEngine, "temp@localhost", "http://127.0.0.1:8080");
+        mailService = new MailService(javaMailSender, messageSource, templateEngine, "test@localhost", "http://127.0.0.1:8080");
     }
 
     @Test
