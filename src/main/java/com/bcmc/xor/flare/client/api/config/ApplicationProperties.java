@@ -11,7 +11,7 @@ import java.util.List;
  * See {@link io.github.jhipster.config.JHipsterProperties} for a good example.
  */
 @SuppressWarnings("unused")
-@ConfigurationProperties(prefix = "flare", ignoreUnknownFields = false)
+@ConfigurationProperties(prefix = "flare", ignoreUnknownFields = true)
 public class ApplicationProperties {
 
     private String schemasDirectory;
@@ -22,6 +22,16 @@ public class ApplicationProperties {
     private int maxPageSize;
     private int fetchChunkWindow;
     private int fetchChunkPageSize;
+
+    /* todo: add these values from application.yml
+    security:
+        authentication:
+            jwt:
+                secret: EoP3UiBuHr
+                # Token is valid 24 hours
+                token-validity-in-seconds: 86400
+                token-validity-in-seconds-for-remember-me: 2592000
+     */
 
     public ApplicationProperties() {
     }

@@ -25,51 +25,51 @@ import java.util.List;
 /**
  * This class is probably unused and unnecessary
  */
-@Configuration
-@EnableMongoRepositories("com.bcmc.xor.flare.client.api.repository")
+//@Configuration
+//@EnableMongoRepositories("com.bcmc.xor.flare.client.api.repository")
 public class CloudDatabaseConfiguration extends AbstractCloudConfig {
 
-    private static final Logger log = LoggerFactory.getLogger(CloudDatabaseConfiguration.class);
-
-    @Bean
-    public MongoDbFactory mongoFactory() {
-        return connectionFactory().mongoDbFactory();
-    }
-
-    @Bean
-    public LocalValidatorFactoryBean validator() {
-        return new LocalValidatorFactoryBean();
-    }
-
-    @Bean
-    public ValidatingMongoEventListener validatingMongoEventListener() {
-        return new ValidatingMongoEventListener(validator());
-    }
-
-    @Bean
-    public MongoCustomConversions customConversions() {
-        List<Converter<?, ?>> converterList = new ArrayList<>();
-        converterList.add(JSR310DateConverters.DateToZonedDateTimeConverter.INSTANCE);
-        converterList.add(JSR310DateConverters.ZonedDateTimeToDateConverter.INSTANCE);
-        return new MongoCustomConversions(converterList);
-    }
-
-    @Bean
-    public Mongobee mongobee(MongoDbFactory mongoDbFactory, MongoTemplate mongoTemplate, Cloud cloud) {
-        log.debug("Configuring Cloud Mongobee");
-        List<ServiceInfo> matchingServiceInfos = cloud.getServiceInfos(MongoDbFactory.class);
-
-        if (matchingServiceInfos.size() != 1) {
-            throw new CloudException("No unique service matching MongoDbFactory found. Expected 1, found "
-                + matchingServiceInfos.size());
-        }
-        MongoServiceInfo info = (MongoServiceInfo) matchingServiceInfos.get(0);
-        Mongobee mongobee = new Mongobee(info.getUri());
-        mongobee.setDbName(mongoDbFactory.getDb().getName());
-        mongobee.setMongoTemplate(mongoTemplate);
-        // package to scan for migrations
-        mongobee.setChangeLogsScanPackage("com.bcmc.xor.flare.client.api.config.dbmigrations");
-        mongobee.setEnabled(true);
-        return mongobee;
-    }
+//    private static final Logger log = LoggerFactory.getLogger(CloudDatabaseConfiguration.class);
+//
+//    @Bean
+//    public MongoDbFactory mongoFactory() {
+//        return connectionFactory().mongoDbFactory();
+//    }
+//
+//    @Bean
+//    public LocalValidatorFactoryBean validator() {
+//        return new LocalValidatorFactoryBean();
+//    }
+//
+//    @Bean
+//    public ValidatingMongoEventListener validatingMongoEventListener() {
+//        return new ValidatingMongoEventListener(validator());
+//    }
+//
+//    @Bean
+//    public MongoCustomConversions customConversions() {
+//        List<Converter<?, ?>> converterList = new ArrayList<>();
+//        converterList.add(JSR310DateConverters.DateToZonedDateTimeConverter.INSTANCE);
+//        converterList.add(JSR310DateConverters.ZonedDateTimeToDateConverter.INSTANCE);
+//        return new MongoCustomConversions(converterList);
+//    }
+//
+//    @Bean
+//    public Mongobee mongobee(MongoDbFactory mongoDbFactory, MongoTemplate mongoTemplate, Cloud cloud) {
+//        log.debug("Configuring Cloud Mongobee");
+//        List<ServiceInfo> matchingServiceInfos = cloud.getServiceInfos(MongoDbFactory.class);
+//
+//        if (matchingServiceInfos.size() != 1) {
+//            throw new CloudException("No unique service matching MongoDbFactory found. Expected 1, found "
+//                + matchingServiceInfos.size());
+//        }
+//        MongoServiceInfo info = (MongoServiceInfo) matchingServiceInfos.get(0);
+//        Mongobee mongobee = new Mongobee(info.getUri());
+//        mongobee.setDbName(mongoDbFactory.getDb().getName());
+//        mongobee.setMongoTemplate(mongoTemplate);
+//        // package to scan for migrations
+//        mongobee.setChangeLogsScanPackage("com.bcmc.xor.flare.client.api.config.dbmigrations");
+//        mongobee.setEnabled(true);
+//        return mongobee;
+//    }
 }
