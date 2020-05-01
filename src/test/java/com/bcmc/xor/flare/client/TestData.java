@@ -104,51 +104,51 @@ public class TestData {
 
         // Establish test data: Taxii11Collection
         pollingServices =
-            new ServiceContactInfoType(Constants.HEADER_TAXII11_PROTOCOL,
-                "http://localhost:5000/poll/",
-                Collections.singletonList(Constants.HEADER_TAXII11_SERVICES));
+                new ServiceContactInfoType(Constants.HEADER_TAXII11_PROTOCOL,
+                        "http://localhost:5000/poll/",
+                        Collections.singletonList(Constants.HEADER_TAXII11_SERVICES));
 
         inboxServiceBindingsType = new InboxServiceBindingsType()
-            .withAddress("test")
-            .withMessageBindings(Constants.HEADER_TAXII11_MESSAGE_BINDING)
-            .withContentBindings(Constants.stix1ContentBindingsMap.values());
+                .withAddress("test")
+                .withMessageBindings(Constants.HEADER_TAXII11_MESSAGE_BINDING)
+                .withContentBindings(Constants.stix1ContentBindingsMap.values());
 
         pollServiceInstance = new ServiceInstanceType()
-            .withServiceType(ServiceTypeEnum.POLL)
-            .withAddress("test")
-            .withAvailable(true)
-            .withMessageBindings(Constants.HEADER_TAXII11_MESSAGE_BINDING)
-            .withContentBindings(Constants.stix1ContentBindingsMap.values());
+                .withServiceType(ServiceTypeEnum.POLL)
+                .withAddress("test")
+                .withAvailable(true)
+                .withMessageBindings(Constants.HEADER_TAXII11_MESSAGE_BINDING)
+                .withContentBindings(Constants.stix1ContentBindingsMap.values());
 
         inboxServiceInstance = new ServiceInstanceType()
-            .withServiceType(ServiceTypeEnum.INBOX)
-            .withAddress("test")
-            .withAvailable(true)
-            .withMessageBindings(Constants.HEADER_TAXII11_MESSAGE_BINDING)
-            .withContentBindings(Constants.stix1ContentBindingsMap.values());
+                .withServiceType(ServiceTypeEnum.INBOX)
+                .withAddress("test")
+                .withAvailable(true)
+                .withMessageBindings(Constants.HEADER_TAXII11_MESSAGE_BINDING)
+                .withContentBindings(Constants.stix1ContentBindingsMap.values());
 
         collectionManagementServiceInstance = new ServiceInstanceType()
-            .withServiceType(ServiceTypeEnum.COLLECTION_MANAGEMENT)
-            .withAddress("test")
-            .withAvailable(true)
-            .withMessageBindings(Constants.HEADER_TAXII11_MESSAGE_BINDING)
-            .withContentBindings(Constants.stix1ContentBindingsMap.values());
+                .withServiceType(ServiceTypeEnum.COLLECTION_MANAGEMENT)
+                .withAddress("test")
+                .withAvailable(true)
+                .withMessageBindings(Constants.HEADER_TAXII11_MESSAGE_BINDING)
+                .withContentBindings(Constants.stix1ContentBindingsMap.values());
 
         discoveryServiceInstance = new ServiceInstanceType()
-            .withServiceType(ServiceTypeEnum.DISCOVERY)
-            .withAddress("test")
-            .withAvailable(true)
-            .withMessageBindings(Constants.HEADER_TAXII11_MESSAGE_BINDING)
-            .withContentBindings(Constants.stix1ContentBindingsMap.values());
+                .withServiceType(ServiceTypeEnum.DISCOVERY)
+                .withAddress("test")
+                .withAvailable(true)
+                .withMessageBindings(Constants.HEADER_TAXII11_MESSAGE_BINDING)
+                .withContentBindings(Constants.stix1ContentBindingsMap.values());
 
 
         collectionRecordType = new CollectionRecordType()
-            .withCollectionType(CollectionTypeEnum.DATA_FEED)
-            .withDescription("Collection record under test")
-            .withCollectionName("Test11Collection")
-            .withAvailable(true)
-            .withPollingServices(pollingServices)
-            .withReceivingInboxServices(inboxServiceBindingsType);
+                .withCollectionType(CollectionTypeEnum.DATA_FEED)
+                .withDescription("Collection record under test")
+                .withCollectionName("Test11Collection")
+                .withAvailable(true)
+                .withPollingServices(pollingServices)
+                .withReceivingInboxServices(inboxServiceBindingsType);
 
         taxii11Collection = new Taxii11Collection(collectionRecordType, taxii11Server.getId());
         taxii11Collection.setId(UUID.randomUUID().toString());
@@ -165,28 +165,31 @@ public class TestData {
         taxii20Server.setUrl(URI.create("http://localhost:5000/taxii/"));
 
 
-        // Establish test data: Taxii20Collection
-        String apiRootId = UUID.randomUUID().toString();
-        Collection collectionObject = new Collection(UUID.randomUUID().toString(), "Taxii20Collection", true, true);
-        taxii20Collection = new Taxii20Collection(collectionObject, taxii20Server.getId(), apiRootId);
-        taxii20Collection.setTaxiiVersion(Constants.TaxiiVersion.TAXII21);
-        taxii20Collection.setId(UUID.randomUUID().toString());
-        taxii20Collection.setDisplayName("Taxii20Collection");
+
 
         // Establish test data: Taxii20 ApiRoot
         xor.bcmc.taxii2.resources.ApiRoot apiRootObject = new xor.bcmc.taxii2.resources.ApiRoot()
-            .withTitle("Test Title")
-            .withDescription("Test Description")
-            .withMaxContentLength(10000000)
-            .withVersions(Collections.singletonList("taxii-2.0"))
-            .withId("TestApi");
+                .withTitle("Test Title")
+                .withDescription("Test Description")
+                .withMaxContentLength(10000000)
+                .withVersions(Collections.singletonList("taxii-2.0"))
+                .withId("TestApi");
 
         apiRoot = new ApiRoot(taxii20Server.getId());
+        String apiRootId = UUID.randomUUID().toString();
         apiRoot.setId(apiRootId);
         apiRoot.setObject(apiRootObject);
         apiRoot.setCollections(Sets.newHashSet(taxii20Collection));
         apiRoot.setUrl(URI.create("http://localhost:5000/TestApi/"));
         apiRoot.setEndpoint("TestApi");
+
+        // Establish test data: Taxii20Collection
+
+        Collection collectionObject = new Collection(UUID.randomUUID().toString(), "Taxii20Collection", true, true);
+        taxii20Collection = new Taxii20Collection(collectionObject, taxii20Server.getId(), apiRoot.getEndpoint());
+        taxii20Collection.setTaxiiVersion(Constants.TaxiiVersion.TAXII21);
+        taxii20Collection.setId(UUID.randomUUID().toString());
+        taxii20Collection.setDisplayName("Taxii20Collection");
 
         taxii11Server.setServiceInstances(Sets.newHashSet(pollServiceInstance, inboxServiceInstance, discoveryServiceInstance, collectionManagementServiceInstance));
         taxii11Server.setCollections(Sets.newHashSet(taxii11Collection));
@@ -196,76 +199,76 @@ public class TestData {
         taxii20Association = new Taxii20Association(taxii20Server, taxii20Collection, user);
 
         rawStix111 = "<stix:STIX_Package\n" +
-            "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
-            "    xmlns:stix=\"http://stix.mitre.org/stix-1\"\n" +
-            "    xmlns:indicator=\"http://stix.mitre.org/Indicator-2\"\n" +
-            "    xmlns:cybox=\"http://cybox.mitre.org/cybox-2\"\n" +
-            "    xmlns:AddressObject=\"http://cybox.mitre.org/objects#AddressObject-2\"\n" +
-            "    xmlns:stixVocabs=\"http://stix.mitre.org/default_vocabularies-1\"\n" +
-            "    xmlns:example=\"http://example.com/\"\n" +
-            "    xsi:schemaLocation=\"http://stix.mitre.org/stix-1 ../stix_core.xsd\n" +
-            "    http://stix.mitre.org/Indicator-2 ../indicator.xsd\n" +
-            "\n" +
-            "    http://stix.mitre.org/default_vocabularies-1 ../stix_default_vocabularies.xsd\n" +
-            "    http://cybox.mitre.org/objects#AddressObject-2 ../cybox/objects/Address_Object.xsd\"\n" +
-            "    id=\"example:STIXPackage-33fe3b22-0201-47cf-85d0-97c02164528d\"\n" +
-            "    timestamp=\"2014-05-08T09:00:00.000000Z\"\n" +
-            "    version=\"1.1.1\"\n" +
-            ">\n" +
-            "    <stix:STIX_Header>\n" +
-            "        <stix:Title>Example watchlist that contains IP information.</stix:Title>\n" +
-            "        <stix:Package_Intent xsi:type=\"stixVocabs:PackageIntentVocab-1.0\">Indicators - Watchlist</stix:Package_Intent>\n" +
-            "    </stix:STIX_Header>\n" +
-            "    <stix:Indicators>\n" +
-            "        <stix:Indicator xsi:type=\"indicator:IndicatorType\" id=\"example:Indicator-33fe3b22-0201-47cf-85d0-97c02164528d\" timestamp=\"2014-05-08T09:00:00.000000Z\">\n" +
-            "            <indicator:Type xsi:type=\"stixVocabs:IndicatorTypeVocab-1.1\">IP Watchlist</indicator:Type>\n" +
-            "            <indicator:Description>Sample IP Address Indicator for this watchlist. This contains one indicator with a set of three IP addresses in the watchlist.</indicator:Description>\n" +
-            "            <indicator:Observable  id=\"example:Observable-1c798262-a4cd-434d-a958-884d6980c459\">\n" +
-            "                <cybox:Object id=\"example:Object-1980ce43-8e03-490b-863a-ea404d12242e\">\n" +
-            "                    <cybox:Properties xsi:type=\"AddressObject:AddressObjectType\" category=\"ipv4-addr\">\n" +
-            "                        <AddressObject:Address_Value condition=\"Equals\" apply_condition=\"ANY\">10.0.0.0##comma##10.0.0.1##comma##10.0.0.2</AddressObject:Address_Value>\n" +
-            "                    </cybox:Properties>\n" +
-            "                </cybox:Object>\n" +
-            "            </indicator:Observable>\n" +
-            "        </stix:Indicator>\n" +
-            "    </stix:Indicators>\n" +
-            "</stix:STIX_Package>\n";
+                "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+                "    xmlns:stix=\"http://stix.mitre.org/stix-1\"\n" +
+                "    xmlns:indicator=\"http://stix.mitre.org/Indicator-2\"\n" +
+                "    xmlns:cybox=\"http://cybox.mitre.org/cybox-2\"\n" +
+                "    xmlns:AddressObject=\"http://cybox.mitre.org/objects#AddressObject-2\"\n" +
+                "    xmlns:stixVocabs=\"http://stix.mitre.org/default_vocabularies-1\"\n" +
+                "    xmlns:example=\"http://example.com/\"\n" +
+                "    xsi:schemaLocation=\"http://stix.mitre.org/stix-1 ../stix_core.xsd\n" +
+                "    http://stix.mitre.org/Indicator-2 ../indicator.xsd\n" +
+                "\n" +
+                "    http://stix.mitre.org/default_vocabularies-1 ../stix_default_vocabularies.xsd\n" +
+                "    http://cybox.mitre.org/objects#AddressObject-2 ../cybox/objects/Address_Object.xsd\"\n" +
+                "    id=\"example:STIXPackage-33fe3b22-0201-47cf-85d0-97c02164528d\"\n" +
+                "    timestamp=\"2014-05-08T09:00:00.000000Z\"\n" +
+                "    version=\"1.1.1\"\n" +
+                ">\n" +
+                "    <stix:STIX_Header>\n" +
+                "        <stix:Title>Example watchlist that contains IP information.</stix:Title>\n" +
+                "        <stix:Package_Intent xsi:type=\"stixVocabs:PackageIntentVocab-1.0\">Indicators - Watchlist</stix:Package_Intent>\n" +
+                "    </stix:STIX_Header>\n" +
+                "    <stix:Indicators>\n" +
+                "        <stix:Indicator xsi:type=\"indicator:IndicatorType\" id=\"example:Indicator-33fe3b22-0201-47cf-85d0-97c02164528d\" timestamp=\"2014-05-08T09:00:00.000000Z\">\n" +
+                "            <indicator:Type xsi:type=\"stixVocabs:IndicatorTypeVocab-1.1\">IP Watchlist</indicator:Type>\n" +
+                "            <indicator:Description>Sample IP Address Indicator for this watchlist. This contains one indicator with a set of three IP addresses in the watchlist.</indicator:Description>\n" +
+                "            <indicator:Observable  id=\"example:Observable-1c798262-a4cd-434d-a958-884d6980c459\">\n" +
+                "                <cybox:Object id=\"example:Object-1980ce43-8e03-490b-863a-ea404d12242e\">\n" +
+                "                    <cybox:Properties xsi:type=\"AddressObject:AddressObjectType\" category=\"ipv4-addr\">\n" +
+                "                        <AddressObject:Address_Value condition=\"Equals\" apply_condition=\"ANY\">10.0.0.0##comma##10.0.0.1##comma##10.0.0.2</AddressObject:Address_Value>\n" +
+                "                    </cybox:Properties>\n" +
+                "                </cybox:Object>\n" +
+                "            </indicator:Observable>\n" +
+                "        </stix:Indicator>\n" +
+                "    </stix:Indicators>\n" +
+                "</stix:STIX_Package>\n";
 
         rawStix111Invalid = "<stix:STIX_Package\n" +
-            "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
-            "    xmlns:stix=\"http://stix.mitre.org/stix-1\"\n" +
-            "    xmlns:indicator=\"http://stix.mitre.org/Indicator-2\"\n" +
-            "    xmlns:cybox=\"http://cybox.mitre.org/cybox-2\"\n" +
-            "    xmlns:AddressObject=\"http://cybox.mitre.org/objects#AddressObject-2\"\n" +
-            "    xmlns:stixVocabs=\"http://stix.mitre.org/default_vocabularies-1\"\n" +
-            "    xmlns:example=\"http://example.com/\"\n" +
-            "    xsi:schemaLocation=\"http://stix.mitre.org/stix-1 ../stix_core.xsd\n" +
-            "    http://stix.mitre.org/Indicator-2 ../indicator.xsd\n" +
-            "\n" +
-            "    http://stix.mitre.org/default_vocabularies-1 ../stix_default_vocabularies.xsd\n" +
-            "    http://cybox.mitre.org/objects#AddressObject-2 ../cybox/objects/Address_Object.xsd\"\n" +
-            "    id=\"example:STIXPackage-33fe3b22-0201-47cf-85d0-97c02164528d\"\n" +
-            "    timestamp=\"2014-05-08T09:00:00.000000Z\"\n" +
-            "    version=\"1.1.1\"\n" +
-            ">\n" +
-            "    <stix:STIX_Header>\n" +
-            "        <stix:Title>Example watchlist that contains IP information.</stix:Title>\n" +
-            "        <stix:Package_Intent xsi:type=\"stixVocabs:PackageIntentVocab-1.0\">Indicators - Watchlist</stix:Package_Intent>\n" +
-            "    </stix:STIX_Header>\n" +
-            "    <stix:Indicators>\n" +
-            "        <stix:Indicator xsi:type=\"indicator:IndicatorType\" id=\"example:Indicator-33fe3b22-0201-47cf-85d0-97c02164528d\" timestamp=\"2014-05-08T09:00:00.000000Z\">\n" +
-            "            <indicator:Observable xsi:type=\"stixVocabs:IndicatorTypeVocab-1.1\">IP Watchlist</indicator:Observable>\n" +
-            "            <indicator:Description>Sample IP Address Indicator for this watchlist. This contains one indicator with a set of three IP addresses in the watchlist.</indicator:Description>\n" +
-            "            <indicator:Observable  id=\"example:Observable-1c798262-a4cd-434d-a958-884d6980c459\">\n" +
-            "                <cybox:Object id=\"example:Object-1980ce43-8e03-490b-863a-ea404d12242e\">\n" +
-            "                    <cybox:Properties xsi:type=\"AddressObject:AddressObjectType\" category=\"ipv4-addr\">\n" +
-            "                        <AddressObject:Address_Value condition=\"Equals\" apply_condition=\"ANY\">10.0.0.0##comma##10.0.0.1##comma##10.0.0.2</AddressObject:Address_Value>\n" +
-            "                    </cybox:Properties>\n" +
-            "                </cybox:Object>\n" +
-            "            </indicator:Observable>\n" +
-            "        </stix:Indicator>\n" +
-            "    </stix:Indicators>\n" +
-            "</stix:STIX_Package>\n";
+                "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+                "    xmlns:stix=\"http://stix.mitre.org/stix-1\"\n" +
+                "    xmlns:indicator=\"http://stix.mitre.org/Indicator-2\"\n" +
+                "    xmlns:cybox=\"http://cybox.mitre.org/cybox-2\"\n" +
+                "    xmlns:AddressObject=\"http://cybox.mitre.org/objects#AddressObject-2\"\n" +
+                "    xmlns:stixVocabs=\"http://stix.mitre.org/default_vocabularies-1\"\n" +
+                "    xmlns:example=\"http://example.com/\"\n" +
+                "    xsi:schemaLocation=\"http://stix.mitre.org/stix-1 ../stix_core.xsd\n" +
+                "    http://stix.mitre.org/Indicator-2 ../indicator.xsd\n" +
+                "\n" +
+                "    http://stix.mitre.org/default_vocabularies-1 ../stix_default_vocabularies.xsd\n" +
+                "    http://cybox.mitre.org/objects#AddressObject-2 ../cybox/objects/Address_Object.xsd\"\n" +
+                "    id=\"example:STIXPackage-33fe3b22-0201-47cf-85d0-97c02164528d\"\n" +
+                "    timestamp=\"2014-05-08T09:00:00.000000Z\"\n" +
+                "    version=\"1.1.1\"\n" +
+                ">\n" +
+                "    <stix:STIX_Header>\n" +
+                "        <stix:Title>Example watchlist that contains IP information.</stix:Title>\n" +
+                "        <stix:Package_Intent xsi:type=\"stixVocabs:PackageIntentVocab-1.0\">Indicators - Watchlist</stix:Package_Intent>\n" +
+                "    </stix:STIX_Header>\n" +
+                "    <stix:Indicators>\n" +
+                "        <stix:Indicator xsi:type=\"indicator:IndicatorType\" id=\"example:Indicator-33fe3b22-0201-47cf-85d0-97c02164528d\" timestamp=\"2014-05-08T09:00:00.000000Z\">\n" +
+                "            <indicator:Observable xsi:type=\"stixVocabs:IndicatorTypeVocab-1.1\">IP Watchlist</indicator:Observable>\n" +
+                "            <indicator:Description>Sample IP Address Indicator for this watchlist. This contains one indicator with a set of three IP addresses in the watchlist.</indicator:Description>\n" +
+                "            <indicator:Observable  id=\"example:Observable-1c798262-a4cd-434d-a958-884d6980c459\">\n" +
+                "                <cybox:Object id=\"example:Object-1980ce43-8e03-490b-863a-ea404d12242e\">\n" +
+                "                    <cybox:Properties xsi:type=\"AddressObject:AddressObjectType\" category=\"ipv4-addr\">\n" +
+                "                        <AddressObject:Address_Value condition=\"Equals\" apply_condition=\"ANY\">10.0.0.0##comma##10.0.0.1##comma##10.0.0.2</AddressObject:Address_Value>\n" +
+                "                    </cybox:Properties>\n" +
+                "                </cybox:Object>\n" +
+                "            </indicator:Observable>\n" +
+                "        </stix:Indicator>\n" +
+                "    </stix:Indicators>\n" +
+                "</stix:STIX_Package>\n";
 
         // Establish test data: Taxii11 Fetch Params
         Instant begin = Instant.now().minusMillis(3000000);
@@ -287,29 +290,29 @@ public class TestData {
 
         XMLGregorianCalendarImpl xmlGregorianCalendar = (XMLGregorianCalendarImpl) XMLGregorianCalendarImpl.createDateTime(2018, 1, 1, 1, 1, 1);
         contentBlock = new ContentBlock()
-            .withContentBinding(new ContentInstanceType(null, Constants.stix1ContentBindingsStringMap.get("1.1.1")))
-            .withTimestampLabel(xmlGregorianCalendar)
-            .withContent(new AnyMixedContentType().withContent(rawStix111));
+                .withContentBinding(new ContentInstanceType(null, Constants.stix1ContentBindingsStringMap.get("1.1.1")))
+                .withTimestampLabel(xmlGregorianCalendar)
+                .withContent(new AnyMixedContentType().withContent(rawStix111));
 
         pollResponse = new PollResponse()
-            .withContentBlocks(contentBlock)
-            .withCollectionName(taxii11Collection.getName())
-            .withMessageId(UUID.randomUUID().toString())
-            .withInResponseTo(UUID.randomUUID().toString())
-            .withMore(false)
-            .withInclusiveEndTimestamp(xmlGregorianCalendar);
+                .withContentBlocks(contentBlock)
+                .withCollectionName(taxii11Collection.getName())
+                .withMessageId(UUID.randomUUID().toString())
+                .withInResponseTo(UUID.randomUUID().toString())
+                .withMore(false)
+                .withInclusiveEndTimestamp(xmlGregorianCalendar);
 
         failureStatusMessage = new StatusMessage()
-            .withStatusType(StatusTypeEnum.FAILURE.toString())
-            .withMessage("Failure!")
-            .withMessageId(UUID.randomUUID().toString())
-            .withInResponseTo(UUID.randomUUID().toString());
+                .withStatusType(StatusTypeEnum.FAILURE.toString())
+                .withMessage("Failure!")
+                .withMessageId(UUID.randomUUID().toString())
+                .withInResponseTo(UUID.randomUUID().toString());
 
         successStatusMessage = new StatusMessage()
-            .withStatusType(StatusTypeEnum.SUCCESS.toString())
-            .withMessage("Success!")
-            .withMessageId(UUID.randomUUID().toString())
-            .withInResponseTo(UUID.randomUUID().toString());
+                .withStatusType(StatusTypeEnum.SUCCESS.toString())
+                .withMessage("Success!")
+                .withMessageId(UUID.randomUUID().toString())
+                .withInResponseTo(UUID.randomUUID().toString());
 
         getParameters = new Taxii20GetParameters();
         getParameters.setAssociation(taxii20Association);
@@ -322,70 +325,70 @@ public class TestData {
         //getParameters.setTypes(Constants.STIX20_TYPES.toArray(new String[]{}));
 
         rawStix20 = "{\n" +
-            "  \"type\": \"bundle\",\n" +
-            "  \"id\": \"bundle--c6a895f2-849c-4d1b-aba4-4b45c2800374\",\n" +
-            "  \"spec_version\": \"2.0\",\n" +
-            "  \"objects\": [\n" +
-            "    {\n" +
-            "      \"type\": \"identity\",\n" +
-            "      \"id\": \"identity--39012926-a052-44c4-ae48-caaf4a10ee61\",\n" +
-            "      \"created\": \"2017-02-24T15:50:10.564Z\",\n" +
-            "      \"modified\": \"2017-08-24T15:50:10.564Z\",\n" +
-            "      \"name\": \"Alpha Threat Analysis Org.\",\n" +
-            "      \"identity_class\": \"organization\",\n" +
-            "      \"labels\": [\n" +
-            "        \"Cyber Security\"\n" +
-            "      ],\n" +
-            "      \"sectors\": [\n" +
-            "        \"technology\"\n" +
-            "      ],\n" +
-            "      \"contact_information\": \"info@alpha.org\"\n" +
-            "    },\n" +
-            "    {\n" +
-            "      \"type\": \"identity\",\n" +
-            "      \"id\": \"identity--5206ba14-478f-4b0b-9a48-395f690c20a1\",\n" +
-            "      \"created\": \"2017-02-26T17:55:10.442Z\",\n" +
-            "      \"modified\": \"2017-02-26T17:55:10.442Z\",\n" +
-            "      \"name\": \"Beta Cyber Intelligence Company\",\n" +
-            "      \"identity_class\": \"organization\",\n" +
-            "      \"labels\": [\n" +
-            "        \"Cyber Security\"\n" +
-            "      ],\n" +
-            "      \"sectors\": [\n" +
-            "        \"technology\"\n" +
-            "      ],\n" +
-            "      \"contact_information\": \"info@beta.com\"\n" +
-            "    },\n" +
-            "    {\n" +
-            "      \"type\": \"indicator\",\n" +
-            "      \"id\": \"indicator--9299f726-ce06-492e-8472-2b52ccb53192\",\n" +
-            "      \"created_by_ref\": \"identity--39012926-a052-44c4-ae48-caaf4a10ee6e\",\n" +
-            "      \"created\": \"2017-02-27T13:57:10.515Z\",\n" +
-            "      \"modified\": \"2017-02-27T13:57:10.515Z\",\n" +
-            "      \"name\": \"Malicious URL\",\n" +
-            "      \"description\": \"This URL is potentially associated with malicious activity and is listed on several blacklist sites.\",\n" +
-            "      \"pattern\": \"[url:value = 'http://paypa1.banking.com']\",\n" +
-            "      \"valid_from\": \"2015-06-29T09:10:15.915Z\",\n" +
-            "      \"labels\": [\n" +
-            "        \"malicious-activity\"\n" +
-            "      ]\n" +
-            "    },\n" +
-            "    {\n" +
-            "      \"type\": \"sighting\",\n" +
-            "      \"id\": \"sighting--8356e820-8080-4692-aa91-ecbe94006832\",\n" +
-            "      \"created_by_ref\": \"identity--5206ba14-478f-4b0b-9a48-395f690c20a2\",\n" +
-            "      \"created\": \"2017-02-28T19:37:11.213Z\",\n" +
-            "      \"modified\": \"2017-02-28T19:37:11.213Z\",\n" +
-            "      \"first_seen\": \"2017-02-27T21:37:11.213Z\",\n" +
-            "      \"last_seen\": \"2017-02-27T21:37:11.213Z\",\n" +
-            "      \"count\": 1,\n" +
-            "      \"sighting_of_ref\": \"indicator--9299f726-ce06-492e-8472-2b52ccb53191\",\n" +
-            "      \"where_sighted_refs\": [\n" +
-            "        \"identity--5206ba14-478f-4b0b-9a48-395f690c20a2\"\n" +
-            "      ]\n" +
-            "    }\n" +
-            "  ]\n" +
-            "}";
+                "  \"type\": \"bundle\",\n" +
+                "  \"id\": \"bundle--c6a895f2-849c-4d1b-aba4-4b45c2800374\",\n" +
+                "  \"spec_version\": \"2.0\",\n" +
+                "  \"objects\": [\n" +
+                "    {\n" +
+                "      \"type\": \"identity\",\n" +
+                "      \"id\": \"identity--39012926-a052-44c4-ae48-caaf4a10ee61\",\n" +
+                "      \"created\": \"2017-02-24T15:50:10.564Z\",\n" +
+                "      \"modified\": \"2017-08-24T15:50:10.564Z\",\n" +
+                "      \"name\": \"Alpha Threat Analysis Org.\",\n" +
+                "      \"identity_class\": \"organization\",\n" +
+                "      \"labels\": [\n" +
+                "        \"Cyber Security\"\n" +
+                "      ],\n" +
+                "      \"sectors\": [\n" +
+                "        \"technology\"\n" +
+                "      ],\n" +
+                "      \"contact_information\": \"info@alpha.org\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"type\": \"identity\",\n" +
+                "      \"id\": \"identity--5206ba14-478f-4b0b-9a48-395f690c20a1\",\n" +
+                "      \"created\": \"2017-02-26T17:55:10.442Z\",\n" +
+                "      \"modified\": \"2017-02-26T17:55:10.442Z\",\n" +
+                "      \"name\": \"Beta Cyber Intelligence Company\",\n" +
+                "      \"identity_class\": \"organization\",\n" +
+                "      \"labels\": [\n" +
+                "        \"Cyber Security\"\n" +
+                "      ],\n" +
+                "      \"sectors\": [\n" +
+                "        \"technology\"\n" +
+                "      ],\n" +
+                "      \"contact_information\": \"info@beta.com\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"type\": \"indicator\",\n" +
+                "      \"id\": \"indicator--9299f726-ce06-492e-8472-2b52ccb53192\",\n" +
+                "      \"created_by_ref\": \"identity--39012926-a052-44c4-ae48-caaf4a10ee6e\",\n" +
+                "      \"created\": \"2017-02-27T13:57:10.515Z\",\n" +
+                "      \"modified\": \"2017-02-27T13:57:10.515Z\",\n" +
+                "      \"name\": \"Malicious URL\",\n" +
+                "      \"description\": \"This URL is potentially associated with malicious activity and is listed on several blacklist sites.\",\n" +
+                "      \"pattern\": \"[url:value = 'http://paypa1.banking.com']\",\n" +
+                "      \"valid_from\": \"2015-06-29T09:10:15.915Z\",\n" +
+                "      \"labels\": [\n" +
+                "        \"malicious-activity\"\n" +
+                "      ]\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"type\": \"sighting\",\n" +
+                "      \"id\": \"sighting--8356e820-8080-4692-aa91-ecbe94006832\",\n" +
+                "      \"created_by_ref\": \"identity--5206ba14-478f-4b0b-9a48-395f690c20a2\",\n" +
+                "      \"created\": \"2017-02-28T19:37:11.213Z\",\n" +
+                "      \"modified\": \"2017-02-28T19:37:11.213Z\",\n" +
+                "      \"first_seen\": \"2017-02-27T21:37:11.213Z\",\n" +
+                "      \"last_seen\": \"2017-02-27T21:37:11.213Z\",\n" +
+                "      \"count\": 1,\n" +
+                "      \"sighting_of_ref\": \"indicator--9299f726-ce06-492e-8472-2b52ccb53191\",\n" +
+                "      \"where_sighted_refs\": [\n" +
+                "        \"identity--5206ba14-478f-4b0b-9a48-395f690c20a2\"\n" +
+                "      ]\n" +
+                "    }\n" +
+                "  ]\n" +
+                "}";
 
         taxii20GetResponse = ResponseEntity.ok(rawStix20);
 
@@ -399,42 +402,42 @@ public class TestData {
         event.setTaxiiCollection(taxii11Collection.getDisplayName());
 
         discoveryResponse = new DiscoveryResponse()
-            .withMessageId(UUID.randomUUID().toString())
-            .withInResponseTo(UUID.randomUUID().toString())
-            .withServiceInstances(discoveryServiceInstance, pollServiceInstance, collectionManagementServiceInstance, inboxServiceInstance);
+                .withMessageId(UUID.randomUUID().toString())
+                .withInResponseTo(UUID.randomUUID().toString())
+                .withServiceInstances(discoveryServiceInstance, pollServiceInstance, collectionManagementServiceInstance, inboxServiceInstance);
 
         collectionInformationResponse = new CollectionInformationResponse()
-            .withCollections(collectionRecordType)
-            .withMessageId(UUID.randomUUID().toString())
-            .withInResponseTo(UUID.randomUUID().toString());
+                .withCollections(collectionRecordType)
+                .withMessageId(UUID.randomUUID().toString())
+                .withInResponseTo(UUID.randomUUID().toString());
 
         taxii20Discovery = new Discovery()
-            .withId(UUID.randomUUID().toString())
-            .withTitle("Test")
-            .withContact("Test")
-            .withDefaultApiRoot("test")
-            .withApiRoots(Arrays.asList("test"))
-            .withDescription("Test");
+                .withId(UUID.randomUUID().toString())
+                .withTitle("Test")
+                .withContact("Test")
+                .withDefaultApiRoot("test")
+                .withApiRoots(Arrays.asList("test"))
+                .withDescription("Test");
         taxii20Server.updateFromDiscovery(taxii20Discovery);
 
         taxii20ApiRoot = new xor.bcmc.taxii2.resources.ApiRoot()
-            .withId(UUID.randomUUID().toString())
-            .withTitle("Test")
-            .withDescription("Test")
-            .withMaxContentLength(1000000000)
-            .withVersions(Arrays.asList(Constants.HEADER_TAXII20_JSON));
+                .withId(UUID.randomUUID().toString())
+                .withTitle("Test")
+                .withDescription("Test")
+                .withMaxContentLength(1000000000)
+                .withVersions(Arrays.asList(Constants.HEADER_TAXII20_JSON));
         HashSet<ApiRoot> apiRootObjects = new HashSet<>();
         apiRootObjects.add(apiRoot);
         taxii20Server.setApiRootObjects(apiRootObjects);
-        taxii20Collection.setApiRootRef(apiRoot.getId());
+        taxii20Collection.setApiRootRef(apiRoot.getEndpoint());
 
         taxii20CollectionObject = new Collection()
-            .withId(UUID.randomUUID().toString())
-            .withTitle("Test")
-            .withDescription("Test")
-            .withMediaTypes(Arrays.asList(Constants.HEADER_STIX20_JSON))
-            .withCanRead(true)
-            .withCanWrite(true);
+                .withId(UUID.randomUUID().toString())
+                .withTitle("Test")
+                .withDescription("Test")
+                .withMediaTypes(Arrays.asList(Constants.HEADER_STIX20_JSON))
+                .withCanRead(true)
+                .withCanWrite(true);
 
         taxii20Status = new Status();
         taxii20Status.setAssociation(taxii20Association);
