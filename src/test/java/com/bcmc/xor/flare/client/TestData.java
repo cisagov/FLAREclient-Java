@@ -271,7 +271,7 @@ public class TestData {
                 "</stix:STIX_Package>\n";
 
         // Establish test data: Taxii11 Fetch Params
-        Instant begin = Instant.now().minusMillis(3000000);
+        Instant begin = Instant.now().minusMillis(60000*3);
         Instant end = Instant.now();
 
         pollParameters = new Taxii11PollParameters();

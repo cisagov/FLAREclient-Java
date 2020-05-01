@@ -7,7 +7,6 @@ import com.bcmc.xor.flare.client.api.domain.async.AsyncFetch;
 import com.bcmc.xor.flare.client.api.domain.async.Taxii11AsyncFetch;
 import com.bcmc.xor.flare.client.api.domain.async.Taxii20AsyncFetch;
 import com.bcmc.xor.flare.client.api.domain.content.CountResult;
-import com.bcmc.xor.flare.client.api.domain.parameters.Taxii11PollParameters;
 import com.bcmc.xor.flare.client.api.repository.AsyncFetchRequestRepository;
 import com.bcmc.xor.flare.client.api.service.CollectionService;
 import com.bcmc.xor.flare.client.api.service.DownloadService;
@@ -17,7 +16,6 @@ import com.bcmc.xor.flare.client.taxii.taxii20.Taxii20Association;
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mitre.taxii.messages.xml11.AnyMixedContentType;
@@ -32,7 +30,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.Duration;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoField;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -40,7 +39,6 @@ import java.util.UUID;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
-@Ignore
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = FlareclientApp.class)
 public class AsyncFetchTest {
@@ -104,48 +102,50 @@ public class AsyncFetchTest {
     public void processAsyncFetch11() {
 
         // All of the code below is to emulate subsequent poll responses, increasing the 'window' of retrieved content
-        XMLGregorianCalendarImpl timestamp1 = (XMLGregorianCalendarImpl) XMLGregorianCalendarImpl.createDateTime(2018, 1, 1, 1, 1, 1);
-        XMLGregorianCalendarImpl timestamp2 = (XMLGregorianCalendarImpl) XMLGregorianCalendarImpl.createDateTime(2018, 1, 1, 1, 2, 1);
-        XMLGregorianCalendarImpl timestamp3 = (XMLGregorianCalendarImpl) XMLGregorianCalendarImpl.createDateTime(2018, 1, 1, 1, 3, 1);
+        ZonedDateTime begin = TestData.pollParameters.getStartDate();
+
+        XMLGregorianCalendarImpl timestamp1 = (XMLGregorianCalendarImpl) XMLGregorianCalendarImpl.createDateTime(begin.getYear(), begin.getMonthValue(), begin.getDayOfMonth(), begin.getHour(), begin.getMinute()+1, begin.getSecond(), begin.get(ChronoField.MILLI_OF_SECOND), 0);
+        XMLGregorianCalendarImpl timestamp2 = (XMLGregorianCalendarImpl) XMLGregorianCalendarImpl.createDateTime(begin.getYear(), begin.getMonthValue(), begin.getDayOfMonth(), begin.getHour(), begin.getMinute()+2, begin.getSecond(), begin.get(ChronoField.MILLI_OF_SECOND), 0);
+        XMLGregorianCalendarImpl timestamp3 = (XMLGregorianCalendarImpl) XMLGregorianCalendarImpl.createDateTime(begin.getYear(), begin.getMonthValue(), begin.getDayOfMonth(), begin.getHour(), begin.getMinute()+3, begin.getSecond(), begin.get(ChronoField.MILLI_OF_SECOND), 0);
 
         ContentBlock contentBlock1 = new ContentBlock()
-            .withContentBinding(new ContentInstanceType(null, Constants.stix1ContentBindingsStringMap.get("1.1.1")))
-            .withTimestampLabel(timestamp1)
-            .withContent(new AnyMixedContentType().withContent(TestData.rawStix111));
+                .withContentBinding(new ContentInstanceType(null, Constants.stix1ContentBindingsStringMap.get("1.1.1")))
+                .withTimestampLabel(timestamp1)
+                .withContent(new AnyMixedContentType().withContent(TestData.rawStix111));
 
         ContentBlock contentBlock2 = new ContentBlock()
-            .withContentBinding(new ContentInstanceType(null, Constants.stix1ContentBindingsStringMap.get("1.1.1")))
-            .withTimestampLabel(timestamp2)
-            .withContent(new AnyMixedContentType().withContent(TestData.rawStix111));
+                .withContentBinding(new ContentInstanceType(null, Constants.stix1ContentBindingsStringMap.get("1.1.1")))
+                .withTimestampLabel(timestamp2)
+                .withContent(new AnyMixedContentType().withContent(TestData.rawStix111));
 
         ContentBlock contentBlock3 = new ContentBlock()
-            .withContentBinding(new ContentInstanceType(null, Constants.stix1ContentBindingsStringMap.get("1.1.1")))
-            .withTimestampLabel(timestamp3)
-            .withContent(new AnyMixedContentType().withContent(TestData.rawStix111));
+                .withContentBinding(new ContentInstanceType(null, Constants.stix1ContentBindingsStringMap.get("1.1.1")))
+                .withTimestampLabel(timestamp3)
+                .withContent(new AnyMixedContentType().withContent(TestData.rawStix111));
 
         PollResponse response1 = new PollResponse()
-            .withContentBlocks(contentBlock1)
-            .withCollectionName(TestData.taxii11Collection.getName())
-            .withMessageId(UUID.randomUUID().toString())
-            .withInResponseTo(UUID.randomUUID().toString())
-            .withMore(false)
-            .withInclusiveEndTimestamp(timestamp1);
+                .withContentBlocks(contentBlock1)
+                .withCollectionName(TestData.taxii11Collection.getName())
+                .withMessageId(UUID.randomUUID().toString())
+                .withInResponseTo(UUID.randomUUID().toString())
+                .withMore(false)
+                .withInclusiveEndTimestamp(timestamp1);
 
         PollResponse response2 = new PollResponse()
-            .withContentBlocks(contentBlock2)
-            .withCollectionName(TestData.taxii11Collection.getName())
-            .withMessageId(UUID.randomUUID().toString())
-            .withInResponseTo(UUID.randomUUID().toString())
-            .withMore(false)
-            .withInclusiveEndTimestamp(timestamp2);
+                .withContentBlocks(contentBlock2)
+                .withCollectionName(TestData.taxii11Collection.getName())
+                .withMessageId(UUID.randomUUID().toString())
+                .withInResponseTo(UUID.randomUUID().toString())
+                .withMore(false)
+                .withInclusiveEndTimestamp(timestamp2);
 
         PollResponse response3 = new PollResponse()
-            .withContentBlocks(contentBlock3)
-            .withCollectionName(TestData.taxii11Collection.getName())
-            .withMessageId(UUID.randomUUID().toString())
-            .withInResponseTo(UUID.randomUUID().toString())
-            .withMore(false)
-            .withInclusiveEndTimestamp(timestamp3);
+                .withContentBlocks(contentBlock3)
+                .withCollectionName(TestData.taxii11Collection.getName())
+                .withMessageId(UUID.randomUUID().toString())
+                .withInResponseTo(UUID.randomUUID().toString())
+                .withMore(false)
+                .withInclusiveEndTimestamp(timestamp3);
 
 
         when(downloadService.fetchContent(any(), any())).thenReturn(response1, response2, response3);
@@ -156,6 +156,8 @@ public class AsyncFetchTest {
         // Verify 3 chunks are created based on the window supplied.
         // Window is 60,0000 millis
         // so 3 chunks should be iterated
+        assertEquals(asyncFetch11.getInitialFetchParams().getStartDate(), TestData.pollParameters.getStartDate());
+        assertEquals(asyncFetch11.getInitialFetchParams().getEndDate(), TestData.pollParameters.getEndDate());
         assertEquals(asyncFetch11.getEnd(), asyncFetch11.getLastRequested());
         assertEquals(asyncFetch11.getStatus(), AsyncFetch.Status.COMPLETE);
         verify(asyncFetch11, times(3)).next();
