@@ -108,12 +108,8 @@ flare:
     fetch-chunk-window: 28800000 # every 8 hours
     fetch-chunk-page-size: 100
     schemas-directory: 'src/main/resources/schemas'
-    supportedContentBindings: [
-        "urn:stix.mitre.org:xml:1.0",
-        "urn:stix.mitre.org:xml:1.0.1",
-        "urn:stix.mitre.org:xml:1.1",
-        "urn:stix.mitre.org:xml:1.1.1",
-        "urn:stix.mitre.org:xml:1.2"
+    supportedContentBindings: [ #disable all but 1.1.1 in testing for performance
+        "urn:stix.mitre.org:xml:1.1.1"
         ]
 
     security:

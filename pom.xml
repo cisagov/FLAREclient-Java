@@ -10,9 +10,6 @@
 
     <properties>
         <!-- Build properties -->
-        <serenity-cucumber4.version>1.0.5</serenity-cucumber4.version>
-        <serenity-core.version>2.0.39</serenity-core.version>
-        <io.cucumber.version>4.2.0</io.cucumber.version>
         <surefire.rerunFailingTestsCount>2</surefire.rerunFailingTestsCount>
         <webdriver.driver>chrome</webdriver.driver>
         <imartutil.version>0.1</imartutil.version>
@@ -82,7 +79,6 @@
         <couchmove.version>1.0.2</couchmove.version>
         <couchbase-testcontainer.version>1.2</couchbase-testcontainer.version>
         <couchbase-client.version>2.5.9</couchbase-client.version>
-        <cucumber.version>3.0.2</cucumber.version>
         <commons-io.version>2.6</commons-io.version>
         <guava.version>25.1-jre</guava.version>
         <infinispan.version>8.2.5.Final</infinispan.version>
@@ -124,12 +120,6 @@
     </dependencyManagement>
 
     <dependencies>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-java</artifactId>
-            <version>2.53.1</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
@@ -354,6 +344,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.vaadin.external.google</groupId>
+                    <artifactId>android-json</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -385,44 +381,6 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-data</artifactId>
         </dependency>
-        <dependency>
-            <groupId>net.serenity-bdd</groupId>
-            <artifactId>serenity-core</artifactId>
-            <version>${serenity-core.version}</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>io.cucumber</groupId>
-                    <artifactId>cucumber-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>javax.el</groupId>
-                    <artifactId>javax.el-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>net.serenity-bdd</groupId>
-            <artifactId>serenity-cucumber4</artifactId>
-            <version>${serenity-cucumber4.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-java</artifactId>
-            <version>${io.cucumber.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-junit</artifactId>
-            <version>${io.cucumber.version}</version>
-        </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.springframework</groupId>-->
-<!--            <artifactId>spring-beans</artifactId>-->
-<!--            <version>5.2.5.RELEASE</version>-->
-<!--            <scope>compile</scope>-->
-<!--        </dependency>-->
     </dependencies>
 
     <build>
@@ -670,27 +628,6 @@
                     </systemProperties>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>net.serenity-bdd.maven.plugins</groupId>
-                <artifactId>serenity-maven-plugin</artifactId>
-                <version>${serenity-core.version}</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>net.serenity-bdd</groupId>
-                        <artifactId>serenity-core</artifactId>
-                        <version>[${serenity-core.version}]</version>
-                    </dependency>
-                </dependencies>
-                <executions>
-                    <execution>
-                        <id>serenity-reports</id>
-                        <phase>post-integration-test</phase>
-                        <goals>
-                            <goal>aggregate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
@@ -741,6 +678,10 @@
                         </lifecycleMappingMetadata>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>docker-maven-plugin</artifactId>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
@@ -757,78 +698,6 @@
                 <profile.swagger>,swagger</profile.swagger>
             </properties>
         </profile>
-<!--        <profile>-->
-<!--            <id>webpack</id>-->
-<!--            <activation>-->
-<!--                <file>-->
-<!--                    <missing>${basedir}/target/www/app/main.bundle.js</missing>-->
-<!--                </file>-->
-<!--            </activation>-->
-<!--            <dependencies>-->
-<!--                <dependency>-->
-<!--                    <groupId>org.springframework.boot</groupId>-->
-<!--                    <artifactId>spring-boot-starter-undertow</artifactId>-->
-<!--                </dependency>-->
-<!--                <dependency>-->
-<!--                    <groupId>org.springframework.boot</groupId>-->
-<!--                    <artifactId>spring-boot-devtools</artifactId>-->
-<!--                    <optional>true</optional>-->
-<!--                </dependency>-->
-<!--            </dependencies>-->
-<!--            <build>-->
-<!--                <plugins>-->
-<!--                    <plugin>-->
-<!--                        <groupId>com.github.eirslett</groupId>-->
-<!--                        <artifactId>frontend-maven-plugin</artifactId>-->
-<!--                        <version>${frontend-maven-plugin.version}</version>-->
-<!--                        <executions>-->
-<!--                            <execution>-->
-<!--                                <id>install node and yarn</id>-->
-<!--                                <goals>-->
-<!--                                    <goal>install-node-and-yarn</goal>-->
-<!--                                </goals>-->
-<!--                                <configuration>-->
-<!--                                    <nodeVersion>${node.version}</nodeVersion>-->
-<!--                                    <yarnVersion>${yarn.version}</yarnVersion>-->
-<!--                                </configuration>-->
-<!--                            </execution>-->
-<!--                            <execution>-->
-<!--                                <id>webpack build dev</id>-->
-<!--                                <goals>-->
-<!--                                    <goal>yarn</goal>-->
-<!--                                </goals>-->
-<!--                                <phase>generate-resources</phase>-->
-<!--                                <configuration>-->
-<!--                                    <arguments>run webpack:build</arguments>-->
-<!--                                    <yarnInheritsProxyConfigFromMaven>false</yarnInheritsProxyConfigFromMaven>-->
-<!--                                </configuration>-->
-<!--                            </execution>-->
-<!--                        </executions>-->
-<!--                    </plugin>-->
-<!--                    <plugin>-->
-<!--                        <groupId>org.apache.maven.plugins</groupId>-->
-<!--                        <artifactId>maven-war-plugin</artifactId>-->
-<!--                        <version>${maven-war-plugin.version}</version>-->
-<!--                        <configuration>-->
-<!--                            <failOnMissingWebXml>false</failOnMissingWebXml>-->
-<!--                            <warSourceDirectory>target/www/</warSourceDirectory>-->
-<!--                            <webResources>-->
-<!--                                <resource>-->
-<!--                                    <directory>src/main/webapp</directory>-->
-<!--                                    <includes>-->
-<!--                                        <include>WEB-INF/**</include>-->
-<!--                                    </includes>-->
-<!--                                </resource>-->
-<!--                            </webResources>-->
-<!--                        </configuration>-->
-<!--                    </plugin>-->
-<!--                </plugins>-->
-<!--            </build>-->
-<!--            <properties>-->
-<!--                &lt;!&ndash; default Spring profiles &ndash;&gt;-->
-<!--                <spring.profiles.active>dev${profile.no-liquibase}</spring.profiles.active>-->
-<!--            </properties>-->
-<!--        </profile>-->
         <profile>
             <id>dev</id>
             <activation>
@@ -871,234 +740,6 @@
                 <spring.profiles.active>dev${profile.no-liquibase}</spring.profiles.active>
             </properties>
         </profile>
-<!--        <profile>-->
-<!--            <id>prod</id>-->
-<!--            <dependencies>-->
-<!--                <dependency>-->
-<!--                    <groupId>org.springframework.boot</groupId>-->
-<!--                    <artifactId>spring-boot-starter-undertow</artifactId>-->
-<!--                </dependency>-->
-<!--            </dependencies>-->
-<!--            <build>-->
-<!--                <plugins>-->
-<!--                    <plugin>-->
-<!--                        <artifactId>maven-clean-plugin</artifactId>-->
-<!--                        <version>${maven-clean-plugin.version}</version>-->
-<!--                        <configuration>-->
-<!--                            <filesets>-->
-<!--                                <fileset>-->
-<!--                                    <directory>target/www/</directory>-->
-<!--                                </fileset>-->
-<!--                            </filesets>-->
-<!--                        </configuration>-->
-<!--                    </plugin>-->
-<!--                    <plugin>-->
-<!--                        <groupId>org.apache.maven.plugins</groupId>-->
-<!--                        <artifactId>maven-war-plugin</artifactId>-->
-<!--                        <version>${maven-war-plugin.version}</version>-->
-<!--                        <configuration>-->
-<!--                            <failOnMissingWebXml>false</failOnMissingWebXml>-->
-<!--                            <warSourceDirectory>target/www/</warSourceDirectory>-->
-<!--                            <webResources>-->
-<!--                                <resource>-->
-<!--                                    <directory>src/main/webapp</directory>-->
-<!--                                    <includes>-->
-<!--                                        <include>WEB-INF/**</include>-->
-<!--                                    </includes>-->
-<!--                                </resource>-->
-<!--                            </webResources>-->
-<!--                        </configuration>-->
-<!--                    </plugin>-->
-<!--                    <plugin>-->
-<!--                        <groupId>org.springframework.boot</groupId>-->
-<!--                        <artifactId>spring-boot-maven-plugin</artifactId>-->
-<!--                        <version>${spring-boot.version}</version>-->
-<!--                        <configuration>-->
-<!--                            <mainClass>${start-class}</mainClass>-->
-<!--                            <executable>true</executable>-->
-<!--                        </configuration>-->
-<!--                        <executions>-->
-<!--                            <execution>-->
-<!--                                <goals>-->
-<!--                                    <goal>build-info</goal>-->
-<!--                                </goals>-->
-<!--                            </execution>-->
-<!--                        </executions>-->
-<!--                    </plugin>-->
-<!--&lt;!&ndash;                    <plugin>&ndash;&gt;-->
-<!--&lt;!&ndash;                        <groupId>com.github.eirslett</groupId>&ndash;&gt;-->
-<!--&lt;!&ndash;                        <artifactId>frontend-maven-plugin</artifactId>&ndash;&gt;-->
-<!--&lt;!&ndash;                        <version>${frontend-maven-plugin.version}</version>&ndash;&gt;-->
-<!--&lt;!&ndash;                        <executions>&ndash;&gt;-->
-<!--&lt;!&ndash;                            <execution>&ndash;&gt;-->
-<!--&lt;!&ndash;                                <id>install node and yarn</id>&ndash;&gt;-->
-<!--&lt;!&ndash;                                <goals>&ndash;&gt;-->
-<!--&lt;!&ndash;                                    <goal>install-node-and-yarn</goal>&ndash;&gt;-->
-<!--&lt;!&ndash;                                </goals>&ndash;&gt;-->
-<!--&lt;!&ndash;                                <configuration>&ndash;&gt;-->
-<!--&lt;!&ndash;                                    <nodeVersion>${node.version}</nodeVersion>&ndash;&gt;-->
-<!--&lt;!&ndash;                                    <yarnVersion>${yarn.version}</yarnVersion>&ndash;&gt;-->
-<!--&lt;!&ndash;                                </configuration>&ndash;&gt;-->
-<!--&lt;!&ndash;                            </execution>&ndash;&gt;-->
-<!--&lt;!&ndash;                            <execution>&ndash;&gt;-->
-<!--&lt;!&ndash;                                <id>yarn install</id>&ndash;&gt;-->
-<!--&lt;!&ndash;                                <goals>&ndash;&gt;-->
-<!--&lt;!&ndash;                                    <goal>yarn</goal>&ndash;&gt;-->
-<!--&lt;!&ndash;                                </goals>&ndash;&gt;-->
-<!--&lt;!&ndash;                                <configuration>&ndash;&gt;-->
-<!--&lt;!&ndash;                                    <arguments>install &#45;&#45;force</arguments>&ndash;&gt;-->
-<!--&lt;!&ndash;                                </configuration>&ndash;&gt;-->
-<!--&lt;!&ndash;                            </execution>&ndash;&gt;-->
-<!--&lt;!&ndash;                            <execution>&ndash;&gt;-->
-<!--&lt;!&ndash;                                <id>webpack build test</id>&ndash;&gt;-->
-<!--&lt;!&ndash;                                <goals>&ndash;&gt;-->
-<!--&lt;!&ndash;                                    <goal>yarn</goal>&ndash;&gt;-->
-<!--&lt;!&ndash;                                </goals>&ndash;&gt;-->
-<!--&lt;!&ndash;                                <phase>test</phase>&ndash;&gt;-->
-<!--&lt;!&ndash;                                <configuration>&ndash;&gt;-->
-<!--&lt;!&ndash;                                    <arguments>run webpack:test</arguments>&ndash;&gt;-->
-<!--&lt;!&ndash;                                    <yarnInheritsProxyConfigFromMaven>false</yarnInheritsProxyConfigFromMaven>&ndash;&gt;-->
-<!--&lt;!&ndash;                                </configuration>&ndash;&gt;-->
-<!--&lt;!&ndash;                            </execution>&ndash;&gt;-->
-<!--&lt;!&ndash;                            <execution>&ndash;&gt;-->
-<!--&lt;!&ndash;                                <id>webpack build prod</id>&ndash;&gt;-->
-<!--&lt;!&ndash;                                <goals>&ndash;&gt;-->
-<!--&lt;!&ndash;                                    <goal>yarn</goal>&ndash;&gt;-->
-<!--&lt;!&ndash;                                </goals>&ndash;&gt;-->
-<!--&lt;!&ndash;                                <phase>generate-resources</phase>&ndash;&gt;-->
-<!--&lt;!&ndash;                                <configuration>&ndash;&gt;-->
-<!--&lt;!&ndash;                                    <arguments>run webpack:prod</arguments>&ndash;&gt;-->
-<!--&lt;!&ndash;                                    <yarnInheritsProxyConfigFromMaven>false</yarnInheritsProxyConfigFromMaven>&ndash;&gt;-->
-<!--&lt;!&ndash;                                </configuration>&ndash;&gt;-->
-<!--&lt;!&ndash;                            </execution>&ndash;&gt;-->
-<!--&lt;!&ndash;                        </executions>&ndash;&gt;-->
-<!--&lt;!&ndash;                    </plugin>&ndash;&gt;-->
-<!--&lt;!&ndash;                    <plugin>&ndash;&gt;-->
-<!--&lt;!&ndash;                        <groupId>pl.project13.maven</groupId>&ndash;&gt;-->
-<!--&lt;!&ndash;                        <artifactId>git-commit-id-plugin</artifactId>&ndash;&gt;-->
-<!--&lt;!&ndash;                        <version>${git-commit-id-plugin.version}</version>&ndash;&gt;-->
-<!--&lt;!&ndash;                        <executions>&ndash;&gt;-->
-<!--&lt;!&ndash;                            <execution>&ndash;&gt;-->
-<!--&lt;!&ndash;                                <goals>&ndash;&gt;-->
-<!--&lt;!&ndash;                                    <goal>revision</goal>&ndash;&gt;-->
-<!--&lt;!&ndash;                                </goals>&ndash;&gt;-->
-<!--&lt;!&ndash;                            </execution>&ndash;&gt;-->
-<!--&lt;!&ndash;                        </executions>&ndash;&gt;-->
-<!--&lt;!&ndash;                        <configuration>&ndash;&gt;-->
-<!--&lt;!&ndash;                            <failOnNoGitDirectory>false</failOnNoGitDirectory>&ndash;&gt;-->
-<!--&lt;!&ndash;                            <generateGitPropertiesFile>true</generateGitPropertiesFile>&ndash;&gt;-->
-<!--&lt;!&ndash;                            <includeOnlyProperties>&ndash;&gt;-->
-<!--&lt;!&ndash;                                <includeOnlyProperty>^git.commit.id.abbrev$</includeOnlyProperty>&ndash;&gt;-->
-<!--&lt;!&ndash;                                <includeOnlyProperty>^git.commit.id.describe$</includeOnlyProperty>&ndash;&gt;-->
-<!--&lt;!&ndash;                                <includeOnlyProperty>^git.branch$</includeOnlyProperty>&ndash;&gt;-->
-<!--&lt;!&ndash;                            </includeOnlyProperties>&ndash;&gt;-->
-<!--&lt;!&ndash;                        </configuration>&ndash;&gt;-->
-<!--&lt;!&ndash;                    </plugin>&ndash;&gt;-->
-<!--                </plugins>-->
-<!--            </build>-->
-<!--            <properties>-->
-<!--                &lt;!&ndash; default Spring profiles &ndash;&gt;-->
-<!--                <spring.profiles.active>prod${profile.swagger}${profile.no-liquibase}</spring.profiles.active>-->
-<!--            </properties>-->
-<!--        </profile>-->
-<!--        <profile>-->
-<!--            &lt;!&ndash;-->
-<!--                Profile for doing "continuous compilation" with the Scala Maven plugin.-->
-<!--                It allows automatic compilation of Java classes as soon as they are saved.-->
-<!--                To use it, run in 3 terminals:-->
-<!--                - './mvnw -Pcc scala:cc' for continuous compilation of your classes-->
-<!--                - './mvnw -Pcc -Pdev' for hot reload of Spring boot-->
-<!--                - 'npm start/yarn start' for hot reload of the HTML/JavaScript asset-->
-<!--                Everything should hot reload automatically!-->
-<!--            &ndash;&gt;-->
-<!--            <id>cc</id>-->
-<!--            <dependencies>-->
-<!--                <dependency>-->
-<!--                    <groupId>org.springframework.boot</groupId>-->
-<!--                    <artifactId>spring-boot-starter-undertow</artifactId>-->
-<!--                </dependency>-->
-<!--                <dependency>-->
-<!--                    <groupId>org.springframework.boot</groupId>-->
-<!--                    <artifactId>spring-boot-devtools</artifactId>-->
-<!--                    <optional>true</optional>-->
-<!--                </dependency>-->
-<!--            </dependencies>-->
-<!--            <build>-->
-<!--                <plugins>-->
-<!--                    <plugin>-->
-<!--                        <groupId>org.apache.maven.plugins</groupId>-->
-<!--                        <artifactId>maven-war-plugin</artifactId>-->
-<!--                        <version>${maven-war-plugin.version}</version>-->
-<!--                        <configuration>-->
-<!--                            <failOnMissingWebXml>false</failOnMissingWebXml>-->
-<!--                            <warSourceDirectory>src/main/webapp/</warSourceDirectory>-->
-<!--                        </configuration>-->
-<!--                    </plugin>-->
-<!--                    <plugin>-->
-<!--                        <groupId>org.springframework.boot</groupId>-->
-<!--                        <artifactId>spring-boot-maven-plugin</artifactId>-->
-<!--                        <version>${spring-boot.version}</version>-->
-<!--                        <configuration>-->
-<!--                            <mainClass>${start-class}</mainClass>-->
-<!--                            <executable>true</executable>-->
-<!--                            <fork>true</fork>-->
-<!--                            <addResources>true</addResources>-->
-<!--                            &lt;!&ndash;-->
-<!--                            Enable the line below to have remote debugging of your application on port 5005-->
-<!--                            <jvmArguments>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005</jvmArguments>-->
-<!--                            &ndash;&gt;-->
-<!--                        </configuration>-->
-<!--                    </plugin>-->
-<!--                    <plugin>-->
-<!--                        <groupId>org.apache.maven.plugins</groupId>-->
-<!--                        <artifactId>maven-compiler-plugin</artifactId>-->
-<!--                        <version>${maven-compiler-plugin.version}</version>-->
-<!--                        <executions>-->
-<!--                            <execution>-->
-<!--                                <id>default-compile</id>-->
-<!--                                <phase>none</phase>-->
-<!--                            </execution>-->
-<!--                            <execution>-->
-<!--                                <id>default-testCompile</id>-->
-<!--                                <phase>none</phase>-->
-<!--                            </execution>-->
-<!--                        </executions>-->
-<!--                    </plugin>-->
-<!--                    <plugin>-->
-<!--                        <groupId>net.alchim31.maven</groupId>-->
-<!--                        <artifactId>scala-maven-plugin</artifactId>-->
-<!--                        <version>${scala-maven-plugin.version}</version>-->
-<!--                        <executions>-->
-<!--                            <execution>-->
-<!--                                <id>compile</id>-->
-<!--                                <phase>compile</phase>-->
-<!--                                <goals>-->
-<!--                                    <goal>add-source</goal>-->
-<!--                                    <goal>compile</goal>-->
-<!--                                </goals>-->
-<!--                            </execution>-->
-<!--                            <execution>-->
-<!--                                <id>test-compile</id>-->
-<!--                                <phase>test-compile</phase>-->
-<!--                                <goals>-->
-<!--                                    <goal>add-source</goal>-->
-<!--                                    <goal>testCompile</goal>-->
-<!--                                </goals>-->
-<!--                            </execution>-->
-<!--                        </executions>-->
-<!--                        <configuration>-->
-<!--                            <recompileMode>incremental</recompileMode>-->
-<!--                            <verbose>true</verbose>-->
-<!--                            <scalaVersion>${scala.version}</scalaVersion>-->
-<!--                        </configuration>-->
-<!--                    </plugin>-->
-<!--                </plugins>-->
-<!--            </build>-->
-<!--            <properties>-->
-<!--                &lt;!&ndash; default Spring profiles &ndash;&gt;-->
-<!--                <spring.profiles.active>dev,swagger</spring.profiles.active>-->
-<!--            </properties>-->
-<!--        </profile>-->
         <profile>
             <!--
                 Profile for applying IDE-specific configuration.

@@ -13,19 +13,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.seleniumhq.selenium:selenium-java:2.53.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.seleniumhq.selenium:selenium-chrome-driver:3.9.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.apache.commons:commons-exec:1.3" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.4.10" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.squareup.okhttp3:okhttp:3.9.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.squareup.okio:okio:1.13.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.seleniumhq.selenium:selenium-edge-driver:3.9.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.seleniumhq.selenium:htmlunit-driver:2.29.3" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.seleniumhq.selenium:selenium-firefox-driver:3.9.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.seleniumhq.selenium:selenium-ie-driver:3.9.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.seleniumhq.selenium:selenium-safari-driver:3.9.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.seleniumhq.selenium:selenium-support:3.9.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.seleniumhq.selenium:selenium-leg-rc:2.53.1" level="project" />
     <orderEntry type="library" name="Maven: xml-apis:xml-apis:1.4.01" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.persistence:org.eclipse.persistence.moxy:2.6.4" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.persistence:org.eclipse.persistence.core:2.6.4" level="project" />
@@ -35,8 +22,11 @@
     <orderEntry type="library" name="Maven: xor.bcmc:taxii2:0.2.1" level="project" />
     <orderEntry type="library" name="Maven: xor.flare:utils:1.0.5-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: javax.mail:javax.mail-api:1.6.1" level="project" />
+    <orderEntry type="library" name="Maven: javax.activation:activation:1.1" level="project" />
     <orderEntry type="library" name="Maven: org.mitre:stix:1.2.0.2" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpclient:4.5.6" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.4.10" level="project" />
+    <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.11" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-pool2:2.5.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.santuario:xmlsec:2.0.5" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.woodstox:woodstox-core-asl:4.4.1" level="project" />
@@ -46,6 +36,7 @@
     <orderEntry type="library" name="Maven: com.sun.xml.bind:jaxb-impl:2.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.mitre.taxii:taxii:1.1.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:fluent-hc:4.5.6" level="project" />
+    <orderEntry type="library" name="Maven: commons-logging:commons-logging:1.2" level="project" />
     <orderEntry type="library" name="Maven: org.jvnet.jaxb2_commons:jaxb2-basics-runtime:0.6.5" level="project" />
     <orderEntry type="library" name="Maven: net.sf.saxon:Saxon-HE:9.5.1-5" level="project" />
     <orderEntry type="library" name="Maven: javax.xml.bind:jaxb-api:2.3.0" level="project" />
@@ -69,6 +60,7 @@
     <orderEntry type="library" name="Maven: io.dropwizard.metrics:metrics-servlets:3.2.6" level="project" />
     <orderEntry type="library" name="Maven: io.dropwizard.metrics:metrics-healthchecks:3.2.6" level="project" />
     <orderEntry type="library" name="Maven: com.papertrail:profiler:1.0.2" level="project" />
+    <orderEntry type="library" name="Maven: joda-time:joda-time:2.9.9" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.datatype:jackson-datatype-hppc:2.9.6" level="project" />
     <orderEntry type="library" name="Maven: com.carrotsearch:hppc:0.7.1" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.9.6" level="project" />
@@ -81,6 +73,7 @@
     <orderEntry type="library" scope="TEST" name="Maven: com.jayway.jsonpath:json-path:2.4.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: net.minidev:json-smart:2.3" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: net.minidev:accessors-smart:1.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.ow2.asm:asm:5.0.4" level="project" />
     <orderEntry type="library" name="Maven: io.springfox:springfox-swagger2:2.9.2" level="project" />
     <orderEntry type="library" name="Maven: io.swagger:swagger-annotations:1.5.20" level="project" />
     <orderEntry type="library" name="Maven: io.swagger:swagger-models:1.5.20" level="project" />
@@ -177,12 +170,14 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-webmvc:5.0.8.RELEASE" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework.boot:spring-boot-starter-test:2.0.4.RELEASE" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework.boot:spring-boot-test-autoconfigure:2.0.4.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: junit:junit:4.12" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.12" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.mockito:mockito-core:2.15.0" level="project" />
-    <orderEntry type="library" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />
+    <orderEntry type="library" name="Maven: net.bytebuddy:byte-buddy:1.7.11" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: net.bytebuddy:byte-buddy-agent:1.7.11" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.objenesis:objenesis:2.6" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-library:1.3" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.skyscreamer:jsonassert:1.5.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vaadin.external.google:android-json:0.0.20131108.vaadin1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework:spring-test:5.0.8.RELEASE" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.xmlunit:xmlunit-core:2.5.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework.boot:spring-boot-test:2.0.4.RELEASE" level="project" />
@@ -200,148 +195,6 @@
     <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-connectors-core:2.0.2.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.security:spring-security-data:5.0.7.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.data:spring-data-commons:2.0.9.RELEASE" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: net.serenity-bdd:serenity-core:2.0.39" level="project" />
-    <orderEntry type="library" name="Maven: net.bytebuddy:byte-buddy:1.7.11" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: net.bytebuddy:byte-buddy-agent:1.7.11" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.google.inject:guice:4.2.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: javax.inject:javax.inject:1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: aopalliance:aopalliance:1.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: cglib:cglib:3.2.5" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.ow2.asm:asm:5.0.3" level="project" />
-    <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.11" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.objenesis:objenesis:2.6" level="project" />
-    <orderEntry type="library" name="Maven: commons-logging:commons-logging:1.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: io.vavr:vavr:0.9.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: io.vavr:vavr-match:0.9.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.sun.xml.bind:jaxb-core:2.3.0.1" level="project" />
-    <orderEntry type="library" name="Maven: javax.activation:activation:1.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: net.serenity-bdd:serenity-report-resources:2.0.39" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: net.serenity-bdd:serenity-model:2.0.39" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: commons-net:commons-net:3.6" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.apache.commons:commons-text:1.6" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: net.serenity-bdd:serenity-reports:2.0.39" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: net.serenity-bdd:serenity-stats:2.0.39" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.jetbrains.kotlin:kotlin-stdlib:1.2.51" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-common:1.2.51" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.jetbrains:annotations:13.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.seleniumhq.selenium:selenium-server:3.141.59" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.beust:jcommander:1.72" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: net.jcip:jcip-annotations:1.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.seleniumhq.selenium:jetty-repacked:9.4.12.v20180830" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.seleniumhq.selenium:selenium-api:3.9.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.seleniumhq.selenium:selenium-remote-driver:3.9.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.seleniumhq.selenium:selenium-opera-driver:3.9.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.paulhammant:ngwebdriver:1.1.4" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.codeborne:phantomjsdriver:1.4.4" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.eclipse.jetty:jetty-util:9.4.11.v20180605" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.eclipse.jetty:jetty-io:9.4.11.v20180605" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: io.appium:java-client:6.1.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: commons-validator:commons-validator:1.6" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: commons-beanutils:commons-beanutils:1.9.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: commons-digester:commons-digester:1.8.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.openpnp:opencv:3.2.0-1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.glassfish.tyrus:tyrus-core:1.13.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.glassfish.tyrus:tyrus-spi:1.13.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: javax.websocket:javax.websocket-api:1.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.codehaus.groovy:groovy:2.4.15" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: net.sf.opencsv:opencsv:2.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: commons-beanutils:commons-beanutils-core:1.8.3" level="project" />
-    <orderEntry type="library" name="Maven: joda-time:joda-time:2.9.9" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.thoughtworks.xstream:xstream:1.4.9" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: xmlpull:xmlpull:1.1.3.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: xpp3:xpp3_min:1.1.4c" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: commons-collections:commons-collections:3.2.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.freemarker:freemarker:2.3.28" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: net.sourceforge.jexcelapi:jxl:2.6.12" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: net.sourceforge.htmlunit:htmlunit:2.29" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: net.sourceforge.htmlunit:htmlunit-core-js:2.28" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: net.sourceforge.htmlunit:neko-htmlunit:2.28" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: xerces:xercesImpl:2.11.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: net.sourceforge.cssparser:cssparser:0.9.24" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.w3c.css:sac:1.3" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.eclipse.jetty.websocket:websocket-client:9.4.11.v20180605" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.eclipse.jetty:jetty-client:9.4.11.v20180605" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.eclipse.jetty:jetty-http:9.4.11.v20180605" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.eclipse.jetty:jetty-xml:9.4.11.v20180605" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.eclipse.jetty.websocket:websocket-common:9.4.11.v20180605" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.eclipse.jetty.websocket:websocket-api:9.4.11.v20180605" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.fluentlenium:fluentlenium-core:0.10.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.jhlabs:filters:2.0.235" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.asciidoctor:asciidoctorj:1.5.6" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.jruby:jruby-complete:1.7.26" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.imgscalr:imgscalr-lib:4.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.glassfish.web:javax.el:2.2.4" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: xalan:xalan:2.7.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: xalan:serializer:2.7.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.awaitility:awaitility:3.1.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.typesafe:config:1.3.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.jsoup:jsoup:1.10.3" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.google.jimfs:jimfs:1.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: es.nitaur.markdown:txtmark:0.16" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-all:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-ext-abbreviation:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-ext-admonition:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-ext-anchorlink:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-ext-aside:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-ext-attributes:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-ext-autolink:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.nibor.autolink:autolink:0.6.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-ext-definition:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-ext-emoji:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-ext-enumerated-reference:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-ext-escaped-character:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-ext-footnotes:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-ext-gfm-issues:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-ext-gfm-strikethrough:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-ext-gfm-tables:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-ext-gfm-tasklist:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-ext-gfm-users:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-ext-gitlab:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-ext-jekyll-front-matter:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-ext-jekyll-tag:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-ext-media-tags:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-test-util:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-ext-ins:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-ext-xwiki-macros:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-ext-superscript:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-ext-tables:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-ext-toc:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-ext-typographic:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-ext-wikilink:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-ext-yaml-front-matter:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-ext-youtube-embedded:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-formatter:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-html-parser:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-jira-converter:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-pdf-converter:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.openhtmltopdf:openhtmltopdf-core:0.0.1-RC13" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.openhtmltopdf:openhtmltopdf-pdfbox:0.0.1-RC13" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.apache.pdfbox:pdfbox:2.0.8" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.apache.pdfbox:fontbox:2.0.8" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.apache.pdfbox:xmpbox:2.0.8" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: de.rototor.pdfbox:graphics2d:0.12" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.openhtmltopdf:openhtmltopdf-rtl-support:0.0.1-RC13" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.ibm.icu:icu4j:59.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.openhtmltopdf:openhtmltopdf-jsoup-dom-converter:0.0.1-RC13" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-profile-pegdown:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-util:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.vladsch.flexmark:flexmark-youtrack-converter:0.34.30" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: net.serenity-bdd:serenity-cucumber4:1.0.5" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: net.serenity-bdd:serenity-screenplay:2.0.39" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: uk.com.robust-it:cloning:1.9.10" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: net.serenity-bdd:serenity-screenplay-webdriver:2.0.39" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: io.cucumber:datatable-matchers:1.1.7" level="project" />
-    <orderEntry type="library" name="Maven: io.cucumber:datatable:1.1.7" level="project" />
-    <orderEntry type="library" name="Maven: io.cucumber:datatable-dependencies:1.1.7" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.apache.commons:commons-csv:1.5" level="project" />
-    <orderEntry type="library" name="Maven: io.cucumber:cucumber-java:4.2.0" level="project" />
-    <orderEntry type="library" name="Maven: io.cucumber:cucumber-core:4.2.0" level="project" />
-    <orderEntry type="library" name="Maven: io.cucumber:cucumber-html:0.2.7" level="project" />
-    <orderEntry type="library" name="Maven: io.cucumber:gherkin:5.1.0" level="project" />
-    <orderEntry type="library" name="Maven: io.cucumber:tag-expressions:1.1.1" level="project" />
-    <orderEntry type="library" name="Maven: io.cucumber:cucumber-expressions:6.2.0" level="project" />
-    <orderEntry type="library" name="Maven: io.cucumber:cucumber-junit:4.2.0" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-undertow:2.0.4.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: io.undertow:undertow-core:1.4.25.Final" level="project" />
     <orderEntry type="library" name="Maven: org.jboss.xnio:xnio-api:3.3.8.Final" level="project" />
