@@ -16,8 +16,7 @@
 logging:
     level:
         ROOT: DEBUG
-        io.github.jhipster: DEBUG
-        com.bcmc.xor.flare.client.gui: DEBUG
+        com.bcmc.xor.flare: DEBUG
 
 spring:
     profiles:

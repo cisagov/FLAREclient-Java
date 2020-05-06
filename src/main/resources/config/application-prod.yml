@@ -16,8 +16,7 @@
 logging:
     level:
         ROOT: INFO
-        com.bcmc.xor.flare.client.gui: INFO
-        io.github.jhipster: INFO
+        com.bcmc.xor.flare: INFO
 
 spring:
     devtools:

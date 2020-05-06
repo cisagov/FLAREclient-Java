@@ -2,16 +2,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.bcmc.xor.flare.client.gui</groupId>
-    <artifactId>flareclient</artifactId>
+    <groupId>com.bcmc.xor.flare</groupId>
+    <artifactId>flareclient.backend</artifactId>
     <version>0.0.2-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
+
     <name>Flareclient</name>
 
     <properties>
         <!-- Build properties -->
         <surefire.rerunFailingTestsCount>2</surefire.rerunFailingTestsCount>
-        <webdriver.driver>chrome</webdriver.driver>
         <imartutil.version>0.1</imartutil.version>
         <maven.version>3.0.0</maven.version>
         <java.version>1.8</java.version>
@@ -619,11 +619,11 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>2.19</version>
                 <configuration>
-                    <includes>
-                        <include>**/features/**/When*.java</include>
-                    </includes>
+<!--                    <includes>-->
+<!--                        <include>**/features/**/When*.java</include>-->
+<!--                    </includes>-->
                     <systemProperties>
-                        <webdriver.driver>${webdriver.driver}</webdriver.driver>
+<!--                        <webdriver.driver>${webdriver.driver}</webdriver.driver>-->
                         <surefire.rerunFailingTestsCount>${surefire.rerunFailingTestsCount}</surefire.rerunFailingTestsCount>
                     </systemProperties>
                 </configuration>
