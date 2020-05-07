@@ -8,11 +8,16 @@ ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS \
 RUN adduser -D -s /bin/sh flare
 WORKDIR /home/flare
 
-ADD entrypoint.sh entrypoint.sh
+ADD docker/entrypoint.sh entrypoint.sh
 RUN chmod 755 entrypoint.sh && chown flare:flare entrypoint.sh
 USER flare
 
-ADD *.jar app.jar
+ADD target/*.jar app.jar
+ADD src/main/resources/schemas/ schemas/
+ADD src/main/resources/i18n/ i18n/
+ADD src/main/resources/templates/ templates/
+ADD src/main/resources/* /home/flare/
+ADD docker/application.yml application.yml
 
 ENTRYPOINT ["./entrypoint.sh"]
 

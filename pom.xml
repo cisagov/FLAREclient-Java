@@ -161,6 +161,10 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-undertow</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
             <version>${spring-boot.version}</version>
         </dependency>
@@ -440,62 +444,62 @@
                     </rules>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>${maven-resources-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>default-resources</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>target/classes</outputDirectory>
-                            <useDefaultDelimiters>false</useDefaultDelimiters>
-                            <delimiters>
-                                <delimiter>#</delimiter>
-                            </delimiters>
-                            <resources>
-                                <resource>
-                                    <directory>src/main/resources/</directory>
-                                    <filtering>true</filtering>
-                                    <includes>
-                                        <include>config/*.yml</include>
-                                    </includes>
-                                </resource>
-                                <resource>
-                                    <directory>src/main/resources/</directory>
-                                    <filtering>false</filtering>
-                                    <excludes>
-                                        <exclude>config/*.yml</exclude>
-                                    </excludes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>docker-resources</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>target/</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/main/docker/</directory>
-                                    <filtering>false</filtering>
-                                    <excludes>
-                                        <exclude>**/*.yml</exclude>
-                                    </excludes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-resources-plugin</artifactId>-->
+<!--                <version>${maven-resources-plugin.version}</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>default-resources</id>-->
+<!--                        <phase>validate</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>copy-resources</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <outputDirectory>target/classes</outputDirectory>-->
+<!--                            <useDefaultDelimiters>false</useDefaultDelimiters>-->
+<!--                            <delimiters>-->
+<!--                                <delimiter>#</delimiter>-->
+<!--                            </delimiters>-->
+<!--                            <resources>-->
+<!--                                <resource>-->
+<!--                                    <directory>src/main/resources/</directory>-->
+<!--                                    <filtering>true</filtering>-->
+<!--                                    <includes>-->
+<!--                                        <include>config/*.yml</include>-->
+<!--                                    </includes>-->
+<!--                                </resource>-->
+<!--                                <resource>-->
+<!--                                    <directory>src/main/resources/</directory>-->
+<!--                                    <filtering>false</filtering>-->
+<!--                                    <excludes>-->
+<!--                                        <exclude>config/*.yml</exclude>-->
+<!--                                    </excludes>-->
+<!--                                </resource>-->
+<!--                            </resources>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                    <execution>-->
+<!--                        <id>docker-resources</id>-->
+<!--                        <phase>validate</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>copy-resources</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <outputDirectory>target/</outputDirectory>-->
+<!--                            <resources>-->
+<!--                                <resource>-->
+<!--                                    <directory>src/main/docker/</directory>-->
+<!--                                    <filtering>false</filtering>-->
+<!--                                    <excludes>-->
+<!--                                        <exclude>**/*.yml</exclude>-->
+<!--                                    </excludes>-->
+<!--                                </resource>-->
+<!--                            </resources>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -505,35 +509,35 @@
                     <runOrder>alphabetical</runOrder>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco-maven-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>pre-unit-tests</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                        <configuration>
-                            <!-- Sets the path to the file which contains the execution data. -->
-                            <destFile>${project.testresult.directory}/coverage/jacoco/jacoco.exec</destFile>
-                        </configuration>
-                    </execution>
-                    <!-- Ensures that the code coverage report for unit tests is created after unit tests have been run -->
-                    <execution>
-                        <id>post-unit-test</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                        <configuration>
-                            <dataFile>${project.testresult.directory}/coverage/jacoco/jacoco.exec</dataFile>
-                            <outputDirectory>${project.testresult.directory}/coverage/jacoco</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.jacoco</groupId>-->
+<!--                <artifactId>jacoco-maven-plugin</artifactId>-->
+<!--                <version>${jacoco-maven-plugin.version}</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>pre-unit-tests</id>-->
+<!--                        <goals>-->
+<!--                            <goal>prepare-agent</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            &lt;!&ndash; Sets the path to the file which contains the execution data. &ndash;&gt;-->
+<!--                            <destFile>${project.testresult.directory}/coverage/jacoco/jacoco.exec</destFile>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                    &lt;!&ndash; Ensures that the code coverage report for unit tests is created after unit tests have been run &ndash;&gt;-->
+<!--                    <execution>-->
+<!--                        <id>post-unit-test</id>-->
+<!--                        <phase>test</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>report</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <dataFile>${project.testresult.directory}/coverage/jacoco/jacoco.exec</dataFile>-->
+<!--                            <outputDirectory>${project.testresult.directory}/coverage/jacoco</outputDirectory>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
             <plugin>
                 <groupId>org.sonarsource.scanner.maven</groupId>
                 <artifactId>sonar-maven-plugin</artifactId>
@@ -560,70 +564,66 @@
 <!--                    &ndash;&gt;-->
 <!--                </configuration>-->
             </plugin>
-            <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>dockerfile-maven-plugin</artifactId>
-                <version>${dockerfile-maven-plugin.version}</version>
-                <executions>
-                    <!--
-                     Uncomment the section below to build the docker image with mvn package and and push it with mvn deploy
-                    <execution>
-                        <id>default</id>
-                        <goals>
-                            <goal>build</goal>
-                            <goal>push</goal>
-                        </goals>
-                    </execution>
-                    -->
-                    <execution>
-                        <id>tag-latest</id>
-                        <phase>none</phase>
-                        <goals>
-                            <goal>build</goal>
-                            <goal>tag</goal>
-                            <goal>push</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>version</id>
-                        <phase>none</phase>
-                        <goals>
-                            <goal>build</goal>
-                            <goal>tag</goal>
-                            <goal>push</goal>
-                        </goals>
-                        <configuration>
-                            <tag>${project.version}</tag>
-                        </configuration>
-                    </execution>
+<!--            <plugin>-->
+<!--                <groupId>com.spotify</groupId>-->
+<!--                <artifactId>dockerfile-maven-plugin</artifactId>-->
+<!--                <version>${dockerfile-maven-plugin.version}</version>-->
+<!--                <executions>-->
+<!--                    &lt;!&ndash;-->
+<!--                     Uncomment the section below to build the docker image with mvn package and and push it with mvn deploy-->
 <!--                    <execution>-->
-<!--                        <id>commit</id>-->
+<!--                        <id>default</id>-->
+<!--                        <goals>-->
+<!--                            <goal>build</goal>-->
+<!--                            <goal>push</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                    &ndash;&gt;-->
+<!--                    <execution>-->
+<!--                        <id>tag-latest</id>-->
 <!--                        <phase>none</phase>-->
 <!--                        <goals>-->
 <!--                            <goal>build</goal>-->
 <!--                            <goal>tag</goal>-->
 <!--                            <goal>push</goal>-->
 <!--                        </goals>-->
+<!--                    </execution>-->
+<!--                    <execution>-->
+<!--                        <id>version</id>-->
+<!--                        <phase>none</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>build</goal>-->
+<!--                            <goal>tag</goal>-->
+<!--&lt;!&ndash;                            <goal>push</goal>&ndash;&gt;-->
+<!--                        </goals>-->
 <!--                        <configuration>-->
-<!--                            <tag>${git.commit.id.describe}</tag>-->
+<!--                            <tag>${project.version}</tag>-->
 <!--                        </configuration>-->
 <!--                    </execution>-->
-                </executions>
-                <configuration>
-                    <repository>flareclient</repository>
-                    <contextDirectory>${project.build.directory}</contextDirectory>
-                </configuration>
-            </plugin>
+<!--&lt;!&ndash;                    <execution>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <id>commit</id>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <phase>none</phase>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <goals>&ndash;&gt;-->
+<!--&lt;!&ndash;                            <goal>build</goal>&ndash;&gt;-->
+<!--&lt;!&ndash;                            <goal>tag</goal>&ndash;&gt;-->
+<!--&lt;!&ndash;                            <goal>push</goal>&ndash;&gt;-->
+<!--&lt;!&ndash;                        </goals>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <configuration>&ndash;&gt;-->
+<!--&lt;!&ndash;                            <tag>${git.commit.id.describe}</tag>&ndash;&gt;-->
+<!--&lt;!&ndash;                        </configuration>&ndash;&gt;-->
+<!--&lt;!&ndash;                    </execution>&ndash;&gt;-->
+<!--                </executions>-->
+<!--                <configuration>-->
+<!--                    <repository>flareclient</repository>-->
+<!--                    <contextDirectory>${project.build.directory}</contextDirectory>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
             <!-- jhipster-needle-maven-add-plugin -->
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>2.19</version>
                 <configuration>
-<!--                    <includes>-->
-<!--                        <include>**/features/**/When*.java</include>-->
-<!--                    </includes>-->
                     <systemProperties>
-<!--                        <webdriver.driver>${webdriver.driver}</webdriver.driver>-->
                         <surefire.rerunFailingTestsCount>${surefire.rerunFailingTestsCount}</surefire.rerunFailingTestsCount>
                     </systemProperties>
                 </configuration>
@@ -631,53 +631,6 @@
         </plugins>
         <pluginManagement>
             <plugins>
-                <!--
-                    This plugin's configuration is used to store Eclipse m2e settings only.
-                    It has no influence on the Maven build itself.
-                    Remove when the m2e plugin can correctly bind to Maven lifecycle
-                -->
-                <plugin>
-                    <groupId>org.eclipse.m2e</groupId>
-                    <artifactId>lifecycle-mapping</artifactId>
-                    <version>1.0.0</version>
-                    <configuration>
-                        <lifecycleMappingMetadata>
-                            <pluginExecutions>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>org.jacoco</groupId>
-                                        <artifactId>
-                                            jacoco-maven-plugin
-                                        </artifactId>
-                                        <versionRange>
-                                            ${jacoco-maven-plugin.version}
-                                        </versionRange>
-                                        <goals>
-                                            <goal>prepare-agent</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore/>
-                                    </action>
-                                </pluginExecution>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>com.github.eirslett</groupId>
-                                        <artifactId>frontend-maven-plugin</artifactId>
-                                        <versionRange>${frontend-maven-plugin.version}</versionRange>
-                                        <goals>
-                                            <goal>install-node-and-yarn</goal>
-                                            <goal>yarn</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore/>
-                                    </action>
-                                </pluginExecution>
-                            </pluginExecutions>
-                        </lifecycleMappingMetadata>
-                    </configuration>
-                </plugin>
                 <plugin>
                     <groupId>io.fabric8</groupId>
                     <artifactId>docker-maven-plugin</artifactId>
@@ -685,76 +638,55 @@
             </plugins>
         </pluginManagement>
     </build>
-    <profiles>
-        <profile>
-            <id>no-liquibase</id>
-            <properties>
-                <profile.no-liquibase>,no-liquibase</profile.no-liquibase>
-            </properties>
-        </profile>
-        <profile>
-            <id>swagger</id>
-            <properties>
-                <profile.swagger>,swagger</profile.swagger>
-            </properties>
-        </profile>
-        <profile>
-            <id>dev</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-undertow</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-devtools</artifactId>
-                    <optional>true</optional>
-                </dependency>
-            </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-war-plugin</artifactId>
-                        <version>${maven-war-plugin.version}</version>
-                        <configuration>
-                            <failOnMissingWebXml>false</failOnMissingWebXml>
-                            <warSourceDirectory>target/www/</warSourceDirectory>
-                            <webResources>
-                                <resource>
-                                    <directory>src/main/webapp</directory>
-                                    <includes>
-                                        <include>WEB-INF/**</include>
-                                    </includes>
-                                </resource>
-                            </webResources>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-            <properties>
-                <!-- default Spring profiles -->
-                <spring.profiles.active>dev${profile.no-liquibase}</spring.profiles.active>
-            </properties>
-        </profile>
-        <profile>
-            <!--
-                Profile for applying IDE-specific configuration.
-                At the moment it configures MapStruct and Hibernate JPA Metamodel Generator, which you need when working
-                with DTOs and entity filtering.
-            -->
-            <id>IDE</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.mapstruct</groupId>
-                    <artifactId>mapstruct-processor</artifactId>
-                    <version>${mapstruct.version}</version>
-                </dependency>
-            </dependencies>
-        </profile>
-        <!-- jhipster-needle-maven-add-profile -->
-    </profiles>
+<!--    <profiles>-->
+<!--        <profile>-->
+<!--            <id>no-liquibase</id>-->
+<!--            <properties>-->
+<!--                <profile.no-liquibase>,no-liquibase</profile.no-liquibase>-->
+<!--            </properties>-->
+<!--        </profile>-->
+<!--        <profile>-->
+<!--            <id>swagger</id>-->
+<!--            <properties>-->
+<!--                <profile.swagger>,swagger</profile.swagger>-->
+<!--            </properties>-->
+<!--        </profile>-->
+<!--        <profile>-->
+<!--            <id>dev</id>-->
+<!--            <activation>-->
+<!--                <activeByDefault>true</activeByDefault>-->
+<!--            </activation>-->
+<!--            <dependencies>-->
+<!--                <dependency>-->
+<!--                    <groupId>org.springframework.boot</groupId>-->
+<!--                    <artifactId>spring-boot-starter-undertow</artifactId>-->
+<!--                </dependency>-->
+<!--                <dependency>-->
+<!--                    <groupId>org.springframework.boot</groupId>-->
+<!--                    <artifactId>spring-boot-devtools</artifactId>-->
+<!--                    <optional>true</optional>-->
+<!--                </dependency>-->
+<!--            </dependencies>-->
+<!--            <properties>-->
+<!--                &lt;!&ndash; default Spring profiles &ndash;&gt;-->
+<!--                <spring.profiles.active>dev${profile.no-liquibase}</spring.profiles.active>-->
+<!--            </properties>-->
+<!--        </profile>-->
+<!--        <profile>-->
+<!--            &lt;!&ndash;-->
+<!--                Profile for applying IDE-specific configuration.-->
+<!--                At the moment it configures MapStruct and Hibernate JPA Metamodel Generator, which you need when working-->
+<!--                with DTOs and entity filtering.-->
+<!--            &ndash;&gt;-->
+<!--            <id>IDE</id>-->
+<!--            <dependencies>-->
+<!--                <dependency>-->
+<!--                    <groupId>org.mapstruct</groupId>-->
+<!--                    <artifactId>mapstruct-processor</artifactId>-->
+<!--                    <version>${mapstruct.version}</version>-->
+<!--                </dependency>-->
+<!--            </dependencies>-->
+<!--        </profile>-->
+<!--        &lt;!&ndash; jhipster-needle-maven-add-profile &ndash;&gt;-->
+<!--    </profiles>-->
 </project>

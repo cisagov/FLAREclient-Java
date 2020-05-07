@@ -71,7 +71,7 @@ To stop it and remove the container, run:
 You can also fully dockerize your application and all the services that it depends on.
 To achieve this, first build a docker image of your app by running:
 
-    mvn verify dockerfile:build dockerfile:tag@version dockerfile:tag@commit
+    mvn clean package docker:build
 
 Then run:
 

@@ -77,7 +77,7 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
     public void customize(WebServerFactory server) {
         setMimeMappings(server);
         // When running in an IDE or with ./mvnw spring-boot:run, set location of the static web assets.
-        setLocationForStaticAssets(server);
+//        setLocationForStaticAssets(server);
 
         /*
          * Enable HTTP/2 for Undertow - https://twitter.com/ankinson/status/829256167700492288
@@ -106,17 +106,17 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
         }
     }
 
-    private void setLocationForStaticAssets(WebServerFactory server) {
-        if (server instanceof ConfigurableServletWebServerFactory) {
-            ConfigurableServletWebServerFactory servletWebServer = (ConfigurableServletWebServerFactory) server;
-            File root;
-            String prefixPath = resolvePathPrefix();
-            root = new File(prefixPath + "target/www/");
-            if (root.exists() && root.isDirectory()) {
-                servletWebServer.setDocumentRoot(root);
-            }
-        }
-    }
+//    private void setLocationForStaticAssets(WebServerFactory server) {
+//        if (server instanceof ConfigurableServletWebServerFactory) {
+//            ConfigurableServletWebServerFactory servletWebServer = (ConfigurableServletWebServerFactory) server;
+//            File root;
+//            String prefixPath = resolvePathPrefix();
+//            root = new File(prefixPath + "target/www/");
+//            if (root.exists() && root.isDirectory()) {
+//                servletWebServer.setDocumentRoot(root);
+//            }
+//        }
+//    }
 
     /**
      * Resolve path prefix to static resources.

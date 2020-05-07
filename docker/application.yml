@@ -1,0 +1,145 @@
+# ===================================================================
+# Spring Boot configuration.
+#
+# More information on profiles: https://www.jhipster.tech/profiles/
+# More information on configuration properties: https://www.jhipster.tech/common-application-properties/
+# ===================================================================
+
+# ===================================================================
+# Standard Spring Boot properties.
+# Full reference is available at:
+# http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
+# ===================================================================
+
+logging:
+    level:
+        ROOT: DEBUG
+        com.bcmc.xor.flare: DEBUG
+
+spring:
+    application:
+        name: flareclient
+    profiles:
+        # The commented value for `active` can be replaced with valid Spring profiles to load.
+        # Otherwise, it will be filled in by maven when building the WAR file
+        # Either way, it can be overridden by `--spring.profiles.active` value passed in the commandline or `-Dspring.profiles.active` set in `JAVA_OPTS`
+        active: #spring.profiles.active#
+    messages:
+        basename: i18n/messages
+    mvc:
+        favicon:
+            enabled: false
+    data:
+        mongodb:
+            uri: mongodb://localhost:27017
+            database: flareclient
+    mail:
+        host: localhost
+        port: 25
+        username:
+        password:
+    thymeleaf:
+        mode: HTML
+
+# ===================================================================
+# To enable SSL, generate a certificate using:
+# keytool -genkey -alias flareclient -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12 -validity 3650
+#
+# You can also use Let's Encrypt:
+# https://maximilian-boehm.com/hp2121/Create-a-Java-Keystore-JKS-from-Let-s-Encrypt-Certificates.htm
+#
+# Then, modify the server.ssl properties so your "server" configuration looks like:
+#
+# server:
+#    port: 8443
+#    ssl:
+#        key-store: keystore.p12
+#        key-store-password: <your-password>
+#        key-store-type: PKCS12
+#        key-alias: flareclient
+# ===================================================================
+server:
+    port: 8081
+    ssl:
+        key-store: demouser_ks.jks
+        key-store-password: 12qwaszx@#WESDXC
+        key-store-provider: SUN
+        key-store-type: JKS
+        trust-store: ca.jks
+        trust-store-password: 12qwaszx@#WESDXC
+        keyAlias: demouser
+
+# ===================================================================
+# JHipster specific properties
+#
+# Full reference is available at: https://www.jhipster.tech/common-application-properties/
+# ===================================================================
+
+jhipster:
+    async:
+        core-pool-size: 8
+        max-pool-size: 64
+        queue-capacity: 10000
+    http:
+        version: V_1_1 # To use HTTP/2 (V_2_0) you will need SSL support (see above the "server.ssl" configuration)
+    # By default CORS is disabled. Uncomment to enable.
+    #cors:
+        #allowed-origins: "*"
+        #allowed-methods: "*"
+        #allowed-headers: "*"
+        #exposed-headers: "Authorization,Link,X-Total-Count"
+        #allow-credentials: true
+        #max-age: 1800
+    mail:
+        from: temp@localhost
+        base-url: http://127.0.0.1:8080 # Modify according to your server's URL
+    metrics: # DropWizard Metrics configuration, used by MetricsConfiguration
+        jmx:
+            enabled: true
+        logs: # Reports Dropwizard metrics in the logs
+            enabled: false
+            report-frequency: 60 # in seconds
+    swagger:
+        default-include-pattern: /api/.*
+        title: temp API
+        description: temp API documentation
+        version: 0.0.1
+        terms-of-service-url:
+        contact-name:
+        contact-url:
+        contact-email:
+        license:
+        license-url:
+
+# ===================================================================
+# Application specific properties
+# Add your own application properties here, see the ApplicationProperties class
+# to have type-safe configuration, like in the JHipsterProperties above
+#
+# More documentation is available at:
+# https://www.jhipster.tech/common-application-properties/
+# ===================================================================
+
+# application:
+flare:
+    status-update-interval: 15000
+    validation-interval: 5000
+    server-info-update-interval: 3600000 # every hour
+    fetch-chunk-window: 28800000 # every 8 hours
+    fetch-chunk-page-size: 100
+    schemas-directory: 'schemas'
+    supportedContentBindings: [
+        "urn:stix.mitre.org:xml:1.0",
+        "urn:stix.mitre.org:xml:1.0.1",
+        "urn:stix.mitre.org:xml:1.1",
+        "urn:stix.mitre.org:xml:1.1.1",
+        "urn:stix.mitre.org:xml:1.2"
+        ]
+
+    security:
+        authentication:
+            jwt:
+                secret: EoP3UiBuHr
+                # Token is valid 24 hours
+                token-validity-in-seconds: 86400
+                token-validity-in-seconds-for-remember-me: 2592000
