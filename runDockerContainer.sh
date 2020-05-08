@@ -1,1 +1,1 @@
-docker run --name flareclient.backend flare/flareclient.backend
+docker-compose -f docker/app.yml up -d
