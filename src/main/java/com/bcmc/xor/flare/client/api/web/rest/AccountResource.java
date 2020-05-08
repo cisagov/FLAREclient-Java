@@ -89,7 +89,7 @@ public class AccountResource {
     @GetMapping("/authenticate")
     @Timed
     public String isAuthenticated(HttpServletRequest request) {
-        log.debug("REST request to check if the current user is authenticated");
+        log.debug("REST request to check if the current user {} is authenticated", request.getRemoteUser());
         return request.getRemoteUser();
     }
 

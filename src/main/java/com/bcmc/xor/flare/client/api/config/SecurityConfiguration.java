@@ -76,10 +76,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
             .antMatchers(HttpMethod.OPTIONS, "/**")
-            .antMatchers("/app/**/*.{js,html}")
-            .antMatchers("/i18n/**")
-            .antMatchers("/content/**")
-            .antMatchers("/swagger-ui/index.html")
+//            .antMatchers("/app/**/*.{js,html}")
+//            .antMatchers("/i18n/**")
+//            .antMatchers("/content/**")
+//            .antMatchers("/swagger-ui/index.html")
             .antMatchers("/test/**");
     }
 
@@ -92,14 +92,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .exceptionHandling()
             .authenticationEntryPoint(problemSupport)
             .accessDeniedHandler(problemSupport)
-            .and()
+        .and()
             .headers()
             .frameOptions()
             .disable()
-            .and()
+        .and()
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
+        .and()
             .authorizeRequests()
             .antMatchers("/api/register").permitAll()
             .antMatchers("/api/activate").permitAll()
@@ -110,7 +110,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .antMatchers("/management/health").permitAll()
             .antMatchers("/management/info").permitAll()
             .antMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN)
-            .and()
+        .and()
             .apply(securityConfigurerAdapter());
 
     }

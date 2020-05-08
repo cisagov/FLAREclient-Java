@@ -5,12 +5,15 @@ import com.bcmc.xor.flare.client.api.security.jwt.TokenProvider;
 import com.bcmc.xor.flare.client.api.web.rest.vm.LoginVM;
 import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,6 +29,8 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/api")
 public class UserJWTController {
+
+    private static final Logger log = LoggerFactory.getLogger(UserJWTController.class);
 
     private final TokenProvider tokenProvider;
 
@@ -43,7 +48,13 @@ public class UserJWTController {
         UsernamePasswordAuthenticationToken authenticationToken =
             new UsernamePasswordAuthenticationToken(loginVM.getUsername(), loginVM.getPassword());
 
-        Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
+        Authentication authentication;
+        try {
+            authentication = this.authenticationManager.authenticate(authenticationToken);
+        } catch (AuthenticationException e) {
+            log.error("User {} failed to authenticate", loginVM.getUsername(), e);
+            throw e;
+        }
         SecurityContextHolder.getContext().setAuthentication(authentication);
         boolean rememberMe = (loginVM.isRememberMe() == null) ? false : loginVM.isRememberMe();
         String jwt = tokenProvider.createToken(authentication, rememberMe);
