@@ -78,7 +78,12 @@ public class MailService {
 
     @Async("taskExecutor")
     public void sendEmailFromTemplate(User user, String templateName, String titleKey) {
-        Locale locale = Locale.forLanguageTag(user.getLangKey());
+        Locale locale;
+        if (user.getLangKey() == null) {
+            locale = Locale.ENGLISH;
+        } else {
+            locale = Locale.forLanguageTag(user.getLangKey());
+        }
         Context context = new Context(locale);
         context.setVariable(USER, user);
         context.setVariable(BASE_URL, baseUrl);
