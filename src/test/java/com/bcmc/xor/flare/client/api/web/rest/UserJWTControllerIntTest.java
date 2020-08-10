@@ -7,17 +7,26 @@ import com.bcmc.xor.flare.client.api.security.jwt.TokenProvider;
 import com.bcmc.xor.flare.client.api.web.rest.vm.LoginVM;
 import com.bcmc.xor.flare.client.error.FlareExceptionTranslator;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -29,6 +38,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = FlareclientApp.class)
 public class UserJWTControllerIntTest {
+
+    @InjectMocks
+    UserJWTController userJWTController;
+
+    @Mock
+    TokenProvider mockTokenProvider;
+
+    @Mock
+    AuthenticationManager mockAuthenticationManager;
 
     @Autowired
     private TokenProvider tokenProvider;
@@ -46,8 +64,10 @@ public class UserJWTControllerIntTest {
 
     private MockMvc mockMvc;
 
+
     @Before
     public void setup() {
+        MockitoAnnotations.initMocks(this);
         UserJWTController userJWTController = new UserJWTController(tokenProvider, authenticationManager);
         this.mockMvc = MockMvcBuilders.standaloneSetup(userJWTController)
             .setControllerAdvice(flareExceptionTranslator)
@@ -113,4 +133,19 @@ public class UserJWTControllerIntTest {
             .andExpect(jsonPath("$.id_token").doesNotExist())
             .andExpect(header().doesNotExist("Authorization"));
     }
-}
+
+    @Test
+    public void testBadCredentialsReturn() throws Exception{
+        LoginVM loginVM = new LoginVM();
+        loginVM.setUsername("someUser");
+        loginVM.setPassword("xxxx");
+        mockMvc.perform(post("/api/authenticate")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(loginVM)))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.id_token").doesNotExist())
+                .andExpect(header().doesNotExist("Authorization"))
+                .andExpect(jsonPath("$.error").isNotEmpty())
+                .andExpect(jsonPath("$.error").value("Failed to authenticate"));
+    }
+ }

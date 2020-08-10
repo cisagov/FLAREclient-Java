@@ -3,6 +3,8 @@ package com.bcmc.xor.flare.client.api.web.rest;
 import com.bcmc.xor.flare.client.api.security.jwt.JWTConfigurer;
 import com.bcmc.xor.flare.client.api.security.jwt.TokenProvider;
 import com.bcmc.xor.flare.client.api.web.rest.vm.LoginVM;
+//import com.bcmc.xor.flare.client.error.AuthenticationFailureException;
+import com.bcmc.xor.flare.client.error.ErrorConstants;
 import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.Objects;
 
 /**
  * Controller to authenticate users.
@@ -43,7 +46,7 @@ public class UserJWTController {
 
     @PostMapping("/authenticate")
     @Timed
-    public ResponseEntity<JWTToken> authorize(@Valid @RequestBody LoginVM loginVM) {
+    public ResponseEntity authorize(@Valid @RequestBody LoginVM loginVM) {
 
         UsernamePasswordAuthenticationToken authenticationToken =
             new UsernamePasswordAuthenticationToken(loginVM.getUsername(), loginVM.getPassword());
@@ -53,10 +56,10 @@ public class UserJWTController {
             authentication = this.authenticationManager.authenticate(authenticationToken);
         } catch (AuthenticationException e) {
             log.error("User {} failed to authenticate", loginVM.getUsername(), e);
-            throw e;
+            return new ResponseEntity<>(ErrorConstants.AUTHENTICATION_FAILURE, new HttpHeaders(), HttpStatus.UNAUTHORIZED);
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        boolean rememberMe = (loginVM.isRememberMe() == null) ? false : loginVM.isRememberMe();
+        boolean rememberMe = loginVM.isRememberMe() != null && loginVM.isRememberMe();
         String jwt = tokenProvider.createToken(authentication, rememberMe);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(JWTConfigurer.AUTHORIZATION_HEADER, "Bearer " + jwt);
