@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:marking="http://data-marking.mitre.org/Marking-1" xmlns:stixCommon="http://stix.mitre.org/common-1" xmlns:AISMarking="http://www.us-cert.gov/STIXMarkingStructure#AISConsentMarking-2" targetNamespace="http://www.us-cert.gov/STIXMarkingStructure#AISConsentMarking-2" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.1.1" xml:lang="English">
+	<xs:annotation>
+		<xs:documentation>The AIS Marking Schema implementation is maintained by the National Cybersecurity and Communication Integration Center (NCCIC) of the U.S. Department of Homeland Security (DHS). </xs:documentation>
+		<xs:appinfo>
+			<schema>Data Marking Extension - AIS Consent</schema>
+			<version>1.0</version>
+			<date>02/01/2016 9:00:00 AM</date>
+			<short_description>Data Marking Extension - AIS Consent Marking Instance - Schematic implementation for determining consent to share information source attribution.</short_description>
+			<terms_of_use/>
+		</xs:appinfo>
+	</xs:annotation>
+	<xs:import namespace="http://data-marking.mitre.org/Marking-1" schemaLocation="data_marking.xsd"/>
+	<xs:import namespace="http://stix.mitre.org/common-1" schemaLocation="stix_common.xsd"/>
+	<xs:complexType name="AISHandling">
+		<xs:complexContent>
+			<xs:extension base="marking:MarkingType">
+				<xs:sequence>
+					<xs:element name="Marking" type="AISMarking:MarkingSpecificationType" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="MarkingSpecificationType">
+		<xs:sequence>
+			<xs:element name="Controlled_Structure" fixed="//node() | //@*" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Marking_Structure" type="AISMarking:AISMarkingStructure" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Information_Source" type="stixCommon:InformationSourceType" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The Information_Source field details the submitting information for this entry.
+						The following are required:
+						- /stix:STIX_Package/stix:STIX_Header/stix:Handling/AIS:Marking/AIS:Information_Source/stixCommon:Identity/stix-ciq:Specification/xpil:PartyName/xnl:OrganisationName/xnl:NameElement
+						- /stix:STIX_Package/stix:STIX_Header/stix:Handling/AIS:Marking/AIS:Information_Source/stixCommon:Identity/stix-ciq:Specification/xpil:Addresses/xpil:Address/xal:Country/xal:NameElement/@xal:NameCode
+						- /stix:STIX_Package/stix:STIX_Header/stix:Handling/AIS:Marking/AIS:Information_Source/stixCommon:Identity/stix-ciq:Specification/xpil:Addresses/xpil:Address/xal:AdministrativeArea/xal:NameElement/@xal:NameCode
+						- /stix:STIX_Package/stix:STIX_Header/stix:Handling/AIS:Marking/AIS:Information_Source/stixCommon:Identity/stix-ciq:Specification/xpil:OrganisationInfo/@xpil:IndustryType`
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AISMarkingStructure">
+		<xs:annotation>
+			<xs:documentation>The AISMarkingStructure is an implementation of the data marking schema that allows determining consent to share information source attribution.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="marking:MarkingStructureType">
+				<xs:choice>
+					<xs:element name="Is_Proprietary" type="AISMarking:IsProprietary"/>
+					<xs:element name="Not_Proprietary" type="AISMarking:NotProprietary"/>
+				</xs:choice>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="IsProprietary">
+		<xs:sequence>
+			<xs:element name="AISConsent">
+				<xs:complexType>
+					<xs:attribute name="consent" use="required" fixed="EVERYONE"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="TLPMarking">
+				<xs:complexType>
+					<xs:attribute name="color" type="AISMarking:AISTLPEnum" use="required"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="CISA_Proprietary" type="xs:boolean" use="required" fixed="true"></xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="NotProprietary">
+		<xs:sequence>
+			<xs:element name="AISConsent">
+				<xs:complexType>
+					<xs:attribute name="consent" type="AISMarking:AISConsentEnum" use="required"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="TLPMarking">
+				<xs:complexType>
+					<xs:attribute name="color" type="AISMarking:AISTLPEnum" use="required"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="CISA_Proprietary" type="xs:boolean" use="required" fixed="false"></xs:attribute>
+	</xs:complexType>
+	<xs:simpleType name="AISConsentEnum">
+		<xs:annotation>
+			<xs:documentation>The AIS consent designation of the marked structure.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="EVERYONE"/>
+			<xs:enumeration value="USG"/>
+			<xs:enumeration value="NONE"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="AISTLPEnum">
+		<xs:annotation>
+			<xs:documentation>The AIS Traffic Light Protocol (TLP) values.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="WHITE"/>
+			<xs:enumeration value="GREEN"/>
+			<xs:enumeration value="AMBER"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>
