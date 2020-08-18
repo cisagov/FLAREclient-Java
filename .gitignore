@@ -31,6 +31,8 @@ WLI*
 .classpath
 .project
 .idea
+.factorypath
+.settings
 
 # build files #
 target
