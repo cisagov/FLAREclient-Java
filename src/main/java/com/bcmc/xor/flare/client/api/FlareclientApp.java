@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 
 import javax.annotation.PostConstruct;
@@ -16,6 +17,7 @@ import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 
+@ComponentScan("com.bcmc.xor.flare.client")
 @SpringBootApplication
 @EnableConfigurationProperties({ApplicationProperties.class})
 public class FlareclientApp {
