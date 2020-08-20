@@ -112,14 +112,15 @@ public class AccountResource {
 		try {
 			Optional<User> user = userService.activateRegistration(key);
 			if (!user.isPresent()) {
-				throw new NotFoundException("No user was found for this reset key");
+				httpHeaders.add("api-activate", ErrorConstants.ERR_ACTIVATIONKEY_NOT_FOUND);
+				return new ResponseEntity(new NotFoundException(), httpHeaders, HttpStatus.NOT_FOUND);
 			}
 			
 			httpHeaders.add("api-activate", "actived");
 			return new ResponseEntity(user, httpHeaders, HttpStatus.CREATED);
 			
 		} catch (Exception e) {	
-			httpHeaders.add("api-activate", ErrorConstants.ERR_ACTIVATIONKEY_NOT_FOUND);
+			httpHeaders.add("api-activate", ErrorConstants.ERR_BAD_REQUEST);
 			return new ResponseEntity(e, httpHeaders, HttpStatus.BAD_REQUEST);
 		}
 	}
@@ -155,23 +156,42 @@ public class AccountResource {
      * POST  /account : update the current user information.
      *
      * @param userDTO the current user information
-     * @throws EmailAlreadyUsedException 400 (Bad Request) if the email is already used
+     * @throws EmailAlreadyUsedException 409 (Conflict) if the email is already used
      * @throws RuntimeException 500 (Internal Server Error) if the user login wasn't found
      */
     @PostMapping("/account")
     @Timed
-    public void saveAccount(@Valid @RequestBody UserDTO userDTO) {
-        final String userLogin = SecurityUtils.getCurrentUserLogin().orElseThrow(() -> new InternalServerErrorException("Current user login not found"));
-        Optional<User> existingUser = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail());
-        if (existingUser.isPresent() && (!existingUser.get().getLogin().equalsIgnoreCase(userLogin))) {
-            throw new EmailAlreadyUsedException();
-        }
-        Optional<User> user = userRepository.findOneByLogin(userLogin);
-        if (!user.isPresent()) {
-            throw new InternalServerErrorException("User could not be found");
-        }
-        userService.updateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(),
-            userDTO.getLangKey(), userDTO.getImageUrl());
+	@ResponseBody
+	public Object saveAccount(@Valid @RequestBody UserDTO userDTO) {
+		
+		HttpHeaders httpHeaders = new HttpHeaders();
+		
+		try {
+			final String userLogin = SecurityUtils.getCurrentUserLogin()
+					.orElseThrow(() -> new InternalServerErrorException("Current user login not found"));
+
+			Optional<User> existingUser = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail());
+			
+			if (existingUser.isPresent() && (!existingUser.get().getLogin().equalsIgnoreCase(userLogin)) || !userDTO.getLogin().equals(userLogin))  {
+				httpHeaders.add("api-account-update", ErrorConstants.ERR_EMAIL_IN_USED);
+				return new ResponseEntity(new EmailAlreadyUsedException(), httpHeaders, HttpStatus.CONFLICT);
+			}
+			
+			Optional<User> user = userRepository.findOneByLogin(userLogin);
+			if (!user.isPresent()) {
+				httpHeaders.add("api-account-update", ErrorConstants.ERR_BAD_REQUEST);
+				return new ResponseEntity(new InternalServerErrorException("User could not be found"), httpHeaders, HttpStatus.BAD_REQUEST);
+			}
+			
+			userService.updateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(),
+					userDTO.getLangKey(), userDTO.getImageUrl());
+			
+			return user;
+			
+		} catch (Exception e) {
+			httpHeaders.add("api-account-update-exception", ErrorConstants.ERR_REQUEST_EXCEPTION);
+			return new ResponseEntity(e, httpHeaders, HttpStatus.EXPECTATION_FAILED);
+		}
    }
 
     /**
