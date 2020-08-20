@@ -103,12 +103,26 @@ public class AccountResource {
 
     @GetMapping("/activate")
     @Timed
-    public void activateAccount(@RequestParam(value = "key") String key) {
-        Optional<User> user = userService.activateRegistration(key);
-        if (!user.isPresent()) {
-            throw new NotFoundException("No user was found for this reset key");
-        }
-    }
+	@ResponseStatus(HttpStatus.CREATED)
+	@ResponseBody
+	public Object activateAccount(@RequestParam(value = "key") String key) {
+
+		HttpHeaders httpHeaders = new HttpHeaders();
+		
+		try {
+			Optional<User> user = userService.activateRegistration(key);
+			if (!user.isPresent()) {
+				throw new NotFoundException("No user was found for this reset key");
+			}
+			
+			httpHeaders.add("api-activate", "actived");
+			return new ResponseEntity(user, httpHeaders, HttpStatus.CREATED);
+			
+		} catch (Exception e) {	
+			httpHeaders.add("api-activate", ErrorConstants.ERR_ACTIVATIONKEY_NOT_FOUND);
+			return new ResponseEntity(e, httpHeaders, HttpStatus.BAD_REQUEST);
+		}
+	}
 
     /**
      * GET  /authenticate : check if the user is authenticated, and return its login.
