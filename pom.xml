@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.bcmc.xor.flare</groupId>
-    <artifactId>flareclient.backend</artifactId>
+    <artifactId>FLAREclient-Java-1967</artifactId>
     <version>0.0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -133,7 +133,7 @@
         <dependency>
             <groupId>xor.bcmc</groupId>
             <artifactId>taxii2</artifactId>
-            <version>0.2.3</version>
+            <version>0.2.5</version>
         </dependency>
         <dependency>
             <groupId>xor.flare</groupId>

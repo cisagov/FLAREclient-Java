@@ -14,7 +14,9 @@ import com.codahale.metrics.annotation.Timed;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -49,21 +51,48 @@ public class AccountResource {
      *
      * @param managedUserVM the managed user View Model
      * @throws InvalidPasswordException 400 (Bad Request) if the password is incorrect
-     * @throws EmailAlreadyUsedException 400 (Bad Request) if the email is already used
-     * @throws LoginAlreadyUsedException 400 (Bad Request) if the login is already used
+     * @throws EmailAlreadyUsedException 409 (Conflict) if the email is already used
+     * @throws LoginAlreadyUsedException 409 (Conflict) if the login is already used
      */
-    @PostMapping("/register")
-    @Timed
-    @ResponseStatus(HttpStatus.CREATED)
-    public void registerAccount(@Valid @RequestBody ManagedUserVM managedUserVM) {
-        if (checkPasswordLength(managedUserVM.getPassword())) {
-            throw new InvalidPasswordException();
-        }
-        userRepository.findOneByLogin(managedUserVM.getLogin().toLowerCase()).ifPresent(u -> {throw new LoginAlreadyUsedException();});
-        userRepository.findOneByEmailIgnoreCase(managedUserVM.getEmail()).ifPresent(u -> {throw new EmailAlreadyUsedException();});
-        User user = userService.registerUser(managedUserVM, managedUserVM.getPassword());
-        mailService.sendActivationEmail(user);
-    }
+
+    @SuppressWarnings("unchecked")
+	@PostMapping("/register")
+	@Timed
+	@ResponseStatus(HttpStatus.CREATED)
+	@ResponseBody
+	public Object registerAccount(@Valid @RequestBody ManagedUserVM managedUserVM) {
+
+		HttpHeaders httpHeaders = new HttpHeaders();
+		User user = new User();
+		
+		try {
+	
+			if (checkPasswordLength(managedUserVM.getPassword())) {throw new InvalidPasswordException();}
+			
+			userRepository.findOneByLogin(managedUserVM.getLogin().toLowerCase()).ifPresent(u -> { throw new LoginAlreadyUsedException();});
+			userRepository.findOneByEmailIgnoreCase(managedUserVM.getEmail()).ifPresent(u -> {throw new EmailAlreadyUsedException();});
+
+			user = userService.registerUser(managedUserVM, managedUserVM.getPassword());
+			mailService.sendActivationEmail(user);
+			
+			httpHeaders.add("api-register", "created");
+			return new ResponseEntity (user, httpHeaders, HttpStatus.CREATED);
+			
+		} catch (Exception e) {
+			
+			switch(e.getClass().getSimpleName()) {
+			case "LoginAlreadyUsedException":
+				httpHeaders.add("api-register", ErrorConstants.ERR_LOGIN_IN_USED);
+				return new ResponseEntity (new LoginAlreadyUsedException(), httpHeaders, HttpStatus.CONFLICT);
+			case "EmailAlreadyUsedException":
+				httpHeaders.add("api-register", ErrorConstants.ERR_EMAIL_IN_USED);
+				return new ResponseEntity (new EmailAlreadyUsedException(), httpHeaders, HttpStatus.CONFLICT);
+			default:
+				httpHeaders.add("api-register", ErrorConstants.ERR_BAD_REQUEST);
+				return new ResponseEntity (e, httpHeaders, HttpStatus.BAD_REQUEST);
+			}
+		}
+	}
 
     /**
      * GET  /activate : activate the registered user.
@@ -71,6 +100,7 @@ public class AccountResource {
      * @param key the activation key
      * @throws RuntimeException 500 (Internal Server Error) if the user couldn't be activated
      */
+
     @GetMapping("/activate")
     @Timed
     public void activateAccount(@RequestParam(value = "key") String key) {

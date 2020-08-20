@@ -8,6 +8,8 @@ public final class ErrorConstants {
     public static final String ERR_CONCURRENCY_FAILURE = "error.concurrencyFailure";
     public static final String ERR_VALIDATION = "error.validation";
     public static final String ERR_BAD_REQUEST = "error.request";
+    public static final String ERR_EMAIL_IN_USED = "error.email.in.used";
+    public static final String ERR_LOGIN_IN_USED = "error.login.in.used";
     private static final String PROBLEM_BASE_URL = "https://www.jhipster.tech/problem";
     public static final URI DEFAULT_TYPE = URI.create(PROBLEM_BASE_URL + "/problem-with-message");
     public static final URI RUNTIME_TYPE = URI.create(PROBLEM_BASE_URL + "/runtime");
