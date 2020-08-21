@@ -133,7 +133,7 @@
         <dependency>
             <groupId>xor.bcmc</groupId>
             <artifactId>taxii2</artifactId>
-            <version>0.2.3</version>
+            <version>0.2.5</version>
         </dependency>
         <dependency>
             <groupId>xor.flare</groupId>

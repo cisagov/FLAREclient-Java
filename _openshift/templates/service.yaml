@@ -1,0 +1,24 @@
+---
+apiVersion: v1
+kind: Template
+metadata:
+  name: service-template
+objects:
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      labels:
+        external: flareclient
+      name: flareclient
+    spec:
+      ports:
+      - nodePort: 0
+        port: 8082
+        protocol: TCP
+        targetPort: 8082
+      sessionAffinity: None
+      selector:
+        name: flareclient
+      type: ClusterIP
+    status:
+      loadBalancer: {}
