@@ -518,7 +518,7 @@ public class ServerService {
     /**
      * Saves a TaxiiServer
      * <p>
-     * Will set the {@link TaxiiServer#lastUpdated} field to now, and set the {@link TaxiiServer#isAvailable} field
+     * Will set the lastUpdated field to now, and set the isAvailable field
      *
      * @param server the server to save
      * @return the saved server
@@ -594,10 +594,12 @@ public class ServerService {
 
     public void removeServerCredential(String label) {
         User user = userService.getUserWithAuthoritiesByLogin(SecurityUtils.getCurrentUserLogin().orElseThrow(UserNotFoundException::new)).orElseThrow(UserNotFoundException::new);
-        log.debug("Deleting server credential for user '{}' and server '{}'", user.getLogin(), label);
-        user.getServerCredentials().remove(label);
-        ServerCredentialsUtils.getInstance().getServerCredentialsMap().get(user.getLogin()).remove(label);
-        userService.updateUser(new UserDTO(user));
+        if (!user.getServerCredentials().isEmpty()) {
+            log.debug("Deleting server credential for user '{}' and server '{}'", user.getLogin(), label);
+            user.getServerCredentials().remove(label);
+            ServerCredentialsUtils.getInstance().getServerCredentialsMap().get(user.getLogin()).remove(label);
+            userService.updateUser(new UserDTO(user));
+        }
     }
     // -------------------
 
@@ -644,7 +646,7 @@ public class ServerService {
     /**
      * Updates a server based on a ServerDTO
      *
-     * Will only update the {@link TaxiiServer#label} and {@link TaxiiServer#url} fields.
+     * Will only update the label and url fields.
      * Will call {@link #refreshServer(Taxii11Server)} or {@link #refreshServer(Taxii20Server)} depending on the version.
      *
      * If the provided ServerDTO (must have an 'id') does not already exist, will call {@link #createServer(ServerDTO)}

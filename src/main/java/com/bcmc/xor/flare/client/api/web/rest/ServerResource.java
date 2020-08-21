@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @SuppressWarnings("unused")
@@ -43,11 +45,17 @@ class ServerResource {
 
         // Check basic auth credentials; add them to ServerCredentialsUtils map
         if (serverDTO.getRequiresBasicAuth()) {
-            if (StringUtils.isBlank(serverDTO.getUsername()) || StringUtils.isBlank(serverDTO.getPassword())) {
-                return new ResponseEntity("Requires basic authentication is true.  Missing username and/or password.", HttpStatus.BAD_REQUEST);
-            } else {
-                serverService.addServerCredential(serverDTO.getLabel(), serverDTO.getUsername(), serverDTO.getPassword());
+            Map<String, Object> badParameterMap = new HashMap<>();
+            if (StringUtils.isBlank(serverDTO.getUsername())) {
+                badParameterMap.put("userName", ErrorConstants.USERNAME_REQUIRED_PARAM);
             }
+            if (StringUtils.isBlank(serverDTO.getPassword())) {
+                badParameterMap.put("password", ErrorConstants.PASSWORD_REQUIRED_PARAM);
+            }
+            if (!badParameterMap.isEmpty()) {throw new FlareClientIllegalArgumentException(badParameterMap);}
+
+            serverService.addServerCredential(serverDTO.getLabel(), serverDTO.getUsername(), serverDTO.getPassword());
+
         }
 
         TaxiiServer server = serverService.updateServer(serverDTO);
@@ -97,12 +105,15 @@ class ServerResource {
 
     @DeleteMapping("/servers/{label}/credentials")
     public ResponseEntity<ServerDTO> deleteServerCredential(@PathVariable String label) {
-        Optional<String> currentUser = SecurityUtils.getCurrentUserLogin();
-        log.debug("REST Request to delete server credential for user '{}' and server '{}'", currentUser, label);
-        Optional<User> user = userService.getUserWithAuthoritiesByLogin(currentUser.get());
-        if (!user.isPresent() || user.get().getServerCredentials().isEmpty()) {
-            return new ResponseEntity("Server credentials for user: '" + currentUser.get() + "' does not exist", HttpStatus.BAD_REQUEST);
+        Optional<String> optCurrentUser = SecurityUtils.getCurrentUserLogin();
+        String currentUser = "";
+        if (optCurrentUser.isPresent()) {
+            currentUser = optCurrentUser.get();
         }
+        log.debug("REST Request to delete server credential for user '{}' and server '{}'", currentUser, label);
+        Optional<User> user = userService.getUserWithAuthoritiesByLogin(currentUser);
+        if (!user.isPresent()) {throw new UserNotFoundException();}
+        if (user.get().getServerCredentials().isEmpty()) {throw new ServerCredentialsNotFoundException();}
         serverService.removeServerCredential(label);
         serverService.refreshServer(label);
         return getServer(label);
