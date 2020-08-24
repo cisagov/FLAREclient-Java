@@ -200,20 +200,30 @@ public class AccountResource {
 		return new ResponseEntity<>(new AccountUpdateException(), httpHeaders, HttpStatus.BAD_REQUEST);
 	}
 
-    /**
-     * POST  /account/change-password : changes the current user's password
-     *
-     * @param passwordChangeDto current and new password
-     * @throws InvalidPasswordException 400 (Bad Request) if the new password is incorrect
-     */
-    @PostMapping(path = "/account/change-password")
-    @Timed
-    public void changePassword(@RequestBody PasswordChangeDTO passwordChangeDto) {
-        if (checkPasswordLength(passwordChangeDto.getNewPassword())) {
-            throw new InvalidPasswordException();
-        }
-        userService.changePassword(passwordChangeDto.getCurrentPassword(), passwordChangeDto.getNewPassword());
-   }
+	/**
+	 * POST /account/change-password : changes the current user's password
+	 *
+	 * @param passwordChangeDto current and new password
+	 * @throws InvalidPasswordException 400 (Bad Request) if the new password is incorrect
+	 *
+	 */
+	@PostMapping(path = "/account/change-password")
+	@Timed
+	@ResponseBody
+	public Object changePassword(@RequestBody PasswordChangeDTO passwordChangeDto) {
+		final String userLogin = SecurityUtils.getCurrentUserLogin()
+				.orElseThrow(() -> new InternalServerErrorException("Current user login not found"));
+		
+		if (checkPasswordLength(passwordChangeDto.getNewPassword())) {
+			throw new InvalidPasswordException();
+		}
+
+		userService.changePassword(passwordChangeDto.getCurrentPassword(), passwordChangeDto.getNewPassword());
+	
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.add("api-account-change-password", "accepted");
+		return new ResponseEntity<>(userService.getUserWithAuthoritiesByLogin(userLogin), httpHeaders, HttpStatus.ACCEPTED);
+	}
 
 	@ExceptionHandler(InvalidPasswordException.class)
 	public ResponseEntity<Object> handleInvalidPasswordException() {
