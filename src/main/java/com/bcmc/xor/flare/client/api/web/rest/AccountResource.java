@@ -156,8 +156,7 @@ public class AccountResource {
 	 * @param userDTO the current user information
 	 * @throws LoginAlreadyUsedException 409 if the user try to change email
 	 * @throws EmailAlreadyUsedException 409 if the email is already used
-	 * @throws RuntimeException          500 (Internal Server Error) if the user
-	 *                                   login wasn't found
+	 * @throws AccountUpdateException          400 (Bad Request) Other exceptions 
 	 */
 	@PostMapping("/account")
 	@Timed
@@ -216,6 +215,13 @@ public class AccountResource {
         userService.changePassword(passwordChangeDto.getCurrentPassword(), passwordChangeDto.getNewPassword());
    }
 
+	@ExceptionHandler(InvalidPasswordException.class)
+	public ResponseEntity<Object> handleInvalidPasswordException() {
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.add("api-account-change-passowrd", ErrorConstants.ERR_ACCOUNT_UPDATE);
+		return new ResponseEntity<>(new InvalidPasswordException(), httpHeaders, HttpStatus.BAD_REQUEST);
+	}
+	
     /**
      * POST   /account/reset-password/init : Send an email to reset the password of the user
      *
