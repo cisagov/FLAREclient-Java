@@ -1,9 +1,5 @@
 package com.bcmc.xor.flare.client.error;
 
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.zalando.problem.AbstractThrowableProblem;
 import org.zalando.problem.Status;
 
@@ -12,6 +8,6 @@ public class AccountUpdateException extends AbstractThrowableProblem {
     private static final long serialVersionUID = 1L;
 
     public AccountUpdateException() {
-    	super(ErrorConstants.LOGIN_ALREADY_USED_TYPE, "Activation Key Error", Status.CONFLICT);
+    	super(ErrorConstants.ACCOUNT_UPDATE_ERROR, "Accout update error", Status.BAD_REQUEST);
     }
 }
