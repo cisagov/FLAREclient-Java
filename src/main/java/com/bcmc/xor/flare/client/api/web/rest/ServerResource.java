@@ -107,7 +107,7 @@ class ServerResource {
 
     @PutMapping("/servers/{label}/credentials")
     public ResponseEntity<ServerDTO> addServerCredential(@PathVariable String label, @RequestBody ServerCredentialDTO serverCredential) {
-        log.debug("REST Request to add server credential for user '{}' and server '{}'", SecurityUtils.getCurrentUserLogin().get(), label);
+        log.debug("REST Request to add server credential for server '{}'", label);
         if (!serverService.findOneByLabel(label).isPresent()) {
             log.error("Unable to find server '{}' for adding credentials", label);
             throw new ServerNotFoundException();

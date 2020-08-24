@@ -86,6 +86,9 @@ public class TestData {
         Authority authority = new Authority();
         authority.setName("user");
         Set<Authority> authorities = Sets.newHashSet(authority);
+        Map<String, String> serverCredentialsMap = new HashMap<>();
+        serverCredentialsMap.put("username","user");
+        serverCredentialsMap.put("password", "password");
         user.setId(UUID.randomUUID().toString());
         user.setAuthorities(authorities);
         user.setEmail("user@mail.com");
@@ -94,6 +97,7 @@ public class TestData {
         user.setPassword("password");
         user.setFirstName("User");
         user.setLastName("User");
+        user.setServerCredentials(serverCredentialsMap);
 
         // Establish test data: Taxii11Server
         taxii11Server = new Taxii11Server();
