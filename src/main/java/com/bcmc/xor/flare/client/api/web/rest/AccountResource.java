@@ -46,16 +46,16 @@ public class AccountResource {
         this.mailService = mailService;
     }
 
-    /**
-     * POST  /register : register the user.
-     *
-     * @param managedUserVM the managed user View Model
-     * @throws InvalidPasswordException 400 (Bad Request) if the password is incorrect
-     * @throws EmailAlreadyUsedException 409 (Conflict) if the email is already used
-     * @throws LoginAlreadyUsedException 409 (Conflict) if the login is already used
-     */
+	/**
+	 * POST /register : register the user.
+	 *
+	 * @param managedUserVM the managed user View Model
+	 * @throws InvalidPasswordException  400 (Bad Request) if the password is
+	 *                                   incorrect
+	 * @throws EmailAlreadyUsedException 409 (Conflict) if the email is already used
+	 * @throws LoginAlreadyUsedException 409 (Conflict) if the login is already used
+	 */
 
-    @SuppressWarnings("unchecked")
 	@PostMapping("/register")
 	@Timed
 	@ResponseStatus(HttpStatus.CREATED)
@@ -64,34 +64,34 @@ public class AccountResource {
 
 		HttpHeaders httpHeaders = new HttpHeaders();
 		User user = new User();
-		
-		try {
-	
-			if (checkPasswordLength(managedUserVM.getPassword())) {throw new InvalidPasswordException();}
-			
-			userRepository.findOneByLogin(managedUserVM.getLogin().toLowerCase()).ifPresent(u -> { throw new LoginAlreadyUsedException();});
-			userRepository.findOneByEmailIgnoreCase(managedUserVM.getEmail()).ifPresent(u -> {throw new EmailAlreadyUsedException();});
 
-			user = userService.registerUser(managedUserVM, managedUserVM.getPassword());
-			mailService.sendActivationEmail(user);
-			
-			httpHeaders.add("api-register", "created");
-			return new ResponseEntity (user, httpHeaders, HttpStatus.CREATED);
-			
-		} catch (Exception e) {
-			
-			switch(e.getClass().getSimpleName()) {
-			case "LoginAlreadyUsedException":
-				httpHeaders.add("api-register", ErrorConstants.ERR_LOGIN_IN_USED);
-				return new ResponseEntity (new LoginAlreadyUsedException(), httpHeaders, HttpStatus.CONFLICT);
-			case "EmailAlreadyUsedException":
-				httpHeaders.add("api-register", ErrorConstants.ERR_EMAIL_IN_USED);
-				return new ResponseEntity (new EmailAlreadyUsedException(), httpHeaders, HttpStatus.CONFLICT);
-			default:
-				httpHeaders.add("api-register", ErrorConstants.ERR_BAD_REQUEST);
-				return new ResponseEntity (e, httpHeaders, HttpStatus.BAD_REQUEST);
-			}
-		}
+		userRepository.findOneByLogin(managedUserVM.getLogin().toLowerCase()).ifPresent(u -> {
+			throw new LoginAlreadyUsedException();
+		});
+
+		userRepository.findOneByEmailIgnoreCase(managedUserVM.getEmail()).ifPresent(u -> {
+			throw new EmailAlreadyUsedException();
+		});
+
+		user = userService.registerUser(managedUserVM, managedUserVM.getPassword());
+		mailService.sendActivationEmail(user);
+
+		httpHeaders.add("api-register", "created");
+		return new ResponseEntity<>(user, httpHeaders, HttpStatus.CREATED);
+	}
+
+	@ExceptionHandler(LoginAlreadyUsedException.class)
+	public ResponseEntity<Exception> handleLoginAlreadyUsedException() {
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.add("api-register", ErrorConstants.ERR_LOGIN_IN_USED);
+		return new ResponseEntity<>(new LoginAlreadyUsedException(), httpHeaders, HttpStatus.CONFLICT);
+	}
+
+	@ExceptionHandler(EmailAlreadyUsedException.class)
+	public ResponseEntity<Object> handleEmailAlreadyUsedException() {
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.add("api-register", ErrorConstants.ERR_EMAIL_IN_USED);
+		return new ResponseEntity<>(new EmailAlreadyUsedException(), httpHeaders, HttpStatus.CONFLICT);
 	}
 
     /**
@@ -113,15 +113,15 @@ public class AccountResource {
 			Optional<User> user = userService.activateRegistration(key);
 			if (!user.isPresent()) {
 				httpHeaders.add("api-activate", ErrorConstants.ERR_ACTIVATIONKEY_NOT_FOUND);
-				return new ResponseEntity(new NotFoundException(), httpHeaders, HttpStatus.NOT_FOUND);
+				return new ResponseEntity<NotFoundException>(new NotFoundException(), httpHeaders, HttpStatus.NOT_FOUND);
 			}
 			
 			httpHeaders.add("api-activate", "actived");
-			return new ResponseEntity(user, httpHeaders, HttpStatus.CREATED);
+			return new ResponseEntity<Optional<User>>(user, httpHeaders, HttpStatus.CREATED);
 			
 		} catch (Exception e) {	
 			httpHeaders.add("api-activate", ErrorConstants.ERR_BAD_REQUEST);
-			return new ResponseEntity(e, httpHeaders, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Exception>(e, httpHeaders, HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -174,23 +174,23 @@ public class AccountResource {
 			
 			if (existingUser.isPresent() && (!existingUser.get().getLogin().equalsIgnoreCase(userLogin)) || !userDTO.getLogin().equals(userLogin))  {
 				httpHeaders.add("api-account-update", ErrorConstants.ERR_EMAIL_IN_USED);
-				return new ResponseEntity(new EmailAlreadyUsedException(), httpHeaders, HttpStatus.CONFLICT);
+				return new ResponseEntity<EmailAlreadyUsedException>(new EmailAlreadyUsedException(), httpHeaders, HttpStatus.CONFLICT);
 			}
 			
 			Optional<User> user = userRepository.findOneByLogin(userLogin);
 			if (!user.isPresent()) {
 				httpHeaders.add("api-account-update", ErrorConstants.ERR_BAD_REQUEST);
-				return new ResponseEntity(new InternalServerErrorException("User could not be found"), httpHeaders, HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<InternalServerErrorException>(new InternalServerErrorException("User could not be found"), httpHeaders, HttpStatus.BAD_REQUEST);
 			}
 			
 			userService.updateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(),
 					userDTO.getLangKey(), userDTO.getImageUrl());
 			
-			return user;
+			return new ResponseEntity<Optional<User>>(user, httpHeaders, HttpStatus.EXPECTATION_FAILED);
 			
 		} catch (Exception e) {
 			httpHeaders.add("api-account-update-exception", ErrorConstants.ERR_REQUEST_EXCEPTION);
-			return new ResponseEntity(e, httpHeaders, HttpStatus.EXPECTATION_FAILED);
+			return new ResponseEntity<Exception>(e, httpHeaders, HttpStatus.EXPECTATION_FAILED);
 		}
    }
 
