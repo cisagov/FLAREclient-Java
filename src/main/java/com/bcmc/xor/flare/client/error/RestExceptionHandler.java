@@ -42,7 +42,22 @@ public class RestExceptionHandler  extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(ServerCredentialsNotFoundException.class)
-    protected ResponseEntity<Object> handleUserNotFoundException(ServerCredentialsNotFoundException ex) {
+    protected ResponseEntity<Object> handleServerCredentialsNotFoundException(ServerCredentialsNotFoundException ex) {
+        APIError apiError = new APIError(HttpStatus.BAD_REQUEST);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
+    @ExceptionHandler(ServerNotFoundException.class)
+    protected ResponseEntity<Object> handleServerNotFoundException(ServerNotFoundException ex) {
+        APIError apiError = new APIError(HttpStatus.BAD_REQUEST);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
+
+    @ExceptionHandler(ServerCreationException.class)
+    protected ResponseEntity<Object> handleServerCreationException(ServerCreationException ex) {
         APIError apiError = new APIError(HttpStatus.BAD_REQUEST);
         apiError.setMessage(ex.getMessage());
         return buildResponseEntity(apiError);

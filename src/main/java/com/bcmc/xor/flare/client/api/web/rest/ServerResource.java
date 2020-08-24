@@ -42,7 +42,7 @@ class ServerResource {
 
     @PostMapping("/servers")
     public ResponseEntity<TaxiiServer> createOrUpdateServer(@Valid @RequestBody ServerDTO serverDTO) throws URISyntaxException, InternalServerErrorException {
-
+        log.debug("REST Request to create or update server for {}", serverDTO.getLabel());
         // Check basic auth credentials; add them to ServerCredentialsUtils map
         if (serverDTO.getRequiresBasicAuth()) {
             Map<String, Object> badParameterMap = new HashMap<>();
@@ -52,15 +52,18 @@ class ServerResource {
             if (StringUtils.isBlank(serverDTO.getPassword())) {
                 badParameterMap.put("password", ErrorConstants.PASSWORD_REQUIRED_PARAM);
             }
-            if (!badParameterMap.isEmpty()) {throw new FlareClientIllegalArgumentException(badParameterMap);}
-
+            if (!badParameterMap.isEmpty()) {
+                log.error("Basic authorization is set to true.  Username and/or password missing.");
+                throw new FlareClientIllegalArgumentException(badParameterMap);
+            }
             serverService.addServerCredential(serverDTO.getLabel(), serverDTO.getUsername(), serverDTO.getPassword());
 
         }
 
         TaxiiServer server = serverService.updateServer(serverDTO);
         if (server instanceof TemporaryServer) {
-            return new ResponseEntity(String.format("'%s' failed creation. Ensure server details are correct.", serverDTO.getLabel()), HttpStatus.BAD_REQUEST);
+            log.error(serverDTO.getLabel() +  " failed creation.  Ensure server details are correct.");
+            throw new ServerCreationException();
         }
         return ResponseEntity
             .created(new URI("/api/servers/" + server.getId()))
@@ -70,19 +73,22 @@ class ServerResource {
 
     @GetMapping("/servers")
     public ResponseEntity<ServersDTO> getAllServers() {
+        log.debug("REST Request to get all servers");
         return new ResponseEntity<>(serverService.getAllServers(), HttpStatus.OK);
     }
 
     @GetMapping("/servers/{label}")
     public ResponseEntity<ServerDTO> getServer(@PathVariable String label) {
+        log.debug("REST Request to get server '{}'", label);
         return ResponseUtil.wrapOrNotFound(serverService.findOneByLabel(label).map(ServerDTO::new), null);
     }
 
     @DeleteMapping("/servers/{label}")
     public ResponseEntity<String> deleteServer(@PathVariable String label) {
-        log.debug("REST Request to delete server for '{}'", label);
+        log.debug("REST Request to delete server '{}'", label);
         if (!serverService.findOneByLabel(label).isPresent()) {
-            return new ResponseEntity<>("Unable to find server '" + label + "' for deletion", HttpStatus.BAD_REQUEST);
+            log.error("Unable to find server '{}' for deletion", label);
+            throw new ServerNotFoundException();
         }
         serverService.deleteServer(label);
         return new ResponseEntity<>("Successfully deleted server '" + label + "'", HttpStatus.OK);
@@ -90,14 +96,22 @@ class ServerResource {
 
     @PostMapping("/servers/{label}/refresh")
     public ResponseEntity<ServerDTO> refreshServer(@PathVariable String label) {
-        log.debug("Refreshing server information for '{}'", label);
+        log.debug("REST request to refresh server information for '{}'", label);
+        if (!serverService.findOneByLabel(label).isPresent()) {
+            log.error("Unable to find server '{}' for refresh", label);
+            throw new ServerNotFoundException();
+        }
         serverService.refreshServer(label);
         return getServer(label);
     }
 
     @PutMapping("/servers/{label}/credentials")
     public ResponseEntity<ServerDTO> addServerCredential(@PathVariable String label, @RequestBody ServerCredentialDTO serverCredential) {
-        log.debug("REST Request to add server credential for user '{}' and server '{}'", SecurityUtils.getCurrentUserLogin(), label);
+        log.debug("REST Request to add server credential for user '{}' and server '{}'", SecurityUtils.getCurrentUserLogin().get(), label);
+        if (!serverService.findOneByLabel(label).isPresent()) {
+            log.error("Unable to find server '{}' for adding credentials", label);
+            throw new ServerNotFoundException();
+        }
         serverService.addServerCredential(label, serverCredential.getUsername(), serverCredential.getPassword());
         serverService.refreshServer(label);
         return getServer(label);
@@ -105,6 +119,7 @@ class ServerResource {
 
     @DeleteMapping("/servers/{label}/credentials")
     public ResponseEntity<ServerDTO> deleteServerCredential(@PathVariable String label) {
+        log.debug("REST Request to delete server credential for server '{}'",  label);
         Optional<String> optCurrentUser = SecurityUtils.getCurrentUserLogin();
         String currentUser = "";
         if (optCurrentUser.isPresent()) {
@@ -112,8 +127,14 @@ class ServerResource {
         }
         log.debug("REST Request to delete server credential for user '{}' and server '{}'", currentUser, label);
         Optional<User> user = userService.getUserWithAuthoritiesByLogin(currentUser);
-        if (!user.isPresent()) {throw new UserNotFoundException();}
-        if (user.get().getServerCredentials().isEmpty()) {throw new ServerCredentialsNotFoundException();}
+        if (!user.isPresent()) {
+            log.error("Unable to find user '{}' for adding credentials", currentUser);
+            throw new UserNotFoundException();
+        }
+        if (user.get().getServerCredentials().isEmpty()) {
+            log.error("Unable to find credentials for user '{}'", currentUser);
+            throw new ServerCredentialsNotFoundException();
+        }
         serverService.removeServerCredential(label);
         serverService.refreshServer(label);
         return getServer(label);
