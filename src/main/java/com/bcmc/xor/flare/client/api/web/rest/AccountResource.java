@@ -94,37 +94,35 @@ public class AccountResource {
 		return new ResponseEntity<>(new EmailAlreadyUsedException(), httpHeaders, HttpStatus.CONFLICT);
 	}
 
-    /**
-     * GET  /activate : activate the registered user.
-     *
-     * @param key the activation key
-     * @throws RuntimeException 500 (Internal Server Error) if the user couldn't be activated
-     */
-
-    @GetMapping("/activate")
-    @Timed
+	/**
+	 * GET /activate : activate the registered user.
+	 *
+	 * @param key the activation key
+	 * @throws AccountActivationException if the user couldn't be activated
+	 */
+	@GetMapping("/activate")
+	@Timed
 	@ResponseStatus(HttpStatus.CREATED)
 	@ResponseBody
 	public Object activateAccount(@RequestParam(value = "key") String key) {
 
 		HttpHeaders httpHeaders = new HttpHeaders();
-		
-		try {
-			Optional<User> user = userService.activateRegistration(key);
-			if (!user.isPresent()) {
-				httpHeaders.add("api-activate", ErrorConstants.ERR_ACTIVATIONKEY_NOT_FOUND);
-				return new ResponseEntity<NotFoundException>(new NotFoundException(), httpHeaders, HttpStatus.NOT_FOUND);
-			}
-			
-			httpHeaders.add("api-activate", "actived");
-			return new ResponseEntity<Optional<User>>(user, httpHeaders, HttpStatus.CREATED);
-			
-		} catch (Exception e) {	
-			httpHeaders.add("api-activate", ErrorConstants.ERR_BAD_REQUEST);
-			return new ResponseEntity<Exception>(e, httpHeaders, HttpStatus.BAD_REQUEST);
+		Optional<User> user = userService.activateRegistration(key);
+		if (!user.isPresent()) {
+			throw new AccountActivationException();
 		}
+
+		httpHeaders.add("api-activate", "actived");
+		return new ResponseEntity<>(user, httpHeaders, HttpStatus.CREATED);
 	}
 
+	@ExceptionHandler(AccountActivationException.class)
+	public ResponseEntity<Object> handleAccountActivationException() {
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.add("api-register", ErrorConstants.ERR_ACTIVATIONKEY_NOT_FOUND);
+		return new ResponseEntity<>(new AccountActivationException(), httpHeaders, HttpStatus.BAD_REQUEST);
+	}
+	
     /**
      * GET  /authenticate : check if the user is authenticated, and return its login.
      *

@@ -3,7 +3,7 @@ package com.bcmc.xor.flare.client.error;
 import java.net.URI;
 
 public final class ErrorConstants {
-	
+
 	public static final String ERR_REQUEST_EXCEPTION = "error.requestException";
 	public static final String ERR_CONCURRENCY_FAILURE = "error.concurrencyFailure";
 	public static final String ERR_VALIDATION = "error.validation";
@@ -26,6 +26,7 @@ public final class ErrorConstants {
 	public static final URI LOGIN_ALREADY_USED_TYPE = URI.create(PROBLEM_BASE_URL + "/login-already-used");
 	public static final URI EMAIL_NOT_FOUND_TYPE = URI.create(PROBLEM_BASE_URL + "/email-not-found");
 	public static final URI USER_NOT_FOUND_TYPE = URI.create(PROBLEM_BASE_URL + "/user-not-found");
+	public static final URI ACTIVATION_ERROR = URI.create(PROBLEM_BASE_URL + "/activation-error");
 
 	private ErrorConstants() {
 	}
