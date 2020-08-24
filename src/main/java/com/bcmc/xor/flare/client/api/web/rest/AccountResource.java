@@ -80,19 +80,19 @@ public class AccountResource {
 		return new ResponseEntity<>(user, httpHeaders, HttpStatus.CREATED);
 	}
 
-	@ExceptionHandler(LoginAlreadyUsedException.class)
-	public ResponseEntity<Exception> handleLoginAlreadyUsedException() {
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.add("api-register", ErrorConstants.ERR_LOGIN_IN_USED);
-		return new ResponseEntity<>(new LoginAlreadyUsedException(), httpHeaders, HttpStatus.CONFLICT);
-	}
-
-	@ExceptionHandler(EmailAlreadyUsedException.class)
-	public ResponseEntity<Object> handleEmailAlreadyUsedException() {
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.add("api-register", ErrorConstants.ERR_EMAIL_IN_USED);
-		return new ResponseEntity<>(new EmailAlreadyUsedException(), httpHeaders, HttpStatus.CONFLICT);
-	}
+//	@ExceptionHandler(LoginAlreadyUsedException.class)
+//	public ResponseEntity<Exception> handleLoginAlreadyUsedException() {
+//		HttpHeaders httpHeaders = new HttpHeaders();
+//		httpHeaders.add("api-register", ErrorConstants.ERR_LOGIN_IN_USED);
+//		return new ResponseEntity<>(new LoginAlreadyUsedException(), httpHeaders, HttpStatus.CONFLICT);
+//	}
+//
+//	@ExceptionHandler(EmailAlreadyUsedException.class)
+//	public ResponseEntity<Object> handleEmailAlreadyUsedException() {
+//		HttpHeaders httpHeaders = new HttpHeaders();
+//		httpHeaders.add("api-register", ErrorConstants.ERR_EMAIL_IN_USED);
+//		return new ResponseEntity<>(new EmailAlreadyUsedException(), httpHeaders, HttpStatus.CONFLICT);
+//	}
 
 	/**
 	 * GET /activate : activate the registered user.

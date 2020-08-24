@@ -29,7 +29,14 @@ public final class ErrorConstants {
     public static final URI USER_NOT_FOUND_TYPE = URI.create(PROBLEM_BASE_URL + "/user-not-found");
     public static final URI ACTIVATION_ERROR = URI.create(PROBLEM_BASE_URL + "/activation-error");
     public static final URI ACCOUNT_UPDATE_ERROR = URI.create(PROBLEM_BASE_URL + "/account-update-error");
-    
+
+    public static final String EMAIL_ALREADY_USED = "Email is already in use";
+    public static final String LOGIN_ALREADY_USED = "Login already exists";
+    public static final String USER_NOT_FOUND = "User was not found for credential deletion";
+    public static final String CREDENTIALS_NOT_FOUND = "No server credentials exist for the user";
+    public static final String USERNAME_REQUIRED_PARAM = "Username is a required parameter";
+    public static final String PASSWORD_REQUIRED_PARAM = "Password is a required parameter";
+
     private ErrorConstants() {
     }
 }
