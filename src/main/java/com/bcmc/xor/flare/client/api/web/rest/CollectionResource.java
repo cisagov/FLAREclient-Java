@@ -64,7 +64,7 @@ class CollectionResource {
         return getTaxiiCollectionResponseEntity(serverLabel, collectionId);
     }
 
-    private ResponseEntity<TaxiiCollection> getTaxiiCollectionResponseEntity(@PathVariable String serverLabel, @PathVariable String collectionId) {
+    private ResponseEntity<TaxiiCollection> getTaxiiCollectionResponseEntity(String serverLabel, String collectionId) {
         log.debug("REST Request to get collection details for server '{}' and collectionId '{}'",  serverLabel, collectionId);
         Optional<? extends TaxiiServer> server = serverService.findOneByLabel(serverLabel);
         if (server.isPresent()) {
