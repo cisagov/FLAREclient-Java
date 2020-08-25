@@ -1,9 +1,11 @@
 package com.bcmc.xor.flare.client.util;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 public class ResponseUtil {
@@ -23,6 +25,6 @@ public class ResponseUtil {
      */
     public static <X> ResponseEntity<X> wrapOrNotFound(Optional<X> maybeResponse, HttpHeaders header) {
         return maybeResponse.map(response -> ResponseEntity.ok().headers(header).body(response))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                .orElse(new ResponseEntity(new EmptyJsonResponse(), HttpStatus.OK));
     }
 }

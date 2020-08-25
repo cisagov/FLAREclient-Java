@@ -6,6 +6,6 @@ import org.zalando.problem.Status;
 public class UserNotFoundException extends AbstractThrowableProblem {
 
     public UserNotFoundException() {
-        super(ErrorConstants.USER_NOT_FOUND_TYPE, "User was not found.", Status.BAD_REQUEST);
+        super(null, ErrorConstants.USER_NOT_FOUND,  Status.BAD_REQUEST);
     }
 }
