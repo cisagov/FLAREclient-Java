@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
-@SuppressWarnings("unused")
 @RestController
 @RequestMapping("/api/servers/{serverLabel}/collections")
 class CollectionResource {
