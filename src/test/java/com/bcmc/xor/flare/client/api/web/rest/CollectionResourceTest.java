@@ -53,7 +53,7 @@ public class CollectionResourceTest {
         assertNotNull(response.getBody());
         assertEquals(200, response.getStatusCodeValue());
         assertEquals(1, response.getBody().getAllIds().size());
-        assertTrue(response.getBody().getById().keySet().contains(TestData.taxii11Collection.getId()));
+        assertTrue(response.getBody().getById().containsKey(TestData.taxii11Collection.getId()));
     }
 
     @Test

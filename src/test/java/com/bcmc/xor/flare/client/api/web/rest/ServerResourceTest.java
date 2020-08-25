@@ -10,9 +10,13 @@ import com.bcmc.xor.flare.client.api.service.UserService;
 import com.bcmc.xor.flare.client.api.service.dto.ServerCredentialDTO;
 import com.bcmc.xor.flare.client.api.service.dto.ServerDTO;
 import com.bcmc.xor.flare.client.api.service.dto.ServersDTO;
+import com.bcmc.xor.flare.client.error.ErrorConstants;
+import com.bcmc.xor.flare.client.error.ServerNotFoundException;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.mockito.MockitoAnnotations;
@@ -30,6 +34,7 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -54,6 +59,9 @@ public class ServerResourceTest {
         serverResource = new ServerResource(serverService, userService);
         MockitoAnnotations.initMocks(this);
     }
+
+    @Rule
+    public ExpectedException exceptionRule = ExpectedException.none();
 
     @Test
     public void testCreateTaxii11ServerNoAuth() throws Exception {
@@ -153,11 +161,27 @@ public class ServerResourceTest {
     }
 
     @Test
+    public void testDeleteServer_ServerNotFoundException() {
+        exceptionRule.expect(ServerNotFoundException.class);
+        exceptionRule.expectMessage(ErrorConstants.SERVER_NOT_FOUND);
+        when(serverService.findOneByLabel(anyString())).thenReturn(null);
+        ResponseEntity<String> response = serverResource.deleteServer(null);
+    }
+
+    @Test
     public void testRefreshServer() {
         when(serverService.findOneByLabel(TestData.taxii11Server.getLabel())).thenReturn(Optional.of(TestData.taxii11Server));
         ResponseEntity<ServerDTO> response = serverResource.refreshServer(TestData.taxii11Server.getLabel());
         verify(serverService).refreshServer(TestData.taxii11Server.getLabel());
         assertTrue(response.getStatusCode().is2xxSuccessful());
+    }
+
+    @Test
+    public void testRefreshServer_ServerNotFoundException() {
+        exceptionRule.expect(ServerNotFoundException.class);
+        exceptionRule.expectMessage(ErrorConstants.SERVER_NOT_FOUND);
+        when(serverService.findOneByLabel(anyString())).thenReturn(null);
+        ResponseEntity<ServerDTO> response = serverResource.refreshServer(null);
     }
 
     @Test
@@ -168,6 +192,14 @@ public class ServerResourceTest {
             new ServerCredentialDTO(TestData.taxii11Server.getLabel(), "user", "password"));
         verify(serverService).addServerCredential(TestData.taxii11Server.getLabel(), "user", "password");
         assertTrue(response.getStatusCode().is2xxSuccessful());
+    }
+
+    @Test
+    public void testAddServerCredential_ServerNotFoundException() {
+        exceptionRule.expect(ServerNotFoundException.class);
+        exceptionRule.expectMessage(ErrorConstants.SERVER_NOT_FOUND);
+        when(serverService.findOneByLabel(anyString())).thenReturn(null);
+        ResponseEntity<ServerDTO> response = serverResource.addServerCredential(null, new ServerCredentialDTO());
     }
 
     @Test

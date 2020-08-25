@@ -5,6 +5,7 @@ import com.bcmc.xor.flare.client.api.domain.auth.User;
 import com.bcmc.xor.flare.client.api.repository.UserRepository;
 import com.bcmc.xor.flare.client.api.security.jwt.TokenProvider;
 import com.bcmc.xor.flare.client.api.web.rest.vm.LoginVM;
+import com.bcmc.xor.flare.client.error.AuthenticationFailureException;
 import com.bcmc.xor.flare.client.error.FlareExceptionTranslator;
 import org.junit.Before;
 import org.junit.Rule;
@@ -26,7 +27,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -145,7 +146,7 @@ public class UserJWTControllerIntTest {
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.id_token").doesNotExist())
                 .andExpect(header().doesNotExist("Authorization"))
-                .andExpect(jsonPath("$.error").isNotEmpty())
-                .andExpect(jsonPath("$.error").value("Failed to authenticate"));
+                .andExpect(mvcResult -> assertTrue(mvcResult.getResolvedException() instanceof AuthenticationFailureException))
+                .andExpect(mvcResult -> assertEquals("Authentication failed", mvcResult.getResolvedException().getMessage()));
     }
  }

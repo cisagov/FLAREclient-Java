@@ -24,10 +24,12 @@ public final class ErrorConstants {
     public static final URI EMAIL_NOT_FOUND_TYPE = URI.create(PROBLEM_BASE_URL + "/email-not-found");
     public static final URI USER_NOT_FOUND_TYPE = URI.create(PROBLEM_BASE_URL + "/user-not-found");
 
+    public static final String AUTHENTICATION_FAILURE = "Authentication failed";
     public static final String EMAIL_ALREADY_USED = "Email is already in use";
     public static final String LOGIN_ALREADY_USED = "Login already exists";
     public static final String USER_NOT_FOUND = "User was not found for credential deletion";
     public static final String SERVER_NOT_FOUND = "Server was not found";
+    public static final String COLLECTION_NOT_FOUND = "Collection was not found";
     public static final String SERVER_NOT_CREATED = "Server was not created.  Check server details.";
     public static final String CREDENTIALS_NOT_FOUND = "No server credentials exist for the user";
     public static final String USERNAME_REQUIRED_PARAM = "Username is a required parameter";
