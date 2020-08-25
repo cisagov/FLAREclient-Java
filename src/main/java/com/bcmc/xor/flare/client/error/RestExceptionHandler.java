@@ -50,7 +50,14 @@ public class RestExceptionHandler  extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ServerNotFoundException.class)
     protected ResponseEntity<Object> handleServerNotFoundException(ServerNotFoundException ex) {
-        APIError apiError = new APIError(HttpStatus.BAD_REQUEST);
+        APIError apiError = new APIError(HttpStatus.NOT_ACCEPTABLE);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
+    @ExceptionHandler(CollectionNotFoundException.class)
+    protected ResponseEntity<Object> handleCollectionNotFoundException(CollectionNotFoundException ex) {
+        APIError apiError = new APIError(HttpStatus.NOT_ACCEPTABLE);
         apiError.setMessage(ex.getMessage());
         return buildResponseEntity(apiError);
     }
@@ -66,6 +73,13 @@ public class RestExceptionHandler  extends ResponseEntityExceptionHandler {
     @ExceptionHandler(FlareClientIllegalArgumentException.class)
     protected ResponseEntity<Object> handleUserNotFoundException(FlareClientIllegalArgumentException ex) {
         APIError apiError = new APIError(HttpStatus.BAD_REQUEST);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
+    @ExceptionHandler(AuthenticationFailureException.class)
+    protected ResponseEntity<Object> handleAuthenticationFailureException(AuthenticationFailureException ex) {
+        APIError apiError = new APIError(HttpStatus.UNAUTHORIZED);
         apiError.setMessage(ex.getMessage());
         return buildResponseEntity(apiError);
     }
