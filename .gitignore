@@ -35,4 +35,4 @@ WLI*
 .settings
 
 # build files #
-target
+/target/

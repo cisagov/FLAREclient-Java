@@ -20,8 +20,8 @@ public final class ErrorConstants {
     public static final URI PARAMETERIZED_TYPE = URI.create(PROBLEM_BASE_URL + "/parameterized");
     public static final URI ENTITY_NOT_FOUND_TYPE = URI.create(PROBLEM_BASE_URL + "/entity-not-found");
     public static final URI INVALID_PASSWORD_TYPE = URI.create(PROBLEM_BASE_URL + "/invalid-password");
+    public static final String INVALID_PASSWORD = "Invalid Password";
     public static final URI AUTHENTICATION_FAILURE_TYPE = URI.create(PROBLEM_BASE_URL + "/invalid-credentials");
-    public static final String AUTHENTICATION_FAILURE = "{ \"error\":\"Failed to authenticate\" }";;
     public static final URI EMAIL_ALREADY_USED_TYPE = URI.create(PROBLEM_BASE_URL + "/email-already-used");
     public static final URI DATE_FORMAT_ERROR_TYPE = URI.create(PROBLEM_BASE_URL + "/bad-date");
     public static final URI LOGIN_ALREADY_USED_TYPE = URI.create(PROBLEM_BASE_URL + "/login-already-used");
@@ -33,6 +33,8 @@ public final class ErrorConstants {
     public static final String EMAIL_ALREADY_USED = "Email is already in use";
     public static final String LOGIN_ALREADY_USED = "Login already exists";
     public static final String USER_NOT_FOUND = "User was not found for credential deletion";
+    public static final String SERVER_NOT_FOUND = "Server was not found";
+    public static final String SERVER_NOT_CREATED = "Server was not created.  Check server details.";
     public static final String CREDENTIALS_NOT_FOUND = "No server credentials exist for the user";
     public static final String USERNAME_REQUIRED_PARAM = "Username is a required parameter";
     public static final String PASSWORD_REQUIRED_PARAM = "Password is a required parameter";
