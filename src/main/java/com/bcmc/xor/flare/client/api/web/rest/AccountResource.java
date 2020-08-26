@@ -127,6 +127,7 @@ public class AccountResource {
 	 *
 	 * @param request the HTTP request
 	 * @return the login if the user is authenticated
+	 * @throws User not found Exception 404 (not found) if the user login is null or empty
 	 */
 	@GetMapping("/authenticate")
 	@Timed
@@ -292,6 +293,7 @@ public class AccountResource {
 	@Timed
 	public void finishPasswordReset(@RequestBody KeyAndPasswordVM keyAndPassword) {
 		if (checkPasswordLength(keyAndPassword.getNewPassword())) {
+			log.error("REST API AccountResource : finishPasswordReset : Errr : InvalidPasswordException");
 			throw new InvalidPasswordException();
 		}
 		Optional<User> user = userService.completePasswordReset(keyAndPassword.getNewPassword(),
