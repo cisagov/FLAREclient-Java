@@ -104,7 +104,7 @@ public class AccountResourceIntTest {
         restUserMockMvc.perform(get("/api/authenticate")
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(content().string(""));
+            .andExpect(content().string("[null]"));
     }
 
     @Test
@@ -116,7 +116,7 @@ public class AccountResourceIntTest {
             })
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(content().string("test"));
+            .andExpect(content().string("[\"test\"]"));
     }
 
     @Test
@@ -254,7 +254,7 @@ public class AccountResourceIntTest {
     public void testRegisterNullPassword() throws Exception {
         ManagedUserVM invalidUser = new ManagedUserVM();
         invalidUser.setLogin("bob");
-        invalidUser.setPassword(null);// invalid null password
+        invalidUser.setPassword("");
         invalidUser.setFirstName("Bob");
         invalidUser.setLastName("Green");
         invalidUser.setEmail("bob@example.com");
@@ -430,7 +430,7 @@ public class AccountResourceIntTest {
         userRepository.save(user);
 
         restMvc.perform(get("/api/activate?key={activationKey}", activationKey))
-            .andExpect(status().isOk());
+            .andExpect(status().isCreated());
 
         user = userRepository.findOneByLogin(user.getLogin()).orElse(null);
         assertThat(user.getActivated()).isTrue();
@@ -439,7 +439,7 @@ public class AccountResourceIntTest {
     @Test
     public void testActivateAccountWithWrongKey() throws Exception {
         restMvc.perform(get("/api/activate?key=wrongActivationKey"))
-            .andExpect(status().isNotFound());
+            .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -467,7 +467,7 @@ public class AccountResourceIntTest {
             post("/api/account")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(userDTO)))
-            .andExpect(status().isOk());
+            .andExpect(status().isAccepted());
 
         User updatedUser = userRepository.findOneByLogin(user.getLogin()).orElse(null);
         assertThat(updatedUser.getFirstName()).isEqualTo(userDTO.getFirstName());
@@ -574,7 +574,7 @@ public class AccountResourceIntTest {
             post("/api/account")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(userDTO)))
-            .andExpect(status().isOk());
+            .andExpect(status().isAccepted());
 
         User updatedUser = userRepository.findOneByLogin("save-existing-email-and-login").orElse(null);
         assertThat(updatedUser.getEmail()).isEqualTo("save-existing-email-and-login@example.com");
@@ -611,7 +611,7 @@ public class AccountResourceIntTest {
 
         restMvc.perform(post("/api/account/change-password").contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(new PasswordChangeDTO(currentPassword, "new password"))))
-                .andExpect(status().isOk());
+                .andExpect(status().isAccepted());
 
         User updatedUser = userRepository.findOneByLogin("change-password").orElse(null);
         assertThat(passwordEncoder.matches("new password", updatedUser.getPassword())).isTrue();

@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+
+import java.util.ArrayList;
 import java.util.Optional;
 
 /**
@@ -123,16 +125,18 @@ public class AccountResource {
 	}
 
 	/**
-	 * GET /authenticate : check if the user is authenticated, and return its login.
+	 * GET /authentication : check if the user is authenticated, and return its
+	 * profile
 	 *
 	 * @param request the HTTP request
-	 * @return the login if the user is authenticated
-	 * @throws User not found Exception 404 (not found) if the user login is null or empty
+	 * @return the user details if the user is authenticated
+	 * @throws User not found Exception 404 (not found) if the user login is null or
+	 *              empty
 	 */
-	@GetMapping("/authenticate")
+	@GetMapping("/authentication")
 	@Timed
 	@ResponseBody
-	public Object isAuthenticated(HttpServletRequest request) {
+	public Object isAuthenticationOk(HttpServletRequest request) {
 		try {
 			HttpHeaders httpHeaders = new HttpHeaders();
 			String login = request.getRemoteUser();
@@ -162,6 +166,23 @@ public class AccountResource {
 		return new ResponseEntity<>(new UserNotFoundException(), httpHeaders, HttpStatus.NOT_FOUND);
 	}
 
+    /**
+     * GET  /authenticate : check if the user is authenticated, and return its login.
+     *
+     * @param request the HTTP request
+     * @return the login if the user is authenticated
+     */
+    @GetMapping("/authenticate")
+    @Timed
+    public Object isAuthenticated(HttpServletRequest request) {
+        log.debug("REST request to check if the current user {} is authenticated", request.getRemoteUser());
+    	
+		String login = request.getRemoteUser();
+		ArrayList<String> alist = new ArrayList<String>();
+		alist.add(login);
+        return alist;
+    }
+	
 	/**
 	 * GET /account : get the current user.
 	 *
@@ -197,8 +218,7 @@ public class AccountResource {
 			Optional<User> existingUser = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail());
 			Optional<User> user = userRepository.findOneByLogin(userLogin);
 
-			if (existingUser.isPresent() && (!existingUser.get().getLogin().equalsIgnoreCase(userLogin))
-					|| !userDTO.getLogin().equals(userLogin)) {
+			if (existingUser.isPresent() && (!existingUser.get().getLogin().equalsIgnoreCase(userLogin))) {
 				httpHeaders.add("api-account-update", ErrorConstants.ERR_EMAIL_IN_USED);
 				log.error("REST API AccountResource account update: Exception: EmaaaaailAlreadyUsedException ");
 				return new ResponseEntity<>(new EmailAlreadyUsedException(), httpHeaders, HttpStatus.CONFLICT);
