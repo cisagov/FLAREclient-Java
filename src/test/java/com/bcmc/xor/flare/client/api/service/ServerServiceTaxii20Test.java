@@ -35,6 +35,7 @@ import static com.bcmc.xor.flare.client.TestData.taxii20Discovery;
 import static com.bcmc.xor.flare.client.TestData.taxii20Server;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 /**
@@ -182,6 +183,7 @@ public class ServerServiceTaxii20Test {
 
     @Test
     public void testUpdateTaxii20ServerCreate() {
+        serverService.deleteServer(taxii20Server.getLabel());
         ServerDTO serverDTO = new ServerDTO();
         serverDTO.setLabel(taxii20Server.getLabel());
         serverDTO.setRequiresBasicAuth(false);
@@ -195,23 +197,28 @@ public class ServerServiceTaxii20Test {
         assertTrue(updatedServer.hasReceivedServerInformation());
         assertTrue(updatedServer.hasReceivedCollectionInformation());
         assertFalse(updatedServer.getCollections().isEmpty());
-    }
+      }
 
     @Test
     public void testUpdateTaxii20ServerUpdate() {
-        ServerDTO serverDTO = new ServerDTO();
-        serverDTO.setLabel(taxii20Server.getLabel());
-        serverDTO.setRequiresBasicAuth(false);
-        serverDTO.setUrl("https://example.com");
+        serverService.deleteServer(taxii20Server.getLabel());
+        ServerDTO createServerDTO = new ServerDTO();
+        createServerDTO.setLabel(taxii20Server.getLabel());
+        createServerDTO.setRequiresBasicAuth(false);
+        createServerDTO.setUrl("https://example.com");
 
-        when(taxiiService.getTaxii20RestTemplate().discovery(serverDTO)).thenReturn(TestData.taxii20Discovery);
+        when(taxiiService.getTaxii20RestTemplate().discovery(createServerDTO)).thenReturn(TestData.taxii20Discovery);
         when(taxiiService.getTaxii20RestTemplate().getApiRoot(any(), any())).thenReturn(TestData.taxii20ApiRoot);
         when(taxiiService.getTaxii20RestTemplate().getCollections(any(), any())).thenReturn(new Collections(Arrays.asList(TestData.taxii20CollectionObject)));
 
-        TaxiiServer createdServer = serverService.createServer(serverDTO);
+        TaxiiServer createdServer = serverService.createServer(createServerDTO);
 
-        serverDTO.setLabel("Changed Label");
-        TaxiiServer updatedServer = serverService.updateServer(serverDTO);
+        ServerDTO updateServerDTO = new ServerDTO();
+        updateServerDTO.setId(createdServer.getId());
+        updateServerDTO.setLabel("Changed Label");
+        updateServerDTO.setUrl(String.valueOf(createdServer.getUrl()));
+
+        TaxiiServer updatedServer = serverService.updateServer(updateServerDTO);
 
         assertTrue(updatedServer.getLastUpdated().isAfter(createdServer.getLastUpdated()));
         assertEquals(updatedServer.getLabel(), "Changed Label");
