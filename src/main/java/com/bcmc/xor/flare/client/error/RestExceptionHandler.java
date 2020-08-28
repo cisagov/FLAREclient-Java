@@ -2,6 +2,7 @@ package com.bcmc.xor.flare.client.error;
 
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -70,6 +71,27 @@ public class RestExceptionHandler  extends ResponseEntityExceptionHandler {
         return buildResponseEntity(apiError);
     }
 
+	@ExceptionHandler(AccountActivationException.class)
+	public ResponseEntity<Object> handleAccountActivationException() {
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.add("api-register", ErrorConstants.ERR_ACTIVATIONKEY_NOT_FOUND);
+		return new ResponseEntity<>(new AccountActivationException(), httpHeaders, HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler(AccountUpdateException.class)
+	public ResponseEntity<Object> handleAccountUpdateException() {
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.add("api-account-update", ErrorConstants.ERR_ACCOUNT_UPDATE);
+		return new ResponseEntity<>(new AccountUpdateException(), httpHeaders, HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler(InvalidPasswordException.class)
+	public ResponseEntity<Object> handleInvalidPasswordException() {
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.add("api-account-change-passowrd", ErrorConstants.ERR_ACCOUNT_UPDATE);
+		return new ResponseEntity<>(new InvalidPasswordException(), httpHeaders, HttpStatus.BAD_REQUEST);
+	}
+	
     private ResponseEntity<Object> buildResponseEntity(APIError apiError) {
         return new ResponseEntity<>(apiError, apiError.getHttpStatus());
     }

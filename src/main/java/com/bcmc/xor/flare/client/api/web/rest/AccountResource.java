@@ -80,20 +80,6 @@ public class AccountResource {
 		return new ResponseEntity<>(user, httpHeaders, HttpStatus.CREATED);
 	}
 
-	@ExceptionHandler(LoginAlreadyUsedException.class)
-	public ResponseEntity<Exception> handleLoginAlreadyUsedException() {
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.add("api-register", ErrorConstants.ERR_LOGIN_IN_USED);
-		return new ResponseEntity<>(new LoginAlreadyUsedException(), httpHeaders, HttpStatus.CONFLICT);
-	}
-
-	@ExceptionHandler(EmailAlreadyUsedException.class)
-	public ResponseEntity<Object> handleEmailAlreadyUsedException() {
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.add("api-register", ErrorConstants.ERR_EMAIL_IN_USED);
-		return new ResponseEntity<>(new EmailAlreadyUsedException(), httpHeaders, HttpStatus.CONFLICT);
-	}
-
 	/**
 	 * GET /activate : activate the registered user.
 	 *
@@ -115,13 +101,6 @@ public class AccountResource {
 
 		httpHeaders.add("api-activate", "actived");
 		return new ResponseEntity<>(user, httpHeaders, HttpStatus.CREATED);
-	}
-
-	@ExceptionHandler(AccountActivationException.class)
-	public ResponseEntity<Object> handleAccountActivationException() {
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.add("api-register", ErrorConstants.ERR_ACTIVATIONKEY_NOT_FOUND);
-		return new ResponseEntity<>(new AccountActivationException(), httpHeaders, HttpStatus.BAD_REQUEST);
 	}
 
 	/**
@@ -157,13 +136,6 @@ public class AccountResource {
 			log.error("AccountResouce : isAuthenticated : error : UserNotFoundException");
 			throw new UserNotFoundException();
 		}
-	}
-
-	@ExceptionHandler(UserNotFoundException.class)
-	public ResponseEntity<Object> handleUserNotFoundException() {
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.add("api-get-authenticate", ErrorConstants.ERR_USER_NOT_FOUND);
-		return new ResponseEntity<>(new UserNotFoundException(), httpHeaders, HttpStatus.NOT_FOUND);
 	}
 
     /**
@@ -242,13 +214,6 @@ public class AccountResource {
 		}
 	}
 
-	@ExceptionHandler(AccountUpdateException.class)
-	public ResponseEntity<Object> handleAccountUpdateException() {
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.add("api-account-update", ErrorConstants.ERR_ACCOUNT_UPDATE);
-		return new ResponseEntity<>(new AccountUpdateException(), httpHeaders, HttpStatus.BAD_REQUEST);
-	}
-
 	/**
 	 * POST /account/change-password : changes the current user's password
 	 *
@@ -275,13 +240,6 @@ public class AccountResource {
 		httpHeaders.add("api-account-change-password", "accepted");
 		return new ResponseEntity<>(userService.getUserWithAuthoritiesByLogin(userLogin), httpHeaders,
 				HttpStatus.ACCEPTED);
-	}
-
-	@ExceptionHandler(InvalidPasswordException.class)
-	public ResponseEntity<Object> handleInvalidPasswordException() {
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.add("api-account-change-passowrd", ErrorConstants.ERR_ACCOUNT_UPDATE);
-		return new ResponseEntity<>(new InvalidPasswordException(), httpHeaders, HttpStatus.BAD_REQUEST);
 	}
 
 	/**
