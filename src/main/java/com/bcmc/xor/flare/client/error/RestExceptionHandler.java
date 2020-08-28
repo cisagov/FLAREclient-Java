@@ -56,6 +56,12 @@ public class RestExceptionHandler  extends ResponseEntityExceptionHandler {
         return buildResponseEntity(apiError);
     }
 
+    @ExceptionHandler(CollectionNotFoundException.class)
+    protected ResponseEntity<Object> handleCollectionNotFoundException(CollectionNotFoundException ex) {
+        APIError apiError = new APIError(HttpStatus.NOT_ACCEPTABLE);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
 
     @ExceptionHandler(ServerCreationException.class)
     protected ResponseEntity<Object> handleServerCreationException(ServerCreationException ex) {
@@ -92,6 +98,13 @@ public class RestExceptionHandler  extends ResponseEntityExceptionHandler {
 		return new ResponseEntity<>(new InvalidPasswordException(), httpHeaders, HttpStatus.BAD_REQUEST);
 	}
 	
+    @ExceptionHandler(AuthenticationFailureException.class)
+    protected ResponseEntity<Object> handleAuthenticationFailureException(AuthenticationFailureException ex) {
+        APIError apiError = new APIError(HttpStatus.UNAUTHORIZED);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+  
     private ResponseEntity<Object> buildResponseEntity(APIError apiError) {
         return new ResponseEntity<>(apiError, apiError.getHttpStatus());
     }

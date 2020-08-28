@@ -3,6 +3,7 @@ package com.bcmc.xor.flare.client.api.web.rest;
 import com.bcmc.xor.flare.client.api.security.jwt.JWTConfigurer;
 import com.bcmc.xor.flare.client.api.security.jwt.TokenProvider;
 import com.bcmc.xor.flare.client.api.web.rest.vm.LoginVM;
+import com.bcmc.xor.flare.client.error.AuthenticationFailureException;
 import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
@@ -44,8 +45,7 @@ public class UserJWTController {
     @PostMapping("/authenticate")
     @Timed
     public ResponseEntity<JWTToken> authorize(@Valid @RequestBody LoginVM loginVM) throws BadCredentialsException {
-
-        UsernamePasswordAuthenticationToken authenticationToken =
+    UsernamePasswordAuthenticationToken authenticationToken =
             new UsernamePasswordAuthenticationToken(loginVM.getUsername(), loginVM.getPassword());
 
         Authentication authentication;

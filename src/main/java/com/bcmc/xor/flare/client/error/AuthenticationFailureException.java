@@ -7,6 +7,6 @@ import org.zalando.problem.Status;
 public class AuthenticationFailureException extends AbstractThrowableProblem {
 
     public AuthenticationFailureException() {
-        super(ErrorConstants.AUTHENTICATION_FAILURE_TYPE, "Incorrect credentials", Status.BAD_REQUEST);
+        super(null, ErrorConstants.AUTHENTICATION_FAILURE,  Status.UNAUTHORIZED);
     }
 }
