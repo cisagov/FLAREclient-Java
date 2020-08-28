@@ -68,6 +68,11 @@ public class AccountResource {
 			throw new LoginAlreadyUsedException();
 		});
 
+		userRepository.findOneByEmailIgnoreCase(managedUserVM.getEmail()).ifPresent(u -> {
+			log.error("REST API AccountResource register: Exception: EmailAlreadyUsedException ");
+			throw new EmailAlreadyUsedException();
+		});
+
 		user = userService.registerUser(managedUserVM, managedUserVM.getPassword());
 		mailService.sendActivationEmail(user);
 
