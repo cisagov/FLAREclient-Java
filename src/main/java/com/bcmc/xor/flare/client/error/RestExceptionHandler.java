@@ -50,21 +50,27 @@ public class RestExceptionHandler  extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ServerNotFoundException.class)
     protected ResponseEntity<Object> handleServerNotFoundException(ServerNotFoundException ex) {
-        APIError apiError = new APIError(HttpStatus.NOT_ACCEPTABLE);
+        APIError apiError = new APIError(HttpStatus.BAD_REQUEST);
         apiError.setMessage(ex.getMessage());
         return buildResponseEntity(apiError);
     }
 
     @ExceptionHandler(CollectionNotFoundException.class)
     protected ResponseEntity<Object> handleCollectionNotFoundException(CollectionNotFoundException ex) {
-        APIError apiError = new APIError(HttpStatus.NOT_ACCEPTABLE);
+        APIError apiError = new APIError(HttpStatus.BAD_REQUEST);
         apiError.setMessage(ex.getMessage());
         return buildResponseEntity(apiError);
     }
 
-
     @ExceptionHandler(ServerCreationException.class)
     protected ResponseEntity<Object> handleServerCreationException(ServerCreationException ex) {
+        APIError apiError = new APIError(HttpStatus.BAD_REQUEST);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
+    @ExceptionHandler(ServerLabelAlreadyExistsException.class)
+    protected ResponseEntity<Object> handleServerLabelAlreadyExistsException(ServerLabelAlreadyExistsException ex) {
         APIError apiError = new APIError(HttpStatus.BAD_REQUEST);
         apiError.setMessage(ex.getMessage());
         return buildResponseEntity(apiError);
