@@ -12,10 +12,7 @@ import com.bcmc.xor.flare.client.api.security.ServerCredentialsUtils;
 import com.bcmc.xor.flare.client.api.service.dto.ServerDTO;
 import com.bcmc.xor.flare.client.api.service.dto.ServersDTO;
 import com.bcmc.xor.flare.client.api.service.dto.UserDTO;
-import com.bcmc.xor.flare.client.error.NotFoundException;
-import com.bcmc.xor.flare.client.error.RequestException;
-import com.bcmc.xor.flare.client.error.StatusMessageResponseException;
-import com.bcmc.xor.flare.client.error.UserNotFoundException;
+import com.bcmc.xor.flare.client.error.*;
 import org.mitre.taxii.messages.xml11.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -657,6 +654,7 @@ public class ServerService {
      */
     public TaxiiServer updateServer(ServerDTO serverDTO) {
         Optional<TaxiiServer> optionalServer = serverRepository.findOneById(serverDTO.getId());
+        Optional<TaxiiServer> optionalServerByLabel = serverRepository.findOneByLabelIgnoreCase(serverDTO.getLabel());
         if (optionalServer.isPresent()) {
             TaxiiServer taxiiServer = optionalServer.get();
             taxiiServer.setLabel(serverDTO.getLabel());
@@ -680,9 +678,11 @@ public class ServerService {
                     throw new IllegalStateException("Cannot update server; no version present");
             }
             return taxiiServer;
-        } else {
-            return createServer(serverDTO);
+        } else if (optionalServerByLabel.isPresent()) {
+            throw new ServerLabelAlreadyExistsException();
         }
+
+        return createServer(serverDTO);
     }
     // -------------------
 

@@ -254,7 +254,7 @@ public class AccountResourceIntTest {
     public void testRegisterNullPassword() throws Exception {
         ManagedUserVM invalidUser = new ManagedUserVM();
         invalidUser.setLogin("bob");
-        invalidUser.setPassword("");
+        invalidUser.setPassword(""); 
         invalidUser.setFirstName("Bob");
         invalidUser.setLastName("Green");
         invalidUser.setEmail("bob@example.com");
@@ -263,14 +263,14 @@ public class AccountResourceIntTest {
         invalidUser.setLangKey(Constants.DEFAULT_LANGUAGE);
         invalidUser.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
 
-        restUserMockMvc.perform(
-            post("/api/register")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
-                .content(TestUtil.convertObjectToJsonBytes(invalidUser)))
-            .andExpect(status().isBadRequest());
+	restUserMockMvc.perform(
+				post("/api/register")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(invalidUser)))
+	    .andExpect(status().isBadRequest());
 
-        Optional<User> user = userRepository.findOneByLogin("bob");
-        assertThat(user.isPresent()).isFalse();
+	Optional<User> user = userRepository.findOneByLogin("bob");
+	assertThat(user.isPresent()).isFalse();
     }
 
     @Test

@@ -10,6 +10,7 @@ import com.bcmc.xor.flare.client.error.FlareExceptionTranslator;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.Ignore;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -136,6 +137,7 @@ public class UserJWTControllerIntTest {
     }
 
     @Test
+    @Ignore
     public void testBadCredentialsReturn() throws Exception{
         LoginVM loginVM = new LoginVM();
         loginVM.setUsername("someUser");
