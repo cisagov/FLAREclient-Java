@@ -137,7 +137,6 @@ public class UserJWTControllerIntTest {
     }
 
     @Test
-    @Ignore
     public void testBadCredentialsReturn() throws Exception{
         LoginVM loginVM = new LoginVM();
         loginVM.setUsername("someUser");
