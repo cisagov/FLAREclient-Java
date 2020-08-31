@@ -1,9 +1,5 @@
 package com.bcmc.xor.flare.client.error;
 
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.zalando.problem.AbstractThrowableProblem;
 import org.zalando.problem.Status;
 

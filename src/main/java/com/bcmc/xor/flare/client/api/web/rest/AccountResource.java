@@ -50,8 +50,8 @@ public class AccountResource {
 	 * @param managedUserVM the managed user View Model
 	 * @throws InvalidPasswordException  400 (Bad Request) if the password is
 	 *                                   incorrect
-	 * @throws EmailAlreadyUsedException 409 (Conflict) if the email is already used
-	 * @throws LoginAlreadyUsedException 409 (Conflict) if the login is already used
+	 * @throws EmailAlreadyUsedException 400 (Bad Request) if the email is already used
+	 * @throws LoginAlreadyUsedException 400 (Bad Request) if the login is already used
 	 */
 
 	@PostMapping("/register")
