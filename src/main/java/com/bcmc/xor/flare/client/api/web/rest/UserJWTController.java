@@ -12,9 +12,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,16 +46,17 @@ public class UserJWTController {
 
     @PostMapping("/authenticate")
     @Timed
-    public ResponseEntity<JWTToken> authorize(@Valid @RequestBody LoginVM loginVM) throws BadCredentialsException {
-    UsernamePasswordAuthenticationToken authenticationToken =
+    public ResponseEntity<JWTToken> authorize(@Valid @RequestBody LoginVM loginVM) {
+        log.debug("REST Request to authenticate username '{}'", loginVM.getUsername());
+        UsernamePasswordAuthenticationToken authenticationToken =
             new UsernamePasswordAuthenticationToken(loginVM.getUsername(), loginVM.getPassword());
 
         Authentication authentication;
         try {
             authentication = this.authenticationManager.authenticate(authenticationToken);
-        } catch (BadCredentialsException ex) {
+        } catch (Exception ex) {
             log.error("User {} failed to authenticate", loginVM.getUsername(), ex);
-            throw ex;
+            throw new AuthenticationFailureException();
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
         boolean rememberMe = loginVM.isRememberMe() != null && loginVM.isRememberMe();
