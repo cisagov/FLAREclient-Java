@@ -103,41 +103,6 @@ public class AccountResource {
 		return new ResponseEntity<>(user, httpHeaders, HttpStatus.CREATED);
 	}
 
-	/**
-	 * GET /authentication : check if the user is authenticated, and return its
-	 * profile
-	 *
-	 * @param request the HTTP request
-	 * @return the user details if the user is authenticated
-	 * @throws User not found Exception 404 (not found) if the user login is null or
-	 *              empty
-	 */
-	@GetMapping("/authentication")
-	@Timed
-	@ResponseBody
-	public Object isAuthenticationOk(HttpServletRequest request) {
-		try {
-			HttpHeaders httpHeaders = new HttpHeaders();
-			String login = request.getRemoteUser();
-
-			if (login.isEmpty() || login == null) {
-				httpHeaders.add("api-get-authenticate", "error");
-				log.error("AccountResource : isAuthenticated : error : user not found");
-				return new ResponseEntity<>(new UserNotFoundException(), httpHeaders, HttpStatus.NOT_FOUND);
-			}
-
-			httpHeaders.add("api-get-authenticate", "ok");
-			log.debug("REST request to check if the current user is authenticated");
-			Object o = userService.getUserWithAuthorities().map(UserDTO::new)
-					.orElseThrow(() -> new NotFoundException("User could not be found"));
-
-			return new ResponseEntity<>(o, httpHeaders, HttpStatus.ACCEPTED);
-		} catch (Exception e) {
-			log.error("AccountResouce : isAuthenticated : error : UserNotFoundException");
-			throw new UserNotFoundException();
-		}
-	}
-
     /**
      * GET  /authenticate : check if the user is authenticated, and return its login.
      *
@@ -191,21 +156,17 @@ public class AccountResource {
 			Optional<User> user = userRepository.findOneByLogin(userLogin);
 
 			if (existingUser.isPresent() && (!existingUser.get().getLogin().equalsIgnoreCase(userLogin))) {
-				httpHeaders.add("api-account-update", ErrorConstants.ERR_EMAIL_IN_USED);
 				log.error("REST API AccountResource account update: Exception: EmaaaaailAlreadyUsedException ");
-				return new ResponseEntity<>(new EmailAlreadyUsedException(), httpHeaders, HttpStatus.CONFLICT);
+				throw new EmailAlreadyUsedException();
 			}
 
 			if (!user.isPresent()) {
-				httpHeaders.add("api-account-update", ErrorConstants.ERR_BAD_REQUEST);
 				log.error("REST API AccountResource account update: Exception: AccountUpdateException ");
-				return new ResponseEntity<>(new AccountUpdateException(), httpHeaders, HttpStatus.BAD_REQUEST);
+				throw new AccountUpdateException();
 			}
 
 			userService.updateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(),
 					userDTO.getLangKey(), userDTO.getImageUrl());
-
-			httpHeaders.add("api-account-update", "accepted");
 			return new ResponseEntity<>(user, httpHeaders, HttpStatus.ACCEPTED);
 
 		} catch (Exception e) {
