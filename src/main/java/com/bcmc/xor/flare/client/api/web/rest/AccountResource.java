@@ -59,7 +59,7 @@ public class AccountResource {
 	@ResponseBody
 	public Object registerAccount(@Valid @RequestBody ManagedUserVM managedUserVM) {
 
-		log.debug("REST request to register an user account");
+		log.debug("REST request to register a user account");
 		  
 		userRepository.findOneByLogin(managedUserVM.getLogin().toLowerCase()).ifPresent(u -> {
 			log.error("REST API AccountResource register: Exception: LoginAlreadyUsedException ");
@@ -73,10 +73,7 @@ public class AccountResource {
 
 		User user = userService.registerUser(managedUserVM, managedUserVM.getPassword());
 		mailService.sendActivationEmail(user);
-		
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.add("api-register", "created");
-		return new ResponseEntity<>(user, httpHeaders, HttpStatus.CREATED);
+		return user;
 	}
 
 	/**
@@ -91,7 +88,7 @@ public class AccountResource {
 	@ResponseBody
 	public Object activateAccount(@RequestParam(value = "key") String key) {
 		
-		log.debug("REST request to activate an user account");
+		log.debug("REST request to activate a user account");
 		
 		Optional<User> user = userService.activateRegistration(key);
 		if (!user.isPresent()) {
@@ -109,7 +106,9 @@ public class AccountResource {
      * @return the login if the user is authenticated
      */
     @GetMapping("/authenticate")
+	@ResponseStatus(HttpStatus.OK)
     @Timed
+    @ResponseBody
     public Object isAuthenticated(HttpServletRequest request) {
         log.debug("REST request to check if the current user {} is authenticated", request.getRemoteUser());
     	
@@ -127,7 +126,9 @@ public class AccountResource {
 	 *                          returned
 	 */
 	@GetMapping("/account")
+	@ResponseStatus(HttpStatus.OK)
 	@Timed
+	@ResponseBody
 	public UserDTO getAccount() {
 		log.debug("REST request to get current user");
 		
@@ -144,15 +145,14 @@ public class AccountResource {
 	 * @throws AccountUpdateException    400 (Bad Request) Other exceptions
 	 */
 	@PostMapping("/account")
+	@ResponseStatus(HttpStatus.ACCEPTED)
 	@Timed
 	@ResponseBody
 	public Object saveAccount(@Valid @RequestBody UserDTO userDTO) {
 		
-		log.debug("REST request to update an user inforatmion");
+		log.debug("REST request to update a user information");
 		
 		try {
-			HttpHeaders httpHeaders = new HttpHeaders();
-
 			final String userLogin = SecurityUtils.getCurrentUserLogin()
 					.orElseThrow(() -> new InternalServerErrorException("Current user login not found"));
 
@@ -171,7 +171,8 @@ public class AccountResource {
 
 			userService.updateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(),
 					userDTO.getLangKey(), userDTO.getImageUrl());
-			return new ResponseEntity<>(user, httpHeaders, HttpStatus.ACCEPTED);
+
+			return user;
 
 		} catch (Exception e) {
 			log.error("REST API AccountResource saveAccount exception: Exception ");
@@ -190,7 +191,11 @@ public class AccountResource {
 	@PostMapping(path = "/account/change-password")
 	@Timed
 	@ResponseBody
+	@ResponseStatus(HttpStatus.ACCEPTED)
 	public Object changePassword(@RequestBody PasswordChangeDTO passwordChangeDto) {
+		
+		log.debug("REST API AccountResource changePassword");
+		
 		final String userLogin = SecurityUtils.getCurrentUserLogin()
 				.orElseThrow(() -> new InternalServerErrorException("Current user login not found"));
 
@@ -200,11 +205,8 @@ public class AccountResource {
 		}
 
 		userService.changePassword(passwordChangeDto.getCurrentPassword(), passwordChangeDto.getNewPassword());
-
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.add("api-account-change-password", "accepted");
-		return new ResponseEntity<>(userService.getUserWithAuthoritiesByLogin(userLogin), httpHeaders,
-				HttpStatus.ACCEPTED);
+		return userService.getUserWithAuthoritiesByLogin(userLogin);
+		
 	}
 
 	/**
@@ -216,8 +218,13 @@ public class AccountResource {
 	 *                                registered
 	 */
 	@PostMapping(path = "/account/reset-password/init")
+	@ResponseStatus(HttpStatus.OK)
 	@Timed
+	@ResponseBody
 	public void requestPasswordReset(@RequestBody String mail) {
+		
+		log.debug("REST API AccountResource requestPasswordReset");
+		
 		mailService
 				.sendPasswordResetMail(userService.requestPasswordReset(mail).orElseThrow(EmailNotFoundException::new));
 	}
@@ -233,12 +240,18 @@ public class AccountResource {
 	 *                                  could not be reset
 	 */
 	@PostMapping(path = "/account/reset-password/finish")
+	@ResponseStatus(HttpStatus.OK)
 	@Timed
+	@ResponseBody
 	public void finishPasswordReset(@RequestBody KeyAndPasswordVM keyAndPassword) {
+		
+		log.debug("REST API AccountResource finishPasswordReset");
+		
 		if (checkPasswordLength(keyAndPassword.getNewPassword())) {
 			log.error("REST API AccountResource finishPasswordReset exception : InvalidPasswordException");
 			throw new InvalidPasswordException();
 		}
+		
 		Optional<User> user = userService.completePasswordReset(keyAndPassword.getNewPassword(),
 				keyAndPassword.getKey());
 
