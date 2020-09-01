@@ -9,8 +9,9 @@ import java.util.Map;
 
 @SuppressWarnings({"SameParameterValue", "WeakerAccess", "unused"})
 public class RequestException extends AbstractThrowableProblem {
+	private static final long serialVersionUID = 1L;
 
-    private final String entityName;
+	private final String entityName;
 
     private final String errorKey;
 

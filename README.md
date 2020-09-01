@@ -6,9 +6,9 @@ This application was initially generated using JHipster 5.2.1, you can find docu
 Before you begin **development** on this project you will need to meet these prerequisites in your development environment.
 
 - Install the listed FLARE projects as they are dependencies of the FLAREclient (Branches listed are as of December 17 2018. This will updated as branches are merged, and the application is closer to delivery.)
-  - [javaTAXII2](https://github.com/bcmc/javaTAXII2/tree/develop/) - `develop` branch
+  - [javaTAXII2](https://git.ecicd.dso.ncps.us-cert.gov/fireteam/javaTAXII2/tree/develop/) - `develop` branch
     - To make sure this is properly installed as a dependency for the client run a `mvn install` or `mvn install -DskipTests` to save some time.
-  - [FLAREutils](https://github.com/bcmc/FLAREutils) - `master` branch
+  - [FLAREutils](https://git.ecicd.dso.ncps.us-cert.gov/fireteam/bcmc/FLAREutils) - `master` branch
     - To make sure this is properly installed as a dependency for the client run a `mvn install` or `mvn install -DskipTests` to save some time.
 
 - Install the following development tools in order to run the client locally for development.

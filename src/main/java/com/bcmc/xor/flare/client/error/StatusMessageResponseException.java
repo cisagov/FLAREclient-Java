@@ -9,7 +9,8 @@ import java.util.Map;
 
 public class StatusMessageResponseException extends AbstractThrowableProblem {
 
-    private final StatusMessage statusMessage;
+	private static final long serialVersionUID = 1L;
+	private final StatusMessage statusMessage;
     private final String message;
 
     public StatusMessageResponseException(StatusMessage statusMessage) {

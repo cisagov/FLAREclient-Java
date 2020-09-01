@@ -7,10 +7,10 @@ import xor.bcmc.taxii2.messages.TaxiiError;
 import java.util.HashMap;
 import java.util.Map;
 
-@SuppressWarnings("unused")
 public class TaxiiErrorResponseException extends AbstractThrowableProblem {
 
-    private final TaxiiError taxiiError;
+	private static final long serialVersionUID = 1L;
+	private final TaxiiError taxiiError;
     private final String message;
 
     public TaxiiErrorResponseException(TaxiiError taxiiError) {
