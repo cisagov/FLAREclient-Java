@@ -28,7 +28,6 @@ import java.util.Optional;
 /**
  * REST controller for managing the current user's account.
  */
-@SuppressWarnings("unused")
 @RestController
 @RequestMapping("/api")
 public class AccountResource {
@@ -60,9 +59,8 @@ public class AccountResource {
 	@ResponseBody
 	public Object registerAccount(@Valid @RequestBody ManagedUserVM managedUserVM) {
 
-		HttpHeaders httpHeaders = new HttpHeaders();
-		User user = new User();
-
+		log.debug("REST request to register an user account");
+		  
 		userRepository.findOneByLogin(managedUserVM.getLogin().toLowerCase()).ifPresent(u -> {
 			log.error("REST API AccountResource register: Exception: LoginAlreadyUsedException ");
 			throw new LoginAlreadyUsedException();
@@ -73,9 +71,10 @@ public class AccountResource {
 			throw new EmailAlreadyUsedException();
 		});
 
-		user = userService.registerUser(managedUserVM, managedUserVM.getPassword());
+		User user = userService.registerUser(managedUserVM, managedUserVM.getPassword());
 		mailService.sendActivationEmail(user);
-
+		
+		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.add("api-register", "created");
 		return new ResponseEntity<>(user, httpHeaders, HttpStatus.CREATED);
 	}
@@ -91,16 +90,16 @@ public class AccountResource {
 	@ResponseStatus(HttpStatus.CREATED)
 	@ResponseBody
 	public Object activateAccount(@RequestParam(value = "key") String key) {
-
-		HttpHeaders httpHeaders = new HttpHeaders();
+		
+		log.debug("REST request to activate an user account");
+		
 		Optional<User> user = userService.activateRegistration(key);
 		if (!user.isPresent()) {
 			log.error("REST API AccountResource activate: Exception: AccountActivationException ");
 			throw new AccountActivationException();
 		}
 
-		httpHeaders.add("api-activate", "actived");
-		return new ResponseEntity<>(user, httpHeaders, HttpStatus.CREATED);
+		return user;
 	}
 
     /**
@@ -115,7 +114,7 @@ public class AccountResource {
         log.debug("REST request to check if the current user {} is authenticated", request.getRemoteUser());
     	
 		String login = request.getRemoteUser();
-		ArrayList<String> alist = new ArrayList<String>();
+		ArrayList<String> alist = new ArrayList<>();
 		alist.add(login);
         return alist;
     }
@@ -130,6 +129,8 @@ public class AccountResource {
 	@GetMapping("/account")
 	@Timed
 	public UserDTO getAccount() {
+		log.debug("REST request to get current user");
+		
 		return userService.getUserWithAuthorities().map(UserDTO::new)
 				.orElseThrow(() -> new NotFoundException("User could not be found"));
 	}
@@ -146,6 +147,9 @@ public class AccountResource {
 	@Timed
 	@ResponseBody
 	public Object saveAccount(@Valid @RequestBody UserDTO userDTO) {
+		
+		log.debug("REST request to update an user inforatmion");
+		
 		try {
 			HttpHeaders httpHeaders = new HttpHeaders();
 
@@ -156,12 +160,12 @@ public class AccountResource {
 			Optional<User> user = userRepository.findOneByLogin(userLogin);
 
 			if (existingUser.isPresent() && (!existingUser.get().getLogin().equalsIgnoreCase(userLogin))) {
-				log.error("REST API AccountResource account update: Exception: EmaaaaailAlreadyUsedException ");
+				log.error("REST API AccountResource saveAccount exception: EmailAlreadyUsedException ");
 				throw new EmailAlreadyUsedException();
 			}
 
 			if (!user.isPresent()) {
-				log.error("REST API AccountResource account update: Exception: AccountUpdateException ");
+				log.error("REST API AccountResource saveAccount exception: AccountUpdateException ");
 				throw new AccountUpdateException();
 			}
 
@@ -170,7 +174,7 @@ public class AccountResource {
 			return new ResponseEntity<>(user, httpHeaders, HttpStatus.ACCEPTED);
 
 		} catch (Exception e) {
-			log.error("REST API AccountResource account update: Exception: AccountUpdaeException ");
+			log.error("REST API AccountResource saveAccount exception: Exception ");
 			throw new AccountUpdateException();
 		}
 	}
@@ -232,14 +236,14 @@ public class AccountResource {
 	@Timed
 	public void finishPasswordReset(@RequestBody KeyAndPasswordVM keyAndPassword) {
 		if (checkPasswordLength(keyAndPassword.getNewPassword())) {
-			log.error("REST API AccountResource : finishPasswordReset : Errr : InvalidPasswordException");
+			log.error("REST API AccountResource finishPasswordReset exception : InvalidPasswordException");
 			throw new InvalidPasswordException();
 		}
 		Optional<User> user = userService.completePasswordReset(keyAndPassword.getNewPassword(),
 				keyAndPassword.getKey());
 
 		if (!user.isPresent()) {
-			log.error("REST API AccountResource account-reset-password User NotFoundException");
+			log.error("REST API AccountResource finishPasswordReset exception : NotFoundException");
 			throw new NotFoundException("No user was found for this reset key");
 		}
 	}
