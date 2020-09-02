@@ -21,5 +21,5 @@ ADD docker/application.yml application.yml
 
 ENTRYPOINT ["./entrypoint.sh"]
 
-EXPOSE 8080
+EXPOSE 8081
 

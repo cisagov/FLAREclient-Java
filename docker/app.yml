@@ -9,7 +9,7 @@ services:
             - SPRING_DATA_MONGODB_DATABASE=flareclient
             - JHIPSTER_SLEEP=10 # gives time for the database to boot before the application
         ports:
-            - 8080:8080
+            - 8081:8081
     flareclient-mongodb:
         extends:
             file: mongodb.yml
