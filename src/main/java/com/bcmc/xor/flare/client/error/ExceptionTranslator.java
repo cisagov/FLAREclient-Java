@@ -1,6 +1,10 @@
 package com.bcmc.xor.flare.client.error;
 
 import com.bcmc.xor.flare.client.util.HeaderUtil;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -13,6 +17,7 @@ import org.zalando.problem.Problem;
 import org.zalando.problem.ProblemBuilder;
 import org.zalando.problem.Status;
 import org.zalando.problem.spring.web.advice.ProblemHandling;
+import org.zalando.problem.spring.web.advice.security.SecurityAdviceTrait;
 import org.zalando.problem.spring.web.advice.validation.ConstraintViolationProblem;
 
 import javax.annotation.Nonnull;
@@ -26,18 +31,23 @@ import java.util.stream.Collectors;
  * Controller advice to translate the server side exceptions to client-friendly json structures.
  * The error response follows RFC7807 - Problem Details for HTTP APIs (https://tools.ietf.org/html/rfc7807)
  */
-
+@Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
-public class FlareExceptionTranslator implements ProblemHandling {
+public class ExceptionTranslator implements ProblemHandling, SecurityAdviceTrait {
 
-    public FlareExceptionTranslator() {
-    }
+    private static final String FIELD_ERRORS_KEY = "fieldErrors";
+    private static final String MESSAGE_KEY = "message";
+    private static final String PATH_KEY = "path";
+    private static final String VIOLATIONS_KEY = "violations";
 
+    private String applicationName;
+    
     /**
      * Post-process Problem payload to add the message key for front-end if needed
      */
     @Override
     public ResponseEntity<Problem> process(@Nullable ResponseEntity<Problem> entity, NativeWebRequest request) {
+ 
         if (entity == null || entity.getBody() == null) {
             return entity;
         }
@@ -135,5 +145,4 @@ public class FlareExceptionTranslator implements ProblemHandling {
         return create(ex, request, HeaderUtil.createFailureAlert(String.format("Received status message from server: %s - %s", ex.getStatusMessage().getStatusType(), ex.getStatusMessage().getMessage()),
             "status"));
     }
-
 }

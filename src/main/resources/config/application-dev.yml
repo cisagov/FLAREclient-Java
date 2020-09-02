@@ -61,7 +61,7 @@ spring:
 #        key-alias: flareclient
 # ===================================================================
 server:
-    port: 8081
+    port: 8082
     ssl:
         key-store: src/main/resources/demouser_ks.jks
         key-store-password: 12qwaszx@#WESDXC

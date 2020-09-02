@@ -8,7 +8,9 @@ import org.zalando.problem.Status;
  */
 public class InsufficientInformationException extends AbstractThrowableProblem {
 
-    public InsufficientInformationException(String message) {
+	private static final long serialVersionUID = 1L;
+
+	public InsufficientInformationException(String message) {
         super(ErrorConstants.DEFAULT_TYPE, message, Status.INTERNAL_SERVER_ERROR);
     }
 }
