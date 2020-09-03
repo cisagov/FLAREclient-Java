@@ -25,8 +25,7 @@ spring:
         type: simple
     data:
         mongodb:
-            host: localhost
-            port: 0
+            host: mongodb://admin:QWASZX23wesdxc@flareclient-mongodb:27017
             database: flareclient
     mail:
         host: localhost
@@ -40,7 +39,7 @@ spring:
 
 
 server:
-    port: 10344
+    port: 8081
     address: localhost
     ssl:
         key-store: src/main/resources/keystore.p12
