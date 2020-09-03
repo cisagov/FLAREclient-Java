@@ -18,36 +18,59 @@ objects:
       template:
         metadata:
           labels:
-            name: flareclient-server
+          name: flareclient-server
         spec:
           containers:
-          - env:
-            - name: LOG_LEVEL
-              value: "debug"
-            - name: LOG_LEVEL_SPRING
-              value: "warn"
-            - name: LOG_LEVEL_HIBERNATE
-              value: "warn"
-            - name: SECRETS_DIR
-              value: "/mnt/secrets/"
+            - name: flareclient-server
+              env:
+                - name: LOG_LEVEL
+                  value: "debug"
+                - name: LOG_LEVEL_SPRING
+                  value: "warn"
+                - name: LOG_LEVEL_HIBERNATE
+                  value: "warn"
+                - name: SECRETS_DIR
+                  value: "/mnt/secrets/"
  
-            imagePullPolicy: Always
-            name: flareclient-server
-            image: ${DOCKER_REPO_URL}/${IMAGE_NAMESPACE}/flareclient-server:${IMAGE_VERSION}
-            volumeMounts:
-              - name: secrets
-                mountPath: /mnt/secrets
-                readOnly: true
-          serviceAccountName: "jboss-sa"
-#          initContainers:
-#            - name: wait-humanreview-db
-#              image: ${DOCKER_REPO_URL}/alpine/alpine:3.6
-##              command: ["sh", "-c", "until nc -z -w 2 $(SVC_HOST) $(SVC_PORT) && echo host ready; do sleep 2; done"]
- #             env:
-#                - name: SVC_HOST
-#                  value: "humanreview-db"
-#                - name: SVC_PORT
-#                  value: "3310"
+              imagePullPolicy: Always
+
+              image: ${DOCKER_REPO_URL}/${IMAGE_NAMESPACE}/flareclient-server:${IMAGE_VERSION}
+              volumeMounts:
+                - name: secrets
+                  mountPath: /mnt/secrets
+                  readOnly: true
+              serviceAccountName: "jboss-sa"
+            - name: flareclient-mongo
+              env:
+                - name: LOG_LEVEL
+                  value: "debug"
+                - name: LOG_LEVEL_SPRING
+                  value: "warn"
+                - name: LOG_LEVEL_HIBERNATE
+                  value: "warn"
+                - name: SECRETS_DIR
+                  value: "/mnt/secrets/"
+ 
+              imagePullPolicy: Always
+
+              image: ${DOCKER_REPO_URL}/rhscl/mongodb-36-rhel7
+              env:
+                - name: MONGODB_ADMIN_PASSWORD
+                  value: "QWASZX23wesdxc"
+                - name: LOG_LEVEL
+                  value: "debug"                  
+                - name: LOG_LEVEL_SPRING
+                  value: "warn"
+                - name: LOG_LEVEL_HIBERNATE
+                  value: "warn"
+                - name: SECRETS_DIR
+                  value: "/mnt/secrets/"
+              volumeMounts:
+                - name: secrets
+                  mountPath: /mnt/secrets
+                  readOnly: true
+              serviceAccountName: "jboss-sa"              
+
           volumes:
             - name: secrets
               secret:
