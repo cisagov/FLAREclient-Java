@@ -25,7 +25,7 @@ spring:
         type: simple
     data:
         mongodb:
-            host: mongodb://admin:QWASZX23wesdxc@flareclient-mongodb:27017
+            uri: mongodb://admin:QWASZX23wesdxc@flareclient-mongodb:27017
             database: flareclient
     mail:
         host: localhost
