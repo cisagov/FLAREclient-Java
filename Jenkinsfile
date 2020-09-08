@@ -3,7 +3,7 @@ library(
 )
 
 javaPipeline(
-        applicationName: 'flareclient',
+        applicationName: 'flarecloud',
         serviceName: 'flareclient-server',
         baseDirectory: '.',
         namespacePostfix: 'rwoo',
