@@ -2,17 +2,11 @@ package com.bcmc.xor.flare.client.api.web.rest;
 
 import com.bcmc.xor.flare.client.api.config.Constants;
 import com.bcmc.xor.flare.client.api.domain.auth.User;
-import com.bcmc.xor.flare.client.api.repository.UserRepository;
 import com.bcmc.xor.flare.client.api.service.MailService;
 import com.bcmc.xor.flare.client.api.service.UserService;
 import com.bcmc.xor.flare.client.api.service.dto.UserDTO;
-//import com.bcmc.xor.flare.client.error.BadRequestAlertException;
-import com.bcmc.xor.flare.client.error.BadRequestAlertException;
-import com.bcmc.xor.flare.client.error.EmailAlreadyUsedException;
-import com.bcmc.xor.flare.client.error.LoginAlreadyUsedException;
-import com.bcmc.xor.flare.client.util.HeaderUtil;
+import com.bcmc.xor.flare.client.error.*;
 import com.bcmc.xor.flare.client.util.PaginationUtil;
-import com.bcmc.xor.flare.client.util.ResponseUtil;
 import com.codahale.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,9 +18,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -60,15 +54,11 @@ public class UserResource {
     private static final Logger log = LoggerFactory.getLogger(UserResource.class);
 
     private final UserService userService;
-
-    private final UserRepository userRepository;
-
     private final MailService mailService;
 
-    public UserResource(UserService userService, UserRepository userRepository, MailService mailService) {
+    public UserResource(UserService userService, MailService mailService) {
 
         this.userService = userService;
-        this.userRepository = userRepository;
         this.mailService = mailService;
     }
 
@@ -81,7 +71,6 @@ public class UserResource {
      *
      * @param userDTO the user to create
      * @return the ResponseEntity with status 201 (Created) and with body the new user, or with status 400 (Bad Request) if the login or email is already in use
-     * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/users")
     @Timed
@@ -89,21 +78,22 @@ public class UserResource {
         log.debug("REST request to create User : {}", userDTO);
 
         if (userDTO.getId() != null) {
-            throw new BadRequestAlertException("A new user cannot already have an ID", "userManagement", "idexists");
+            Map<String,Object> badParamMap = new HashMap<>();
+            badParamMap.put("id", ErrorConstants.ILLEGAL_ARG_USER_ID);
+            log.error(ErrorConstants.ILLEGAL_ARG_USER_ID);
+            throw new FlareClientIllegalArgumentException(badParamMap);
             // Lowercase the user login before comparing with database
-//        } else if (userRepository.findOneByLogin(userDTO.getLogin().toLowerCase()).isPresent()) {
         } else if (userService.getUserWithAuthoritiesByLogin(userDTO.getLogin().toLowerCase()).isPresent()) {
+            log.error("Login already users for {}", userDTO.getLogin());
             throw new LoginAlreadyUsedException();
-        } else if (userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).isPresent()) {
+        } else if (userService.getUserByEmail(userDTO.getEmail()).isPresent()) {
+            log.error("Email already used for {}", userDTO.getEmail());
             throw new EmailAlreadyUsedException();
         } else {
             User newUser = userService.createUser(userDTO);
             mailService.sendCreationEmail(newUser);
             log.debug("User created: {}", newUser);
-            return new ResponseEntity<>(newUser, HttpStatus.OK);
-//            return ResponseEntity.created(new URI("/api/users/" + newUser.getLogin()))
-//                .headers(HeaderUtil.createAlert( "A user is created with identifier " + newUser.getLogin(), newUser.getLogin()))
-//                .body(newUser);
+            return new ResponseEntity<>(newUser, HttpStatus.CREATED);
         }
     }
 
@@ -119,18 +109,35 @@ public class UserResource {
     @Timed
     public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody UserDTO userDTO) {
         log.debug("REST request to update User : {}", userDTO);
-        Optional<User> existingUser = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail());
+
+        if (userDTO.getId() == null) {
+            Map<String,Object> badParamMap = new HashMap<>();
+            badParamMap.put("id", ErrorConstants.ILLEGAL_ARG_MISSING_USER_ID);
+            log.error(ErrorConstants.ILLEGAL_ARG_MISSING_USER_ID);
+            throw new FlareClientIllegalArgumentException(badParamMap);
+        }
+
+        Optional<User> existingUser = userService.getUserByEmail(userDTO.getEmail());
         if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDTO.getId()))) {
+            log.error("Email already used for {}", userDTO.getEmail());
             throw new EmailAlreadyUsedException();
         }
-        existingUser = userRepository.findOneByLogin(userDTO.getLogin().toLowerCase());
+
+        // Lowercase the user login before comparing with database
+        existingUser = userService.getUserWithAuthoritiesByLogin(userDTO.getLogin().toLowerCase());
         if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDTO.getId()))) {
+            log.error("Login already users for {}", userDTO.getLogin());
             throw new LoginAlreadyUsedException();
         }
-        Optional<UserDTO> updatedUser = userService.updateUser(userDTO);
 
-        return ResponseUtil.wrapOrNotFound(updatedUser,
-            HeaderUtil.createAlert("A user is updated with identifier " + userDTO.getLogin(), userDTO.getLogin()));
+        Optional<UserDTO> updatedUser = userService.updateUser(userDTO);
+        if (!updatedUser.isPresent()) {
+            log.error("Updated user not returned from service.  Check logs for errors.");
+            throw new FlareServiceUnavailableException();
+        }
+
+        log.debug("User updated: {}", updatedUser);
+        return new ResponseEntity<>(updatedUser.get(), HttpStatus.OK);
     }
 
     /**
@@ -142,8 +149,12 @@ public class UserResource {
     @GetMapping("/users")
     @Timed
     public ResponseEntity<List<UserDTO>> getAllUsers(Pageable pageable) {
+        log.debug("REST request to get all users");
+
         final Page<UserDTO> page = userService.getAllManagedUsers(pageable);
+        // Headers used for pagination
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/users");
+
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
@@ -153,6 +164,8 @@ public class UserResource {
     @GetMapping("/users/authorities")
     @Timed
     public List<String> getAuthorities() {
+        log.debug("REST request to get all authorities");
+
         return userService.getAuthorities();
     }
 
@@ -166,9 +179,13 @@ public class UserResource {
     @Timed
     public ResponseEntity<UserDTO> getUser(@PathVariable String login) {
         log.debug("REST request to get User : {}", login);
-        return ResponseUtil.wrapOrNotFound(
-            userService.getUserWithAuthoritiesByLogin(login)
-                .map(UserDTO::new));
+
+        if (!userService.getUserWithAuthoritiesByLogin(login).isPresent()) {
+            log.error(ErrorConstants.USER_NOT_FOUND);
+            throw new UserNotFoundException();
+        }
+        User user = userService.getUserWithAuthoritiesByLogin(login).get();
+        return new ResponseEntity<>(new UserDTO(user), HttpStatus.OK);
     }
 
     /**
@@ -179,9 +196,17 @@ public class UserResource {
      */
     @DeleteMapping("/users/{login:" + Constants.LOGIN_REGEX + "}")
     @Timed
-    public ResponseEntity<Void> deleteUser(@PathVariable String login) {
+    public ResponseEntity<String> deleteUser(@PathVariable String login) {
         log.debug("REST request to delete User: {}", login);
+
+        if (!userService.getUserWithAuthoritiesByLogin(login).isPresent()) {
+            log.error(ErrorConstants.USER_NOT_FOUND);
+            throw new UserNotFoundException();
+        }
+
         userService.deleteUser(login);
-        return ResponseEntity.ok().headers(HeaderUtil.createAlert( "A user is deleted with identifier " + login, login)).build();
+        String message = "User successfully deleted for login: " + login;
+        log.debug(message);
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
 }

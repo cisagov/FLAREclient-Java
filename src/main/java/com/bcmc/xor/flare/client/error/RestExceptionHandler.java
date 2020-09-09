@@ -34,6 +34,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 		return buildResponseEntity(apiError);
 	}
 
+	@ExceptionHandler(FlareServiceUnavailableException.class)
+	protected ResponseEntity<Object> handleUserNotFoundException(FlareServiceUnavailableException ex) {
+		APIError apiError = new APIError(HttpStatus.SERVICE_UNAVAILABLE);
+		apiError.setMessage(ex.getMessage());
+		return buildResponseEntity(apiError);
+	}
+
 	@ExceptionHandler(UserNotFoundException.class)
 	protected ResponseEntity<Object> handleUserNotFoundException(UserNotFoundException ex) {
 		APIError apiError = new APIError(HttpStatus.BAD_REQUEST);

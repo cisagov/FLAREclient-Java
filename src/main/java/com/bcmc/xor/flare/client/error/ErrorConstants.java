@@ -32,18 +32,21 @@ public final class ErrorConstants {
     public static final URI ACCOUNT_UPDATE_ERROR = URI.create(PROBLEM_BASE_URL + "/account-update-error");
     public static final URI AUDIT_EVENT_NOT_FOUND = URI.create(PROBLEM_BASE_URL + "/audit-event-no-found-error");
     
-    public static final String INVALID_PASSWORD = "Invalid Password";
-    public static final String EMAIL_ALREADY_USED = "Email is already in use";
-    public static final String LOGIN_ALREADY_USED = "Login already exists";
-    public static final String USER_NOT_FOUND = "User was not found for credential deletion";
-    public static final String SERVER_NOT_FOUND = "Server was not found";
+    public static final String INVALID_PASSWORD = "Invalid Password.";
+    public static final String EMAIL_ALREADY_USED = "Email is already in use.";
+    public static final String LOGIN_ALREADY_USED = "Login already exists.";
+    public static final String USER_NOT_FOUND = "User was not found.";
+    public static final String SERVER_NOT_FOUND = "Server was not found.";
     public static final String SERVER_NOT_CREATED = "Server was not created.  Check server details.";
-    public static final String SERVER_LABEL_ALREADY_USED = "Server label already exists";
-    public static final String CREDENTIALS_NOT_FOUND = "No server credentials exist for the user";
-    public static final String USERNAME_REQUIRED_PARAM = "Username is a required parameter";
-    public static final String PASSWORD_REQUIRED_PARAM = "Password is a required parameter";
-    public static final String AUTHENTICATION_FAILURE = "Authentication failed";
-    public static final String COLLECTION_NOT_FOUND = "Collection was not found";
+    public static final String SERVER_LABEL_ALREADY_USED = "Server label already exists.";
+    public static final String CREDENTIALS_NOT_FOUND = "No server credentials exist for the user.";
+    public static final String USERNAME_REQUIRED_PARAM = "Username is a required parameter.";
+    public static final String PASSWORD_REQUIRED_PARAM = "Password is a required parameter.";
+    public static final String AUTHENTICATION_FAILURE = "Authentication failed.";
+    public static final String COLLECTION_NOT_FOUND = "Collection was not found.";
+    public static final String ILLEGAL_ARG_USER_ID = "Request body to create a new user cannot contain an 'id' field.";
+    public static final String ILLEGAL_ARG_MISSING_USER_ID = "Request body to update a new user must contain an 'id' field.";
+    public static final String SERVICE_RETURNED_NO_DATA = "No data was returned by service.  Check server logs.";
 
     private ErrorConstants() {
     }
