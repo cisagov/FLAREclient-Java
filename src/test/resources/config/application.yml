@@ -25,7 +25,7 @@ spring:
         type: simple
     data:
         mongodb:
-            uri: localhost
+            host: localhost
             port: 0
             database: flareclient
     mail:
