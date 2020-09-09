@@ -6,6 +6,7 @@ import com.bcmc.xor.flare.client.api.repository.UserRepository;
 import com.bcmc.xor.flare.client.api.service.MailService;
 import com.bcmc.xor.flare.client.api.service.UserService;
 import com.bcmc.xor.flare.client.api.service.dto.UserDTO;
+//import com.bcmc.xor.flare.client.error.BadRequestAlertException;
 import com.bcmc.xor.flare.client.error.BadRequestAlertException;
 import com.bcmc.xor.flare.client.error.EmailAlreadyUsedException;
 import com.bcmc.xor.flare.client.error.LoginAlreadyUsedException;
@@ -81,26 +82,28 @@ public class UserResource {
      * @param userDTO the user to create
      * @return the ResponseEntity with status 201 (Created) and with body the new user, or with status 400 (Bad Request) if the login or email is already in use
      * @throws URISyntaxException if the Location URI syntax is incorrect
-     * @throws BadRequestAlertException 400 (Bad Request) if the login or email is already in use
      */
     @PostMapping("/users")
     @Timed
-    public ResponseEntity<User> createUser(@Valid @RequestBody UserDTO userDTO) throws URISyntaxException {
-        log.debug("REST request to save User : {}", userDTO);
+    public ResponseEntity<User> createUser(@Valid @RequestBody UserDTO userDTO) {
+        log.debug("REST request to create User : {}", userDTO);
 
         if (userDTO.getId() != null) {
             throw new BadRequestAlertException("A new user cannot already have an ID", "userManagement", "idexists");
             // Lowercase the user login before comparing with database
-        } else if (userRepository.findOneByLogin(userDTO.getLogin().toLowerCase()).isPresent()) {
+//        } else if (userRepository.findOneByLogin(userDTO.getLogin().toLowerCase()).isPresent()) {
+        } else if (userService.getUserWithAuthoritiesByLogin(userDTO.getLogin().toLowerCase()).isPresent()) {
             throw new LoginAlreadyUsedException();
         } else if (userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).isPresent()) {
             throw new EmailAlreadyUsedException();
         } else {
             User newUser = userService.createUser(userDTO);
             mailService.sendCreationEmail(newUser);
-            return ResponseEntity.created(new URI("/api/users/" + newUser.getLogin()))
-                .headers(HeaderUtil.createAlert( "A user is created with identifier " + newUser.getLogin(), newUser.getLogin()))
-                .body(newUser);
+            log.debug("User created: {}", newUser);
+            return new ResponseEntity<>(newUser, HttpStatus.OK);
+//            return ResponseEntity.created(new URI("/api/users/" + newUser.getLogin()))
+//                .headers(HeaderUtil.createAlert( "A user is created with identifier " + newUser.getLogin(), newUser.getLogin()))
+//                .body(newUser);
         }
     }
 

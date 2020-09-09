@@ -154,7 +154,7 @@ public class UserResourceIntTest {
         restUserMockMvc.perform(post("/api/users")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(managedUserVM)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isOk());
 
         // Validate the User in the database
         List<User> userList = userRepository.findAll();
