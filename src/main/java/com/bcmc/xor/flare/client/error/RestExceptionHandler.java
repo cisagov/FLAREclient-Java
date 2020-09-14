@@ -2,12 +2,17 @@ package com.bcmc.xor.flare.client.error;
 
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
@@ -30,6 +35,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(EmailAlreadyUsedException.class)
 	protected ResponseEntity<Object> handleEmailAlreadyUsedException(EmailAlreadyUsedException ex) {
 		APIError apiError = new APIError(HttpStatus.BAD_REQUEST);
+		apiError.setMessage(ex.getMessage());
+		return buildResponseEntity(apiError);
+	}
+
+	@ExceptionHandler(FlareServiceUnavailableException.class)
+	protected ResponseEntity<Object> handleUserNotFoundException(FlareServiceUnavailableException ex) {
+		APIError apiError = new APIError(HttpStatus.SERVICE_UNAVAILABLE);
 		apiError.setMessage(ex.getMessage());
 		return buildResponseEntity(apiError);
 	}
@@ -107,6 +119,20 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(AuthenticationFailureException.class)
 	protected ResponseEntity<Object> handleAuthenticationFailureException(AuthenticationFailureException ex) {
 		APIError apiError = new APIError(HttpStatus.UNAUTHORIZED);
+		apiError.setMessage(ex.getMessage());
+		return buildResponseEntity(apiError);
+	}
+
+	@Override
+	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+		APIError apiError = new APIError(HttpStatus.BAD_REQUEST);
+		apiError.setMessage(ex.getMessage());
+		return buildResponseEntity(apiError);
+	}
+
+	@Override
+	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+		APIError apiError = new APIError(HttpStatus.BAD_REQUEST);
 		apiError.setMessage(ex.getMessage());
 		return buildResponseEntity(apiError);
 	}
