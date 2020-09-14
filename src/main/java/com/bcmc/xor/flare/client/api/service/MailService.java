@@ -42,8 +42,8 @@ public class MailService {
 
     public MailService(JavaMailSender javaMailSender,
                        MessageSource messageSource, SpringTemplateEngine templateEngine,
-                       @Value("{jhipster.mail.from}") String mailFrom,
-                       @Value("${jhipster.mail.base-url}") String baseUrl) {
+                       @Value("{spring.mail.from}") String mailFrom,
+                       @Value("${spring.mail.base-url}") String baseUrl) {
 
         this.javaMailSender = javaMailSender;
         this.messageSource = messageSource;

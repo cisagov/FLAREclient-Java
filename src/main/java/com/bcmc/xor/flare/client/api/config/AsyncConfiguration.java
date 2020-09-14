@@ -26,9 +26,9 @@ public class AsyncConfiguration implements AsyncConfigurer {
     private Integer queueCapacity;
 
 
-    public AsyncConfiguration(@Value("${jhipster.async.core-pool-size}") Integer corePoolSize,
-                              @Value("${jhipster.async.max-pool-size}") Integer maxPoolSize,
-                              @Value("${jhipster.async.queue-capacity}") Integer queueCapacity) {
+    public AsyncConfiguration(@Value("${spring.async.core-pool-size}") Integer corePoolSize,
+                              @Value("${spring.async.max-pool-size}") Integer maxPoolSize,
+                              @Value("${spring.async.queue-capacity}") Integer queueCapacity) {
         this.corePoolSize = corePoolSize;
         this.maxPoolSize = maxPoolSize;
         this.queueCapacity = queueCapacity;

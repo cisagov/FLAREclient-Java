@@ -1,8 +1,9 @@
 # FLAREclient
-This application was initially generated using JHipster 5.2.1, you can find documentation and help [here](https://www.jhipster.tech/documentation-archive/v5.2.1).
+This application uses Spring Boot and MongoDB.  
+You can find Spring Boot documentation here: https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/
+MongoDB documentation can be found here: https://docs.mongodb.com/
 
 ## Getting Started
-
 Before you begin **development** on this project you will need to meet these prerequisites in your development environment.
 
 - Install the listed FLARE projects as they are dependencies of the FLAREclient (Branches listed are as of December 17 2018. This will updated as branches are merged, and the application is closer to delivery.)
@@ -39,7 +40,7 @@ where `####` is the first four characters of your container's ID.
 
 ## Building
 
-To build the flareclient application run:
+To build the FLAREclient application run:
 
     mvn clean package
 
@@ -47,7 +48,7 @@ To ensure everything worked, run:
 
     java -jar target/*.jar
 
-Then navigate to [http://localhost:8080](http://localhost:8080) in your browser.
+Then navigate to [http://localhost:8081](http://localhost:8081) in your browser.
 
 
 ## Testing
@@ -58,7 +59,7 @@ To launch your application's tests, run:
 
 ## Using Docker to simplify development (optional)
 
-You can use Docker to improve your JHipster development experience. A number of docker-compose configuration are available in the [src/main/docker](src/main/docker) folder to launch required third party services.
+You can use Docker to improve your FLAREclient development experience. A number of docker-compose configuration are available in the [src/main/docker](src/main/docker) folder to launch required third party services.
 
 For example, to start a mongodb database in a docker container, run:
 
@@ -77,14 +78,6 @@ Then run:
 
     docker-compose -f docker/app.yml up -d
 
-For more information refer to [Using Docker and Docker-Compose][], this page also contains information on the docker-compose sub-generator (`jhipster docker-compose`), which is able to generate docker configurations for one or several JHipster applications.
+For more information about Docker refer to https://docs.docker.com/
+For more information about Docker Compose refer to https://docs.docker.com/compose/
 
-
-[JHipster Homepage and latest documentation]: https://www.jhipster.tech
-[JHipster 5.2.1 archive]: https://www.jhipster.tech/documentation-archive/v5.2.1
-
-[Using JHipster in development]: https://www.jhipster.tech/documentation-archive/v5.2.1/development/
-[Using Docker and Docker-Compose]: https://www.jhipster.tech/documentation-archive/v5.2.1/docker-compose
-[Using JHipster in production]: https://www.jhipster.tech/documentation-archive/v5.2.1/production/
-[Running tests page]: https://www.jhipster.tech/documentation-archive/v5.2.1/running-tests/
-[Setting up Continuous Integration]: https://www.jhipster.tech/documentation-archive/v5.2.1/setting-up-ci/

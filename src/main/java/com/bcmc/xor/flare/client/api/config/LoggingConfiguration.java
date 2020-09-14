@@ -39,7 +39,7 @@ public class LoggingConfiguration {
     private final String serverPort;
 
     public LoggingConfiguration(@Value("${spring.application.name}") String appName, @Value("${server.port}") String serverPort,
-                                @Value("${jhipster.metrics.logs.enabled}") Boolean metricsLogsEnabled) {
+                                @Value("${spring.metrics.logs.enabled}") Boolean metricsLogsEnabled) {
         this.appName = appName;
         this.serverPort = serverPort;
 //        if (jHipsterProperties.getLogging().getLogstash().isEnabled()) {
