@@ -3,8 +3,6 @@
 #
 # This configuration is used for unit/integration tests.
 #
-# More information on profiles: https://www.jhipster.tech/profiles/
-# More information on configuration properties: https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
 # ===================================================================
@@ -90,47 +88,8 @@ info:
         version: #project.version#
 
 # ===================================================================
-# JHipster specific properties
-#
-# Full reference is available at: https://www.jhipster.tech/common-application-properties/
-# ===================================================================
-
-#jhipster:
-#    async:
-#        core-pool-size: 1
-#        max-pool-size: 50
-#        queue-capacity: 10000
-#    http:
-#        version: V_1_1
-#    # To test logstash appender
-#    logging:
-#        logstash:
-#            enabled: true
-#            host: localhost
-#            port: 5000
-#            queue-size: 512
-#    mail:
-#        from: test@localhost
-#        base-url: http://127.0.0.1:8080
-#    security:
-#        authentication:
-#            jwt:
-#                secret: 01ed628f9ac8e37dcc8b708c7f4e95c190d21d65
-#                # Token is valid 24 hours
-#                token-validity-in-seconds: 86400
-#    metrics: # DropWizard Metrics configuration, used by MetricsConfiguration
-#        jmx.enabled: true
-#        logs: # Reports Dropwizard metrics in the logs
-#            enabled: true
-#            report-frequency: 60 # in seconds
-
-# ===================================================================
 # Application specific properties
 # Add your own application properties here, see the ApplicationProperties class
-# to have type-safe configuration, like in the JHipsterProperties above
-#
-# More documentation is available at:
-# https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
 # application:
