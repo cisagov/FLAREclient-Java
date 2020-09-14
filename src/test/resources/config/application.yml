@@ -30,6 +30,8 @@ spring:
             database: flareclient
     mail:
         host: localhost
+        from: test@localhost
+        base-url: http://127.0.0.1:8080
     messages:
         basename: i18n/messages
     mvc:
@@ -37,7 +39,39 @@ spring:
             enabled: false
     thymeleaf:
         mode: HTML
+    async:
+        core-pool-size: 1
+        max-pool-size: 50
+        queue-capacity: 10000
+    http:
+        version: V_1_1
+        cors:
+            allowed-origins: "*"
+            allowed-methods: "*"
+            allowed-headers: "*"
+            exposed-headers: "Authorization,Link,X-Total-Count"
+            allow-credentials: true
+            max-age: 1800
+    # To test logstash appender
+    logging:
+        logstash:
+            enabled: true
+            host: localhost
+            port: 5000
+            queue-size: 512
 
+    security:
+        authentication:
+            jwt:
+                secret: 01ed628f9ac8e37dcc8b708c7f4e95c190d21d65
+                # Token is valid 24 hours
+                token-validity-in-seconds: 86400
+    metrics: # DropWizard Metrics configuration, used by MetricsConfiguration
+        jmx:
+            enabled: true
+        logs: # Reports Dropwizard metrics in the logs
+            enabled: false
+            report-frequency: 60 # in seconds
 
 server:
     port: 10344
@@ -61,34 +95,34 @@ info:
 # Full reference is available at: https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
-jhipster:
-    async:
-        core-pool-size: 1
-        max-pool-size: 50
-        queue-capacity: 10000
-    http:
-        version: V_1_1
-    # To test logstash appender
-    logging:
-        logstash:
-            enabled: true
-            host: localhost
-            port: 5000
-            queue-size: 512
-    mail:
-        from: test@localhost
-        base-url: http://127.0.0.1:8080
-    security:
-        authentication:
-            jwt:
-                secret: 01ed628f9ac8e37dcc8b708c7f4e95c190d21d65
-                # Token is valid 24 hours
-                token-validity-in-seconds: 86400
-    metrics: # DropWizard Metrics configuration, used by MetricsConfiguration
-        jmx.enabled: true
-        logs: # Reports Dropwizard metrics in the logs
-            enabled: true
-            report-frequency: 60 # in seconds
+#jhipster:
+#    async:
+#        core-pool-size: 1
+#        max-pool-size: 50
+#        queue-capacity: 10000
+#    http:
+#        version: V_1_1
+#    # To test logstash appender
+#    logging:
+#        logstash:
+#            enabled: true
+#            host: localhost
+#            port: 5000
+#            queue-size: 512
+#    mail:
+#        from: test@localhost
+#        base-url: http://127.0.0.1:8080
+#    security:
+#        authentication:
+#            jwt:
+#                secret: 01ed628f9ac8e37dcc8b708c7f4e95c190d21d65
+#                # Token is valid 24 hours
+#                token-validity-in-seconds: 86400
+#    metrics: # DropWizard Metrics configuration, used by MetricsConfiguration
+#        jmx.enabled: true
+#        logs: # Reports Dropwizard metrics in the logs
+#            enabled: true
+#            report-frequency: 60 # in seconds
 
 # ===================================================================
 # Application specific properties

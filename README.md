@@ -79,12 +79,3 @@ Then run:
 
 For more information refer to [Using Docker and Docker-Compose][], this page also contains information on the docker-compose sub-generator (`jhipster docker-compose`), which is able to generate docker configurations for one or several JHipster applications.
 
-
-[JHipster Homepage and latest documentation]: https://www.jhipster.tech
-[JHipster 5.2.1 archive]: https://www.jhipster.tech/documentation-archive/v5.2.1
-
-[Using JHipster in development]: https://www.jhipster.tech/documentation-archive/v5.2.1/development/
-[Using Docker and Docker-Compose]: https://www.jhipster.tech/documentation-archive/v5.2.1/docker-compose
-[Using JHipster in production]: https://www.jhipster.tech/documentation-archive/v5.2.1/production/
-[Running tests page]: https://www.jhipster.tech/documentation-archive/v5.2.1/running-tests/
-[Setting up Continuous Integration]: https://www.jhipster.tech/documentation-archive/v5.2.1/setting-up-ci/

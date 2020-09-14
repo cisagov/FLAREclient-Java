@@ -45,9 +45,9 @@ public class MetricsConfiguration extends MetricsConfigurerAdapter {
     private Long reportFrequency;
 
 
-    public MetricsConfiguration(@Value("${jhipster.metrics.jmx.enabled}") Boolean jmxEnabled,
-                                @Value("${jhipster.metrics.logs.enabled}") Boolean metricsLogsEnabled,
-                                @Value("${jhipster.metrics.logs.report-frequency}") Long reportFrequency) {
+    public MetricsConfiguration(@Value("${spring.metrics.jmx.enabled}") Boolean jmxEnabled,
+                                @Value("${spring.metrics.logs.enabled}") Boolean metricsLogsEnabled,
+                                @Value("${spring.metrics.logs.report-frequency}") Long reportFrequency) {
 
         this.jmxEnabled = jmxEnabled;
         this.metricsLogsEnabled = metricsLogsEnabled;
