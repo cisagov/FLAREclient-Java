@@ -2,7 +2,6 @@ package com.bcmc.xor.flare.client.api.web.rest;
 
 import com.bcmc.xor.flare.client.api.config.Constants;
 import com.bcmc.xor.flare.client.api.domain.auth.User;
-import com.bcmc.xor.flare.client.api.security.SecurityUtils;
 import com.bcmc.xor.flare.client.api.service.MailService;
 import com.bcmc.xor.flare.client.api.service.UserService;
 import com.bcmc.xor.flare.client.api.service.dto.UserDTO;
@@ -75,10 +74,6 @@ public class UserResource {
     public ResponseEntity<User> createUser(@Valid @RequestBody UserDTO userDTO) {
         log.debug("REST request to create User : {}", userDTO);
 
-        if(!SecurityUtils.isCurrentUserInRole("ROLE_ADMIN")) {
-            throw new AuthenticationFailureException();
-        }
-
         if (userDTO.getId() != null) {
             Map<String,Object> badParamMap = new HashMap<>();
             badParamMap.put("id", ErrorConstants.ILLEGAL_ARG_USER_ID);
@@ -111,10 +106,6 @@ public class UserResource {
     @Timed
     public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody UserDTO userDTO) {
         log.debug("REST request to update User : {}", userDTO);
-
-        if(!SecurityUtils.isCurrentUserInRole("ROLE_ADMIN")) {
-            throw new AuthenticationFailureException();
-        }
 
         if (userDTO.getId() == null) {
             Map<String,Object> badParamMap = new HashMap<>();
@@ -204,10 +195,6 @@ public class UserResource {
     @Timed
     public ResponseEntity<String> deleteUser(@PathVariable String login) {
         log.debug("REST request to delete User: {}", login);
-
-        if(!SecurityUtils.isCurrentUserInRole("ROLE_ADMIN")) {
-            throw new AuthenticationFailureException();
-        }
 
         if (!userService.getUserWithAuthoritiesByLogin(login).isPresent()) {
             log.error(ErrorConstants.USER_NOT_FOUND);
