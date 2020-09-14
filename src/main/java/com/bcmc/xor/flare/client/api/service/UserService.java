@@ -265,6 +265,10 @@ public class UserService {
         return userRepository.findOneByLogin(login);
     }
 
+    public Optional<User> getUserByEmail(String email) {
+        return userRepository.findOneByEmailIgnoreCase(email);
+    }
+
     public Optional<User> getUserWithAuthorities(String id) {
         return userRepository.findById(id);
     }

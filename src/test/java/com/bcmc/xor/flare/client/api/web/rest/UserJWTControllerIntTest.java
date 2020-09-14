@@ -136,17 +136,10 @@ public class UserJWTControllerIntTest {
     }
 
     @Test
-    public void testBadCredentialsReturn() throws Exception{
-        LoginVM loginVM = new LoginVM();
-        loginVM.setUsername("someUser");
-        loginVM.setPassword("xxxx");
-        mockMvc.perform(post("/api/authenticate")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
-                .content(TestUtil.convertObjectToJsonBytes(loginVM)))
-                .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.id_token").doesNotExist())
-                .andExpect(header().doesNotExist("Authorization"))
-                .andExpect(mvcResult -> assertTrue(mvcResult.getResolvedException() instanceof AuthenticationFailureException))
-                .andExpect(mvcResult -> assertEquals("Authentication failed", mvcResult.getResolvedException().getMessage()));
+    public void testJWTToken()  {
+        UserJWTController.JWTToken jwtToken = new UserJWTController.JWTToken("1234Asadfg");
+        jwtToken.setIdToken("newToken");
+        assertEquals(jwtToken.getIdToken(), "newToken");
     }
+
  }
