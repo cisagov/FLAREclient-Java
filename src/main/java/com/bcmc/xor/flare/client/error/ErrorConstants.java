@@ -27,7 +27,7 @@ public final class ErrorConstants {
     public static final URI DATE_FORMAT_ERROR_TYPE = URI.create(PROBLEM_BASE_URL + "/bad-date");
     public static final URI LOGIN_ALREADY_USED_TYPE = URI.create(PROBLEM_BASE_URL + "/login-already-used");
     public static final URI EMAIL_NOT_FOUND_TYPE = URI.create(PROBLEM_BASE_URL + "/email-not-found");
-    public static final URI USER_NOT_FOUND_TYPE = URI.create(PROBLEM_BASE_URL + "/user-not-found");
+//    public static final URI USER_NOT_FOUND_TYPE = URI.create(PROBLEM_BASE_URL + "/user-not-found");
     public static final URI ACTIVATION_ERROR = URI.create(PROBLEM_BASE_URL + "/activation-error");
     public static final URI ACCOUNT_UPDATE_ERROR = URI.create(PROBLEM_BASE_URL + "/account-update-error");
     public static final URI AUDIT_EVENT_NOT_FOUND = URI.create(PROBLEM_BASE_URL + "/audit-event-no-found-error");
