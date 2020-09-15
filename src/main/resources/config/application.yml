@@ -50,7 +50,7 @@ spring:
         # By default CORS is disabled. Uncomment to enable.
         cors:
             allowed-origins: "*"
-            allowed-methods: "*"
+            allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
             allowed-headers: "*"
             exposed-headers: "Authorization,Link,X-Total-Count"
             allow-credentials: true
