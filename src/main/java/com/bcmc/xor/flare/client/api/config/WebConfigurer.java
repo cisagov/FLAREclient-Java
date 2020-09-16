@@ -206,12 +206,17 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
+        config.applyPermitDefaultValues();
+        config.addAllowedMethod("PUT");
+        config.addAllowedMethod("DELETE");
+        config.addAllowedMethod("OPTIONS");
         // config values from application.yml file
-        config.addAllowedHeader(allowedHeaders);
-        config.addAllowedOrigin(allowedOrigins);
-        config.setAllowedOrigins(Arrays.asList(allowedOrigins));
-        config.setAllowedMethods(Arrays.asList(allowedMethods));
+//        config.setAllowedHeaders(Arrays.asList(allowedHeaders));
+//        config.addAllowedOrigin(allowedOrigins);
+//        config.setAllowedOrigins(Arrays.asList(allowedOrigins));
+
         config.setMaxAge(maxAge);
+
         if (config.getAllowedOrigins() != null && !config.getAllowedOrigins().isEmpty()) {
             log.debug("Registering CORS filter");
             source.registerCorsConfiguration("/api/**", config);

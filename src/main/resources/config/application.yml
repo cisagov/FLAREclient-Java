@@ -52,7 +52,7 @@ spring:
             allowed-origins: "*"
             allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
             allowed-headers: "*"
-            exposed-headers: "Authorization,Link,X-Total-Count"
+            exposed-headers: "Authorization,Link,X-Total-Count,Access-Control-Allow-Origin"
             allow-credentials: true
             max-age: 1800
     metrics: # DropWizard Metrics configuration, used by MetricsConfiguration
