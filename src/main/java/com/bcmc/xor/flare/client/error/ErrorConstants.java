@@ -10,11 +10,11 @@ public final class ErrorConstants {
     public static final String ERR_BAD_REQUEST = "error.request";
     public static final String ERR_EMAIL_IN_USED = "error.email.in.used";
     public static final String ERR_LOGIN_IN_USED = "error.login.in.used";
-    public static final String ERR_ACTIVATIONKEY_NOT_FOUND = "error.activation.key.not.found";
-    public static final String ERR_ACCOUNT_UPDATE = "error.accout.update";
-    public static final String ERR_USER_NOT_FOUND = "error.accout.user.not.found";
+//    public static final String ERR_ACTIVATIONKEY_NOT_FOUND = "error.activation.key.not.found";
+//    public static final String ERR_ACCOUNT_UPDATE = "error.accout.update";
+//    public static final String ERR_USER_NOT_FOUND = "error.accout.user.not.found";
     
-    private static final String PROBLEM_BASE_URL = "https://www.jhipster.tech/problem";
+    private static final String PROBLEM_BASE_URL = "";
     public static final URI DEFAULT_TYPE = URI.create(PROBLEM_BASE_URL + "/problem-with-message");
     public static final URI RUNTIME_TYPE = URI.create(PROBLEM_BASE_URL + "/runtime");
     public static final URI INTERNAL_TYPE = URI.create(PROBLEM_BASE_URL + "/internal");
@@ -31,7 +31,7 @@ public final class ErrorConstants {
     public static final URI ACTIVATION_ERROR = URI.create(PROBLEM_BASE_URL + "/activation-error");
     public static final URI ACCOUNT_UPDATE_ERROR = URI.create(PROBLEM_BASE_URL + "/account-update-error");
     public static final URI AUDIT_EVENT_NOT_FOUND = URI.create(PROBLEM_BASE_URL + "/audit-event-no-found-error");
-    
+
     public static final String INVALID_PASSWORD = "Invalid Password.";
     public static final String EMAIL_ALREADY_USED = "Email is already in use.";
     public static final String LOGIN_ALREADY_USED = "Login already exists.";

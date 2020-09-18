@@ -70,8 +70,6 @@
         <sonar.surefire.reportsPath>${project.testresult.directory}/surefire-reports</sonar.surefire.reportsPath>
         <sonar.tests>${project.basedir}/src/test/</sonar.tests>
 
-
-        <!--Dependency versions from JHipster Dependency 2.0.15 pom-->
         <!-- Dependency versions -->
         <awsjavasdk.version>1.11.375</awsjavasdk.version>
         <bucket4j.version>4.0.1</bucket4j.version>
@@ -630,7 +628,6 @@
 <!--                    <contextDirectory>${project.build.directory}</contextDirectory>-->
 <!--                </configuration>-->
 <!--            </plugin>-->
-            <!-- jhipster-needle-maven-add-plugin -->
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>2.19</version>
@@ -699,6 +696,5 @@
 <!--                </dependency>-->
 <!--            </dependencies>-->
 <!--        </profile>-->
-<!--        &lt;!&ndash; jhipster-needle-maven-add-profile &ndash;&gt;-->
 <!--    </profiles>-->
 </project>

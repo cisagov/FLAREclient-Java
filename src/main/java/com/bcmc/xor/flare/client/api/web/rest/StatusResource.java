@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@SuppressWarnings("unused")
 @RestController
 @RequestMapping("/api")
 class StatusResource {
@@ -39,6 +38,7 @@ class StatusResource {
      */
     @GetMapping("/status")
     public ResponseEntity<List<StatusDTO>> getAllStatus(Pageable pageable) {
+        log.debug("REST request to get all statuses");
         final Page<StatusDTO> page = statusService.getAllStatus(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/status");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
