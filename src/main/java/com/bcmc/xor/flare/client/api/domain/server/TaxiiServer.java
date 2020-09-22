@@ -46,6 +46,9 @@ public abstract class TaxiiServer extends AbstractAuditingEntity implements Seri
     @Field("version")
     private Constants.TaxiiVersion version;
 
+    @Field("server_description")
+    private String serverDescription;
+
     /**
      * A boolean indicating that the Server has been configured successfully and has received both discovery and collection information
      */
@@ -85,6 +88,7 @@ public abstract class TaxiiServer extends AbstractAuditingEntity implements Seri
     public TaxiiServer(ServerDTO serverDTO) {
         setLabel(serverDTO.getLabel());
         setUrl(URI.create(serverDTO.getUrl()));
+        setServerDescription(serverDTO.getServerDescription());
         setRequiresBasicAuth(serverDTO.getRequiresBasicAuth());
     }
 
@@ -126,6 +130,14 @@ public abstract class TaxiiServer extends AbstractAuditingEntity implements Seri
 
     public void setVersion(Constants.TaxiiVersion version) {
         this.version = version;
+    }
+
+    public String getServerDescription() {
+        return serverDescription;
+    }
+
+    public void setServerDescription(String serverDescription) {
+        this.serverDescription = serverDescription;
     }
 
     public boolean isAvailable() {
@@ -206,6 +218,7 @@ public abstract class TaxiiServer extends AbstractAuditingEntity implements Seri
             ", label='" + label + '\'' +
             ", url=" + url +
             ", version=" + version +
+            ", serverDescription=" + serverDescription +
             ", isAvailable=" + isAvailable +
             ", hasReceivedServerInformation=" + hasReceivedServerInformation +
             ", hasReceivedCollectionInformation=" + hasReceivedCollectionInformation +

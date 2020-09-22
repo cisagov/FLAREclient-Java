@@ -501,6 +501,7 @@ public class ServerService {
             server.setLabel(serverDTO.getLabel());
             server.setUrl(URI.create(serverDTO.getUrl()));
             server.setVersion(Constants.TaxiiVersion.UNKNOWN);
+            server.setServerDescription(serverDTO.getServerDescription());
             ((TemporaryServer) server).setFailure(true);
             server = serverRepository.save(server);
         } else {

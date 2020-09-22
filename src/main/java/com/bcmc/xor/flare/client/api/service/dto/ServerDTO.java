@@ -31,6 +31,9 @@ public class ServerDTO {
     @Size(max = 255)
     private String url;
 
+    @Size(max = 5000)
+    private String serverDescription;
+
     private Constants.TaxiiVersion version;
 
     private boolean isAvailable = false;
@@ -61,6 +64,7 @@ public class ServerDTO {
         this.label = server.getLabel();
         this.url = server.getUrl() == null ? null : server.getUrl().toString();
         this.version = server.getVersion();
+        this.serverDescription = server.getServerDescription();
         this.isAvailable = server.isAvailable();
         this.hasReceivedServerInformation = server.hasReceivedServerInformation();
         this.hasReceivedCollectionInformation = server.hasReceivedCollectionInformation();
@@ -110,6 +114,14 @@ public class ServerDTO {
 
     public void setVersion(Constants.TaxiiVersion version) {
         this.version = version;
+    }
+
+    public String getServerDescription() {
+        return serverDescription;
+    }
+
+    public void setServerDescription(String serverDescription) {
+        this.serverDescription = serverDescription;
     }
 
     public boolean isAvailable() {
