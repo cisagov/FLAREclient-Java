@@ -18,6 +18,14 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
+	// Default Handler for any all errors that don't have specified handlers
+	@ExceptionHandler({Exception.class})
+	protected ResponseEntity<Object> handleAll(Exception ex, WebRequest request) {
+		APIError apiError = new APIError(HttpStatus.INTERNAL_SERVER_ERROR);
+		apiError.setMessage(ex.getMessage());
+		return buildResponseEntity(apiError);
+	}
+
 	@ExceptionHandler(BadCredentialsException.class)
 	protected ResponseEntity<Object> handleBadCredentialsException(BadCredentialsException ex) {
 		APIError apiError = new APIError(HttpStatus.UNAUTHORIZED);
