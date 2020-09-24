@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.validation.ConstraintViolationException;
+
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
@@ -130,6 +132,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 		apiError.setMessage(ex.getMessage());
 		return buildResponseEntity(apiError);
 	}
+
+	@ExceptionHandler(ConstraintViolationException.class)
+	protected ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException ex) {
+		APIError apiError = new APIError(HttpStatus.BAD_REQUEST);
+		apiError.setMessage(ex.getMessage());
+		return buildResponseEntity(apiError);
+	}
+
 
 	@Override
 	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
