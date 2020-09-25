@@ -139,7 +139,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 		apiError.setMessage(ex.getMessage());
 		return buildResponseEntity(apiError);
 	}
-
+	
+	@ExceptionHandler(NameIsNullException.class)
+	protected ResponseEntity<Object> handleNameIsNullException(NameIsNullException ex) {
+		APIError apiError = new APIError(HttpStatus.BAD_REQUEST);
+		apiError.setMessage(ex.getMessage());
+		return buildResponseEntity(apiError);
+	}
 
 	@Override
 	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
