@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -139,9 +140,10 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 		apiError.setMessage(ex.getMessage());
 		return buildResponseEntity(apiError);
 	}
-	
-	@ExceptionHandler(NameIsNullException.class)
-	protected ResponseEntity<Object> handleNameIsNullException(NameIsNullException ex) {
+
+
+	@Override
+	protected ResponseEntity<Object> handleMissingPathVariable(MissingPathVariableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 		APIError apiError = new APIError(HttpStatus.BAD_REQUEST);
 		apiError.setMessage(ex.getMessage());
 		return buildResponseEntity(apiError);
