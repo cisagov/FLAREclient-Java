@@ -47,6 +47,7 @@ public final class ErrorConstants {
     public static final String ILLEGAL_ARG_USER_ID = "Request body to create a new user cannot contain an 'id' field.";
     public static final String ILLEGAL_ARG_MISSING_USER_ID = "Request body to update a new user must contain an 'id' field.";
     public static final String SERVICE_RETURNED_NO_DATA = "No data was returned by service.  Check server logs.";
+    public static final String NAME_IS_NULL = "Request body 'name' field cannot be null.";
 
     private ErrorConstants() {
     }

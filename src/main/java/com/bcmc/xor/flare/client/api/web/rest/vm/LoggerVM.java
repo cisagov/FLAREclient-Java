@@ -1,5 +1,7 @@
 package com.bcmc.xor.flare.client.api.web.rest.vm;
 
+import javax.validation.constraints.NotEmpty;
+
 import ch.qos.logback.classic.Logger;
 
 /**
@@ -7,8 +9,10 @@ import ch.qos.logback.classic.Logger;
  */
 public class LoggerVM {
 
+	@NotEmpty
     private String name;
 
+	@NotEmpty
     private String level;
 
     public LoggerVM(Logger logger) {
