@@ -17,6 +17,7 @@ import java.io.Serializable;
 import java.net.URI;
 import java.time.Instant;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -194,6 +195,26 @@ public abstract class TaxiiServer extends AbstractAuditingEntity implements Seri
 
     public void setRequiresBasicAuth(boolean requiresBasicAuth) {
         this.requiresBasicAuth = requiresBasicAuth;
+    }
+
+    public String defaultApiRoot;
+
+    public String getDefaultApiRoot() {
+        return defaultApiRoot;
+    }
+
+    public void setDefaultApiRoot(String defaultApiRoot) {
+        this.defaultApiRoot = defaultApiRoot;
+    }
+
+    public HashSet<String> apiRoots;
+
+    public HashSet<String> getApiRoots() {
+        return apiRoots;
+    }
+
+    public void setApiRoots(HashSet<String> apiRoots) {
+        this.apiRoots = apiRoots;
     }
 
     @Override

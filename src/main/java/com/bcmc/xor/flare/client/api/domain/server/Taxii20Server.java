@@ -122,7 +122,7 @@ public class Taxii20Server extends TaxiiServer {
         return defaultApiRoot;
     }
 
-    private void setDefaultApiRoot(String defaultApiRoot) {
+    public void setDefaultApiRoot(String defaultApiRoot) {
         this.defaultApiRoot = defaultApiRoot;
     }
 
@@ -130,7 +130,7 @@ public class Taxii20Server extends TaxiiServer {
         return apiRoots;
     }
 
-    private void setApiRoots(HashSet<String> apiRoots) {
+    public void setApiRoots(HashSet<String> apiRoots) {
         this.apiRoots = apiRoots;
     }
 

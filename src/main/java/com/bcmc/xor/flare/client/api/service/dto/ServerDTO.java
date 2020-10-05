@@ -10,6 +10,7 @@ import org.springframework.data.annotation.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.Instant;
+import java.util.HashSet;
 
 /**
  *  * A DTO representing a server
@@ -56,6 +57,10 @@ public class ServerDTO {
 
     private String password;
 
+    private String defaultApiRoot;
+
+    private HashSet<String> apiRoots;
+
     public ServerDTO() {
     }
 
@@ -76,6 +81,8 @@ public class ServerDTO {
             this.hasCredentials = ServerCredentialsUtils.getInstance().getServerCredentialsMap().get(SecurityUtils.getCurrentUserLogin().get()) != null
                 && ServerCredentialsUtils.getInstance().getServerCredentialsMap().get(SecurityUtils.getCurrentUserLogin().get()).containsKey(this.getLabel());
         }
+        this.defaultApiRoot = server.getDefaultApiRoot();
+        this.apiRoots = server.getApiRoots();
     }
 
 
@@ -203,5 +210,21 @@ public class ServerDTO {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getDefaultApiRoot() {
+        return defaultApiRoot;
+    }
+
+    public void setDefaultApiRoot(String defaultApiRoot) {
+        this.defaultApiRoot = defaultApiRoot;
+    }
+
+    public HashSet<String> getApiRoots() {
+        return apiRoots;
+    }
+
+    public void setApiRoots(HashSet<String> apiRoots) {
+        this.apiRoots = apiRoots;
     }
 }

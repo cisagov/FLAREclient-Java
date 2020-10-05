@@ -2,7 +2,7 @@ package com.bcmc.xor.flare.client.api.web.rest;
 
 import com.bcmc.xor.flare.client.api.domain.auth.User;
 import com.bcmc.xor.flare.client.api.domain.server.TaxiiServer;
-import com.bcmc.xor.flare.client.api.domain.server.TemporaryServer;
+//import com.bcmc.xor.flare.client.api.domain.server.TemporaryServer;
 import com.bcmc.xor.flare.client.api.security.SecurityUtils;
 import com.bcmc.xor.flare.client.api.service.ServerService;
 import com.bcmc.xor.flare.client.api.service.UserService;
@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@SuppressWarnings("unused")
 @RestController
 @RequestMapping("/api")
 class ServerResource {
@@ -57,11 +56,11 @@ class ServerResource {
                 throw new FlareClientIllegalArgumentException(badParameterMap);
             }
             serverService.addServerCredential(serverDTO.getLabel(), serverDTO.getUsername(), serverDTO.getPassword());
-
         }
 
         TaxiiServer server = serverService.updateServer(serverDTO);
-        if (server instanceof TemporaryServer) {
+        if (server == null) {
+//        if (server instanceof TemporaryServer) {
             log.error(serverDTO.getLabel() +  " failed creation.  Ensure server details are correct.");
             throw new ServerCreationException();
         }

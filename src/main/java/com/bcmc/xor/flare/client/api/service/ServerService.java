@@ -496,14 +496,16 @@ public class ServerService {
         }
 
         if (server == null) {
-            eventService.createEvent(EventType.SERVER_UNAVAILABLE, String.format("Error configuring server '%s', or server unavailable", serverDTO.getLabel()), serverDTO.getLabel());
-            server = new TemporaryServer();
-            server.setLabel(serverDTO.getLabel());
-            server.setUrl(URI.create(serverDTO.getUrl()));
-            server.setVersion(Constants.TaxiiVersion.UNKNOWN);
-            server.setServerDescription(serverDTO.getServerDescription());
-            ((TemporaryServer) server).setFailure(true);
-            server = serverRepository.save(server);
+            String errorMessage = String.format("Error configuring server '%s', or server unavailable", serverDTO.getLabel());
+            eventService.createEvent(EventType.SERVER_UNAVAILABLE, errorMessage, serverDTO.getLabel());
+            log.error(errorMessage);
+//            server = new TemporaryServer();
+//            server.setLabel(serverDTO.getLabel());
+//            server.setUrl(URI.create(serverDTO.getUrl()));
+//            server.setVersion(Constants.TaxiiVersion.UNKNOWN);
+//            server.setServerDescription(serverDTO.getServerDescription());
+//            ((TemporaryServer) server).setFailure(true);
+//            server = serverRepository.save(server);
         } else {
             eventService.createEvent(EventType.SERVER_ADDED, String.format("Created the '%s' server", serverDTO.getLabel()), serverDTO.getLabel());
             clearServerCaches(server);
@@ -644,22 +646,24 @@ public class ServerService {
     /**
      * Updates a server based on a ServerDTO
      *
-     * Will only update the label and url fields.
+     * Will only update the label, url, and serverDescription fields.
      * Will call {@link #refreshServer(Taxii11Server)} or {@link #refreshServer(Taxii20Server)} depending on the version.
      *
      * If the provided ServerDTO (must have an 'id') does not already exist, will call {@link #createServer(ServerDTO)}
      *
-     * @param serverDTO the ServerDTO containing an 'id', 'url', and 'label' for updating
+     * @param serverDTO the ServerDTO containing an 'id', 'url', 'serverDescription' and 'label' for updating
      * @return the created or updated server
      * @throws IllegalStateException if the provided server does not have a version
      */
     public TaxiiServer updateServer(ServerDTO serverDTO) {
         Optional<TaxiiServer> optionalServer = serverRepository.findOneById(serverDTO.getId());
         Optional<TaxiiServer> optionalServerByLabel = serverRepository.findOneByLabelIgnoreCase(serverDTO.getLabel());
+        // Server exists and server id was passed
         if (optionalServer.isPresent()) {
             TaxiiServer taxiiServer = optionalServer.get();
             taxiiServer.setLabel(serverDTO.getLabel());
             taxiiServer.setUrl(URI.create(serverDTO.getUrl()));
+            taxiiServer.setServerDescription(serverDTO.getServerDescription());
             if (serverDTO.getRequiresBasicAuth()) {
                 checkNewServerCredentials(serverDTO);
                 taxiiServer.setRequiresBasicAuth(true);
@@ -679,11 +683,12 @@ public class ServerService {
                     throw new IllegalStateException("Cannot update server; no version present");
             }
             return taxiiServer;
-        } else if (optionalServerByLabel.isPresent()) {
+        } else if (optionalServerByLabel.isPresent()) { // Server by id was not present but server exists by label
+            log.error("Server already exists and a Server ID was not provided for update");
             throw new ServerLabelAlreadyExistsException();
+        } else { // Server was found by id or label
+            return createServer(serverDTO);
         }
-
-        return createServer(serverDTO);
     }
     // -------------------
 
