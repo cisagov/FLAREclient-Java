@@ -257,7 +257,7 @@ public class ServerService {
             log.info("Received server information for server '{}' ({})", server.getLabel(), server.getId());
             server.setLastReceivedServerInformation(Instant.now());
         } else {
-            log.warn("Failed to retrieve server information for server '{}' ({})", server.getLabel(), server.getId());
+            log.error("Failed to retrieve server information for server '{}' ({})", server.getLabel(), server.getId());
         }
     }
 
@@ -415,7 +415,8 @@ public class ServerService {
     /**
      * Updates all information for a server
      *
-     * @param server    the server to update
+     * @param server the server to update
+     * @param discovery - discovery endpoint information for the server
      * @return the updated server
      */
     private Taxii20Server refreshServer(Taxii20Server server, Discovery discovery) {
@@ -596,8 +597,11 @@ public class ServerService {
         User user = userService.getUserWithAuthoritiesByLogin(SecurityUtils.getCurrentUserLogin().orElseThrow(UserNotFoundException::new)).orElseThrow(UserNotFoundException::new);
         if (!user.getServerCredentials().isEmpty()) {
             log.debug("Deleting server credential for user '{}' and server '{}'", user.getLogin(), label);
+            Map<String, Map<String, String>> serverCredentialMap = ServerCredentialsUtils.getInstance().getServerCredentialsMap();
+            if (!serverCredentialMap.isEmpty() && serverCredentialMap.get(user.getLogin()) != null) {
+                serverCredentialMap.get(user.getLogin()).remove(label);
+            }
             user.getServerCredentials().remove(label);
-            ServerCredentialsUtils.getInstance().getServerCredentialsMap().get(user.getLogin()).remove(label);
             userService.updateUser(new UserDTO(user));
         }
     }
