@@ -60,7 +60,6 @@ class ServerResource {
 
         TaxiiServer server = serverService.updateServer(serverDTO);
         if (server == null) {
-//        if (server instanceof TemporaryServer) {
             log.error(serverDTO.getLabel() +  " failed creation.  Ensure server details are correct.");
             throw new ServerCreationException();
         }
