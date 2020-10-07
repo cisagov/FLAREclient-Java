@@ -672,6 +672,7 @@ public class ServerService {
                 checkNewServerCredentials(serverDTO);
                 taxiiServer.setRequiresBasicAuth(true);
             } else {
+                taxiiServer.setRequiresBasicAuth(false);
                 this.removeServerCredential(serverDTO.getLabel());
             }
             switch (taxiiServer.getVersion()) {
