@@ -13,6 +13,7 @@ import com.bcmc.xor.flare.client.api.service.dto.ServerDTO;
 import com.bcmc.xor.flare.client.api.service.dto.ServersDTO;
 import com.bcmc.xor.flare.client.api.service.dto.UserDTO;
 import com.bcmc.xor.flare.client.error.*;
+import org.apache.commons.lang3.StringUtils;
 import org.mitre.taxii.messages.xml11.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -668,10 +669,10 @@ public class ServerService {
             taxiiServer.setLabel(serverDTO.getLabel());
             taxiiServer.setUrl(URI.create(serverDTO.getUrl()));
             taxiiServer.setServerDescription(serverDTO.getServerDescription());
-            if (serverDTO.getRequiresBasicAuth()) {
+            if (serverDTO.getRequiresBasicAuth() && StringUtils.isNotBlank(serverDTO.getUsername()) && StringUtils.isNotBlank(serverDTO.getPassword())) {
                 checkNewServerCredentials(serverDTO);
                 taxiiServer.setRequiresBasicAuth(true);
-            } else {
+            } else if (!serverDTO.getRequiresBasicAuth()) {
                 taxiiServer.setRequiresBasicAuth(false);
                 this.removeServerCredential(serverDTO.getLabel());
             }

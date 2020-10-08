@@ -5,6 +5,8 @@ import com.bcmc.xor.flare.client.api.repository.UserRepository;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import xor.flare.utils.crypto.PasswordUtil;
 
 import java.nio.charset.Charset;
@@ -15,15 +17,21 @@ import java.util.Map;
 /**
  * This class could use javadoc
  */
+@Component
 public class ServerCredentialsUtils {
 
     private static final Logger log = LoggerFactory.getLogger(ServerCredentialsUtils.class);
 
     private static ServerCredentialsUtils instance;
 
-    private final Map<String, Map<String, String>> serverCredentialsMap = new HashMap<>();
+    private static Map<String, Map<String, String>> serverCredentialsMap = new HashMap<>();
 
-    private ServerCredentialsUtils() {
+    private static UserRepository userRepository;
+
+ //   private final UserRepository userRepository;
+
+    private ServerCredentialsUtils(UserRepository userRepository) {
+        this.userRepository = userRepository;
 
     }
 
@@ -31,7 +39,7 @@ public class ServerCredentialsUtils {
         if (instance == null) {
             synchronized (ServerCredentialsUtils.class) {
                 if (instance == null) {
-                    instance = new ServerCredentialsUtils();
+                    instance = new ServerCredentialsUtils(userRepository);
                 }
             }
         }
@@ -39,6 +47,7 @@ public class ServerCredentialsUtils {
     }
 
     public Map<String, Map<String, String>> getServerCredentialsMap() {
+        loadAllCredentials(userRepository);
         return serverCredentialsMap;
     }
 

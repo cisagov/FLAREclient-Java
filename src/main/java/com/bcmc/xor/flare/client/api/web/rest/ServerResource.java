@@ -44,18 +44,21 @@ class ServerResource {
         log.debug("REST Request to create or update server for {}", serverDTO.getLabel());
         // Check basic auth credentials; add them to ServerCredentialsUtils map
         if (serverDTO.getRequiresBasicAuth()) {
-            Map<String, Object> badParameterMap = new HashMap<>();
-            if (StringUtils.isBlank(serverDTO.getUsername())) {
-                badParameterMap.put("userName", ErrorConstants.USERNAME_REQUIRED_PARAM);
+            Optional<TaxiiServer> optionalTaxiiServer  = serverService.findOneByLabel(serverDTO.getLabel());
+            if (optionalTaxiiServer.isPresent() && optionalTaxiiServer.get().getRequiresBasicAuth() != serverDTO.getRequiresBasicAuth()) {
+                Map<String, Object> badParameterMap = new HashMap<>();
+                if (StringUtils.isBlank(serverDTO.getUsername())) {
+                    badParameterMap.put("userName", ErrorConstants.USERNAME_REQUIRED_PARAM);
+                }
+                if (StringUtils.isBlank(serverDTO.getPassword())) {
+                    badParameterMap.put("password", ErrorConstants.PASSWORD_REQUIRED_PARAM);
+                }
+                if (!badParameterMap.isEmpty()) {
+                    log.error("Basic authorization is set to true.  Username and/or password missing.");
+                    throw new FlareClientIllegalArgumentException(badParameterMap);
+                }
+                serverService.addServerCredential(serverDTO.getLabel(), serverDTO.getUsername(), serverDTO.getPassword());
             }
-            if (StringUtils.isBlank(serverDTO.getPassword())) {
-                badParameterMap.put("password", ErrorConstants.PASSWORD_REQUIRED_PARAM);
-            }
-            if (!badParameterMap.isEmpty()) {
-                log.error("Basic authorization is set to true.  Username and/or password missing.");
-                throw new FlareClientIllegalArgumentException(badParameterMap);
-            }
-            serverService.addServerCredential(serverDTO.getLabel(), serverDTO.getUsername(), serverDTO.getPassword());
         }
 
         TaxiiServer server = serverService.updateServer(serverDTO);
