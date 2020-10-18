@@ -28,7 +28,7 @@ openshift_cluster_content:
         ocp_url: "{{ ocp_url }}"
     content:
       - name: Secrets
-        template: "{{ playbook_dir }}/templates/secrets-flareclient-server.yaml"
+        template: "{{ playbook_dir }}/templates/secrets-flareclient-api.yaml"
         params_from_vars: "{{ project_params }}"
         namespace: "{{ project_params.NAMESPACE }}"
         tags:
