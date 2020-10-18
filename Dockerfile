@@ -1,4 +1,4 @@
-FROM openjdk:8-jre-alpine
+FROM docker.artifactory.apps.ecicd.dso.ncps.us-cert.gov/openjdk/openjdk-8-rhel8:1.3-2
 
 ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS \
     JHIPSTER_SLEEP=0 \
