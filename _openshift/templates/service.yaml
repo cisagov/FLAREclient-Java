@@ -8,8 +8,8 @@ objects:
     kind: Service
     metadata:
       labels:
-        external: flareclient-server
-      name: flareclient-server
+        external: flareclient-api
+      name: flareclient-api
     spec:
       ports:
       - nodePort: 0
@@ -18,7 +18,7 @@ objects:
         targetPort: 8081
       sessionAffinity: None
       selector:
-        name: flareclient-server
+        name: flareclient-api
       type: ClusterIP
     status:
       loadBalancer: {}

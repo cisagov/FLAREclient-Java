@@ -4,7 +4,7 @@ library(
 
 javaPipeline(
         applicationName: 'flarecloud',
-        serviceName: 'flareclient-server',
+        serviceName: 'flareclient-api',
         baseDirectory: '.',
         namespacePostfix: 'rwoo',
         useFeatureVersionBuild: true,

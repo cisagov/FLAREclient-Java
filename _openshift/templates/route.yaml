@@ -7,12 +7,12 @@ objects:
   - apiVersion: v1
     kind: Route
     metadata:
-      name: flareclient-server
+      name: flareclient-api
     spec:
-      host: flareclient-server.${NAMESPACE}.${APPS_SUBDOMAIN}
+      host: flareclient-api.${NAMESPACE}.${APPS_SUBDOMAIN}
       to:
         kind: Service
-        name: flareclient-server
+        name: flareclient-api
       tls:
         termination: passthrough
 parameters:
