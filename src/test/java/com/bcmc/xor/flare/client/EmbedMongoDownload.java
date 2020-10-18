@@ -1,4 +1,4 @@
-package com.bcmc.xor.flare.client.api.config;
+package com.bcmc.xor.flare.client;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
