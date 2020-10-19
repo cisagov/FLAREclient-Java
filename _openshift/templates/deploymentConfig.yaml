@@ -7,18 +7,18 @@ objects:
   - apiVersion: v1
     kind: DeploymentConfig
     metadata:
-      name: flareclient-api
+      name: flareclient
     spec:
       replicas: 1
       selector:
-        name: flareclient-api
+        name: flareclient
       strategy:
         type: Rolling
         rollingParams:
       template:
         metadata:
           labels:
-            name: flareclient-api
+            name: flareclient
         spec:
           containers:
             - env:
@@ -47,8 +47,8 @@ objects:
                       name: flareclient-mongo
                       key: password
               imagePullPolicy: Always
-              name: flareclient-api
-              image: ${DOCKER_REPO_URL}/${IMAGE_NAMESPACE}/flareclient-api:${IMAGE_VERSION}
+              name: flareclient
+              image: ${DOCKER_REPO_URL}/${IMAGE_NAMESPACE}/flareclient:${IMAGE_VERSION}
               volumeMounts:
                 - name: secrets
                   mountPath: /mnt/secrets
@@ -66,10 +66,10 @@ objects:
           volumes:
             - name: secrets
               secret:
-                secretName: flareclient-api
+                secretName: flareclient
                 items:
-                  - key: flareclient-api_jks
-                    path: flareclient-api_ks.jks
+                  - key: flareclient_jks
+                    path: flareclient_ks.jks
                   - key: truststore_jks
                     path: ca.jks
           imagePullSecrets:

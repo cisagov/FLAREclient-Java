@@ -4,7 +4,7 @@ library(
 
 javaPipeline(
         applicationName: 'flarecloud',
-        serviceName: 'flareclient-api',
+        serviceName: 'flareclient',
         baseDirectory: '.',
         namespacePostfix: 'tmai',
         useFeatureVersionBuild: true,
