@@ -26,6 +26,7 @@ import xor.bcmc.taxii2.JsonHandler;
 import xor.bcmc.taxii2.resources.Collections;
 import xor.bcmc.taxii2.resources.Discovery;
 
+import javax.annotation.Nonnull;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Instant;
@@ -501,13 +502,6 @@ public class ServerService {
             String errorMessage = String.format("Error configuring server '%s', or server unavailable", serverDTO.getLabel());
             eventService.createEvent(EventType.SERVER_UNAVAILABLE, errorMessage, serverDTO.getLabel());
             log.error(errorMessage);
-//            server = new TemporaryServer();
-//            server.setLabel(serverDTO.getLabel());
-//            server.setUrl(URI.create(serverDTO.getUrl()));
-//            server.setVersion(Constants.TaxiiVersion.UNKNOWN);
-//            server.setServerDescription(serverDTO.getServerDescription());
-//            ((TemporaryServer) server).setFailure(true);
-//            server = serverRepository.save(server);
         } else {
             eventService.createEvent(EventType.SERVER_ADDED, String.format("Created the '%s' server", serverDTO.getLabel()), serverDTO.getLabel());
             clearServerCaches(server);
@@ -590,12 +584,12 @@ public class ServerService {
     }
 
     public void addServerCredential(String label, String username, String password) {
-        User user = userService.getUserWithAuthoritiesByLogin(SecurityUtils.getCurrentUserLogin().orElseThrow(UserNotFoundException::new)).orElseThrow(UserNotFoundException::new);
+        User user = userService.getUserWithAuthoritiesByLogin(SecurityUtils.getCurrentUserLogin().orElseThrow(UserNotFoundException::new)).get();
         addServerCredential(user, label, username, password);
     }
 
     public void removeServerCredential(String label) {
-        User user = userService.getUserWithAuthoritiesByLogin(SecurityUtils.getCurrentUserLogin().orElseThrow(UserNotFoundException::new)).orElseThrow(UserNotFoundException::new);
+        User user = userService.getUserWithAuthoritiesByLogin(SecurityUtils.getCurrentUserLogin().orElseThrow(UserNotFoundException::new)).get();
         if (!user.getServerCredentials().isEmpty()) {
             log.debug("Deleting server credential for user '{}' and server '{}'", user.getLogin(), label);
             Map<String, Map<String, String>> serverCredentialMap = ServerCredentialsUtils.getInstance().getServerCredentialsMap();
@@ -660,13 +654,12 @@ public class ServerService {
      * @return the created or updated server
      * @throws IllegalStateException if the provided server does not have a version
      */
-    public TaxiiServer updateServer(ServerDTO serverDTO) {
+    public TaxiiServer updateServer(@Nonnull ServerDTO serverDTO) {
         Optional<TaxiiServer> optionalServer = serverRepository.findOneById(serverDTO.getId());
         Optional<TaxiiServer> optionalServerByLabel = serverRepository.findOneByLabelIgnoreCase(serverDTO.getLabel());
         // Server exists and server id was passed
         if (optionalServer.isPresent()) {
             TaxiiServer taxiiServer = optionalServer.get();
-            taxiiServer.setLabel(serverDTO.getLabel());
             taxiiServer.setUrl(URI.create(serverDTO.getUrl()));
             taxiiServer.setServerDescription(serverDTO.getServerDescription());
             if (serverDTO.getRequiresBasicAuth() && StringUtils.isNotBlank(serverDTO.getUsername()) && StringUtils.isNotBlank(serverDTO.getPassword())) {
@@ -676,6 +669,15 @@ public class ServerService {
                 taxiiServer.setRequiresBasicAuth(false);
                 this.removeServerCredential(serverDTO.getLabel());
             }
+            // Handle label change with credentials
+            if (!StringUtils.equalsIgnoreCase(serverDTO.getLabel(), taxiiServer.getLabel())
+                    && taxiiServer.getRequiresBasicAuth()
+                    && StringUtils.isBlank(serverDTO.getUsername())
+                    && StringUtils.isBlank(serverDTO.getPassword())) {
+                changeServerLabelForCredentials(serverDTO, taxiiServer);
+            }
+            taxiiServer.setLabel(serverDTO.getLabel());
+
             switch (taxiiServer.getVersion()) {
                 case TAXII21:
                     refreshServer((Taxii20Server) taxiiServer);
@@ -697,6 +699,19 @@ public class ServerService {
         } else { // Server was found by id or label
             return createServer(serverDTO);
         }
+    }
+
+    private void changeServerLabelForCredentials(ServerDTO serverDTO, TaxiiServer taxiiServer) {
+        User user = userService.getUserWithAuthoritiesByLogin(SecurityUtils.getCurrentUserLogin().orElseThrow(UserNotFoundException::new)).get();
+        Map<String,String> serverCredentialsMap = user.getServerCredentials();
+        Map<String,String> newServerCredentialMap = new HashMap<>();
+        String oldCredentials = serverCredentialsMap.get(taxiiServer.getLabel());
+        // Add new credentials
+        serverCredentialsMap.put(serverDTO.getLabel(), oldCredentials);
+        // Remove old credentials
+        serverCredentialsMap.remove(taxiiServer.getLabel());
+        user.setServerCredentials(serverCredentialsMap);
+        userService.updateUser(user);
     }
     // -------------------
 

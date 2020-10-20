@@ -2,7 +2,6 @@ package com.bcmc.xor.flare.client.api.web.rest;
 
 import com.bcmc.xor.flare.client.api.domain.auth.User;
 import com.bcmc.xor.flare.client.api.domain.server.TaxiiServer;
-//import com.bcmc.xor.flare.client.api.domain.server.TemporaryServer;
 import com.bcmc.xor.flare.client.api.security.SecurityUtils;
 import com.bcmc.xor.flare.client.api.service.ServerService;
 import com.bcmc.xor.flare.client.api.service.UserService;
@@ -137,7 +136,7 @@ class ServerResource {
             throw new ServerCredentialsNotFoundException();
         }
         serverService.removeServerCredential(label);
-        serverService.refreshServer(label);
+//        serverService.refreshServer(label);
         return getServer(label);
     }
 }
