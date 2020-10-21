@@ -93,9 +93,9 @@ public class Taxii20RestTemplate extends FlareRestTemplate {
     }
 
     public Status postBundle(Taxii20Server server, URI uri, String bundle) {
-        log.info("Attempting to POST content to '{}' with Content-Type: {}", uri.toString(), Constants.HEADER_STIX21_JSON_VERSION_21);
-        TaxiiHeaders headers = Taxii20Headers.fromServer(server).withHeader("Content-Type", Constants.HEADER_STIX21_JSON_VERSION_21);
-        ResponseEntity<String> responseEntity = executePost(bundle, headers, uri);
+        log.info("Attempting to POST content to '{}' with Content-Type: {}", uri.toString(), Constants.HEADER_STIX21_JSON_VERSION_21 +","+ Constants.HEADER_TAXII21_JSON_VERSION_21);
+        TaxiiHeaders headers = Taxii20Headers.fromServer(server).withHeader("Content-Type", Constants.HEADER_STIX21_JSON_VERSION_21 +","+ Constants.HEADER_TAXII21_JSON_VERSION_21);
+         ResponseEntity<String> responseEntity = executePost(bundle, headers, uri);
 
         if (responseEntity.getStatusCode().isError()) {
             TaxiiError taxiiError = JsonHandler.getInstance().fromJson(responseEntity.getBody(), TaxiiError.class);
