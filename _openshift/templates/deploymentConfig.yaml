@@ -33,18 +33,18 @@ objects:
                 - name: VERIFY_HOST
                   value: "false"
                 - name: FLARECLIENT_DB_SVC_HOST
-                  value: flareclient-mongo.${NAMESPACE}.svc
+                  value: flareclient-db.${NAMESPACE}.svc
                 - name: FLARECLIENT_DB_SVC_PORT
-                  value: "3310"
+                  value: "27017"
                 - name: FLARECLIENT_DB_USER
                   valueFrom:
                     secretKeyRef:
-                      name: flareclient-mongo
+                      name: flareclient-db
                       key: username
                 - name: FLARECLIENT_DB_PASS
                   valueFrom:
                     secretKeyRef:
-                      name: flareclient-mongo
+                      name: flareclient-db
                       key: password
               imagePullPolicy: Always
               name: flareclient
@@ -55,21 +55,21 @@ objects:
                   readOnly: true
           serviceAccountName: "jboss-sa"
           initContainers:
-            - name: wait-flareclient-mongo
+            - name: wait-flareclient-db
               image: ${DOCKER_REPO_URL}/rhscl/mongodb-36-rhel7
               command: ["sh", "-c", "until nc -z -w 2 $(SVC_HOST) $(SVC_PORT) && echo host ready; do sleep 2; done"]
               env:
                 - name: SVC_HOST
-                  value: "flareclient-mongo"
+                  value: "flareclient-db"
                 - name: SVC_PORT
-                  value: "3310"
+                  value: "27017"
           volumes:
             - name: secrets
               secret:
                 secretName: flareclient
                 items:
                   - key: flareclient_jks
-                    path: flareclient_ks.jks
+                    path: demouser_ks.jks
                   - key: truststore_jks
                     path: ca.jks
           imagePullSecrets:

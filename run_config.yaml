@@ -1,14 +1,10 @@
 env:
-- name: FLARECLIETN_DB_SVC_HOST
+- name: FLARECLIENT_DB_SVC_HOST
   value: "flareclient-db"
-- name: FLARECLIETN_DB_SVC_PORT
-  value: "5673"
-- name: IMDASHBOARD_SVC_HOST
-  value: "imdashboard"
-- name: IMDASHBOARD_SVC_PORT
-  value: "8082"
+- name: FLARECLIENT_DB_SVC_PORT
+  value: "27017"
 - name: VERIFY_HOST
   value: "false"
 build_script: "build-docker-image.sh"
 run_script: "run.sh"
-ready_string: "Started imDashboardApplication"
+ready_string: "Started FLAREclient"
