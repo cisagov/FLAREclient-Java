@@ -33,7 +33,6 @@ import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("unused")
 @Service
 public class ServerService {
 
@@ -584,20 +583,26 @@ public class ServerService {
     }
 
     public void addServerCredential(String label, String username, String password) {
-        User user = userService.getUserWithAuthoritiesByLogin(SecurityUtils.getCurrentUserLogin().orElseThrow(UserNotFoundException::new)).get();
-        addServerCredential(user, label, username, password);
+        Optional<User> optionalUser = userService.getUserWithAuthoritiesByLogin(SecurityUtils.getCurrentUserLogin().orElseThrow(UserNotFoundException::new));
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            addServerCredential(user, label, username, password);
+        }
     }
 
     public void removeServerCredential(String label) {
-        User user = userService.getUserWithAuthoritiesByLogin(SecurityUtils.getCurrentUserLogin().orElseThrow(UserNotFoundException::new)).get();
-        if (!user.getServerCredentials().isEmpty()) {
-            log.debug("Deleting server credential for user '{}' and server '{}'", user.getLogin(), label);
-            Map<String, Map<String, String>> serverCredentialMap = ServerCredentialsUtils.getInstance().getServerCredentialsMap();
-            if (!serverCredentialMap.isEmpty() && serverCredentialMap.get(user.getLogin()) != null) {
-                serverCredentialMap.get(user.getLogin()).remove(label);
+        Optional<User> optionalUser = userService.getUserWithAuthoritiesByLogin(SecurityUtils.getCurrentUserLogin().orElseThrow(UserNotFoundException::new));
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            if (!user.getServerCredentials().isEmpty()) {
+                log.debug("Deleting server credential for user '{}' and server '{}'", user.getLogin(), label);
+                Map<String, Map<String, String>> serverCredentialMap = ServerCredentialsUtils.getInstance().getServerCredentialsMap();
+                if (!serverCredentialMap.isEmpty() && serverCredentialMap.get(user.getLogin()) != null) {
+                    serverCredentialMap.get(user.getLogin()).remove(label);
+                }
+                user.getServerCredentials().remove(label);
+                userService.updateUser(new UserDTO(user));
             }
-            user.getServerCredentials().remove(label);
-            userService.updateUser(new UserDTO(user));
         }
     }
     // -------------------
@@ -696,22 +701,25 @@ public class ServerService {
         } else if (optionalServerByLabel.isPresent()) { // Server by id was not present but server exists by label
             log.error("Server already exists and a Server ID was not provided for update");
             throw new ServerLabelAlreadyExistsException();
-        } else { // Server was found by id or label
+        } else { // Server wasn't found by id or label
             return createServer(serverDTO);
         }
     }
 
     private void changeServerLabelForCredentials(ServerDTO serverDTO, TaxiiServer taxiiServer) {
-        User user = userService.getUserWithAuthoritiesByLogin(SecurityUtils.getCurrentUserLogin().orElseThrow(UserNotFoundException::new)).get();
-        Map<String,String> serverCredentialsMap = user.getServerCredentials();
-        Map<String,String> newServerCredentialMap = new HashMap<>();
-        String oldCredentials = serverCredentialsMap.get(taxiiServer.getLabel());
-        // Add new credentials
-        serverCredentialsMap.put(serverDTO.getLabel(), oldCredentials);
-        // Remove old credentials
-        serverCredentialsMap.remove(taxiiServer.getLabel());
-        user.setServerCredentials(serverCredentialsMap);
-        userService.updateUser(user);
+        Optional<User> optionalUser = userService.getUserWithAuthoritiesByLogin(SecurityUtils.getCurrentUserLogin().orElseThrow(UserNotFoundException::new));
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            Map<String, String> serverCredentialsMap = user.getServerCredentials();
+            Map<String, String> newServerCredentialMap = new HashMap<>();
+            String oldCredentials = serverCredentialsMap.get(taxiiServer.getLabel());
+            // Add new credentials
+            serverCredentialsMap.put(serverDTO.getLabel(), oldCredentials);
+            // Remove old credentials
+            serverCredentialsMap.remove(taxiiServer.getLabel());
+            user.setServerCredentials(serverCredentialsMap);
+            userService.updateUser(user);
+        }
     }
     // -------------------
 
@@ -752,8 +760,9 @@ public class ServerService {
      * @param server the TaxiiServer to clear caches for
      */
     private void clearServerCaches(TaxiiServer server) {
-        Objects.requireNonNull(cacheManager.getCache(ServerRepository.SERVERS_BY_ID_CACHE)).evict(server.getId());
-        Objects.requireNonNull(cacheManager.getCache(ServerRepository.SERVERS_BY_LABEL_CACHE)).evict(server.getLabel());
+        // TODO We need to investigate why evict() does not work here.
+        Objects.requireNonNull(cacheManager.getCache(ServerRepository.SERVERS_BY_ID_CACHE)).clear();
+        Objects.requireNonNull(cacheManager.getCache(ServerRepository.SERVERS_BY_LABEL_CACHE)).clear();
     }
 
     /**
