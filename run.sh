@@ -2,7 +2,7 @@
 
 docker rm -f flareclient
 docker run \
-    --network ais2 \
+    --network ais20 \
     -p 8082:8082 \
     --name flareclient \
     flareclient
