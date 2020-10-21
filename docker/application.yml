@@ -31,7 +31,7 @@ spring:
             enabled: false
     data:
         mongodb:
-            uri: mongodb://admin:QWASZX23wesdxc@flareclient-mongodb:27017
+            uri: mongodb://admin:QWASZX23wesdxc@flareclient-db:27017
             database: flareclient
     mail:
         host: localhost
@@ -135,7 +135,6 @@ flare:
         "urn:stix.mitre.org:xml:1.1.1",
         "urn:stix.mitre.org:xml:1.2"
         ]
-
     security:
         authentication:
             jwt:

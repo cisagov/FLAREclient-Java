@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.bcmc.xor.flare</groupId>
-    <artifactId>flareclient.backend</artifactId>
+    <artifactId>flareclient</artifactId>
     <version>0.0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
