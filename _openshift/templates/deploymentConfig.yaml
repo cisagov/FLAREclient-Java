@@ -54,15 +54,6 @@ objects:
                   mountPath: /mnt/secrets
                   readOnly: true
           serviceAccountName: "jboss-sa"
-          initContainers:
-            - name: wait-flareclient-db
-              image: ${DOCKER_REPO_URL}/rhscl/mongodb-36-rhel7
-              command: ["sh", "-c", "until nc -z -w 2 $(SVC_HOST) $(SVC_PORT) && echo host ready; do sleep 2; done"]
-              env:
-                - name: SVC_HOST
-                  value: "flareclient-db"
-                - name: SVC_PORT
-                  value: "27017"
           volumes:
             - name: secrets
               secret:
