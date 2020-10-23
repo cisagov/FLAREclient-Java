@@ -117,10 +117,9 @@ public class UploadServiceTaxii11Test {
         Map<String, UploadedFile> fileMap = new HashMap<>();
         fileMap.put("test.xml", uploadedFile);
 
-        ResponseEntity<String> response = uploadService.publish(TestData.taxii11Association, fileMap);
+        String response = uploadService.publish(TestData.taxii11Association, fileMap);
 
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals(TestData.successStatusMessage.getMessage(), response.getBody());
+        assertEquals(TestData.successStatusMessage.getMessage(), response);
 
     }
 
@@ -138,9 +137,8 @@ public class UploadServiceTaxii11Test {
         Map<String, UploadedFile> fileMap = new HashMap<>();
         fileMap.put("test.xml", uploadedFile);
 
-        ResponseEntity<String> response = uploadService.publish(TestData.taxii11Association, fileMap);
+        String response = uploadService.publish(TestData.taxii11Association, fileMap);
 
-        assertEquals(500, response.getStatusCodeValue());
-        assertEquals(TestData.failureStatusMessage.getMessage(), response.getBody());
+        assertEquals(TestData.failureStatusMessage.getMessage(), response);
     }
 }
