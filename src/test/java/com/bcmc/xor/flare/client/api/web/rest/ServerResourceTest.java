@@ -44,7 +44,6 @@ import static org.mockito.Mockito.when;
 @PrepareForTest(SecurityUtils.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @PowerMockIgnore("javax.management.*")
-
 public class ServerResourceTest {
 
     private ServerResource serverResource;

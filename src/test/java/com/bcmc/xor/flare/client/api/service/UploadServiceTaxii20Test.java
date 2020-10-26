@@ -111,10 +111,9 @@ public class UploadServiceTaxii20Test {
         Map<String, UploadedFile> fileMap = new HashMap<>();
         fileMap.put("test.json", uploadedFile);
 
-        ResponseEntity<String> response = uploadService.publish(TestData.taxii20Association, fileMap);
+        String response = uploadService.publish(TestData.taxii20Association, fileMap);
 
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals("Successfully published 1 bundle(s).", response.getBody());
+        assertEquals("Successfully published 1 bundle(s).", response);
 
     }
 
@@ -132,10 +131,9 @@ public class UploadServiceTaxii20Test {
         Map<String, UploadedFile> fileMap = new HashMap<>();
         fileMap.put("test.json", uploadedFile);
 
-        ResponseEntity<String> response = uploadService.publish(TestData.taxii20Association, fileMap);
+        String response = uploadService.publish(TestData.taxii20Association, fileMap);
 
-        assertEquals(500, response.getStatusCodeValue());
-        assertEquals("Failed to published 1 bundle(s).", response.getBody());
+        assertEquals("Failed to published 1 bundle(s).", response);
 
     }
 }
