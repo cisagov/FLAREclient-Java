@@ -13,9 +13,9 @@ objects:
     spec:
       ports:
       - nodePort: 0
-        port: 8081
+        port: 8083
         protocol: TCP
-        targetPort: 8081
+        targetPort: 8083
       sessionAffinity: None
       selector:
         name: flareclient
