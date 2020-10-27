@@ -31,7 +31,7 @@ spring:
             enabled: false
     data:
         mongodb:
-            uri: mongodb://FLARECLIENT_DB_USER:FLARECLIENT_DB_PASS@FLARECLIENT_DB_SVC_HOST:FLARECLIENT_DB_SVC_PORT
+            uri: mongodb://admin:QWASZX23wesdxc@flareclient-db:27017
             database: flareclient
     mail:
         host: localhost
