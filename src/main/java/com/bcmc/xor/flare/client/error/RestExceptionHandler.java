@@ -15,6 +15,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.validation.ConstraintViolationException;
+import java.util.Objects;
 
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -23,8 +24,22 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
 	// Default Handler for any all errors that don't have specified handlers
 	@ExceptionHandler({Exception.class})
-	protected ResponseEntity<Object> handleAll(Exception ex, WebRequest request) {
+	protected ResponseEntity<Object> handleAll(Exception ex) {
 		APIError apiError = new APIError(HttpStatus.INTERNAL_SERVER_ERROR);
+		apiError.setMessage(ex.getMessage());
+		return buildResponseEntity(apiError);
+	}
+
+	@ExceptionHandler(ServerCredentialsUnauthorizedException.class)
+	protected ResponseEntity<Object> handleServerCredentialsUnauthorizedException(ServerCredentialsUnauthorizedException ex) {
+		APIError apiError = new APIError(HttpStatus.UNAUTHORIZED);
+		apiError.setMessage(ex.getMessage());
+		return buildResponseEntity(apiError);
+	}
+
+	@ExceptionHandler(ServerDiscoveryException.class)
+	protected ResponseEntity<Object> handleServerCredentialsUnauthorizedException(ServerDiscoveryException ex) {
+		APIError apiError = new APIError(HttpStatus.BAD_REQUEST);
 		apiError.setMessage(ex.getMessage());
 		return buildResponseEntity(apiError);
 	}
@@ -145,14 +160,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 	@Override
 	protected ResponseEntity<Object> handleMissingPathVariable(MissingPathVariableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 		APIError apiError = new APIError(HttpStatus.BAD_REQUEST);
-		apiError.setMessage(ex.getMessage());
+		apiError.setMessage(Objects.requireNonNull(ex.getMessage()));
 		return buildResponseEntity(apiError);
 	}
 
 	@Override
 	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 		APIError apiError = new APIError(HttpStatus.BAD_REQUEST);
-		apiError.setMessage(ex.getMessage());
+		apiError.setMessage(Objects.requireNonNull(ex.getMessage()));
 		return buildResponseEntity(apiError);
 	}
 
