@@ -18,7 +18,7 @@ USER root
 RUN chmod 755 /opt/app/entrypoint.sh
 
 # Remove dev certs if not running locally
-RUN if [ "${USE_DEV_CERTS}" = "false" ] ; then rm /opt/app/wso2carbon.jks-unique_file_must_exist_for_icam; fi
+#RUN if [ "${USE_DEV_CERTS}" = "false" ] ; then rm /opt/app/wso2carbon.jks-unique_file_must_exist_for_icam; rm /opt/app/*.jks; fi
 WORKDIR /opt/app/
 RUN chmod g+w /opt/app/
 RUN chown -R jboss:jboss /opt/app/*
