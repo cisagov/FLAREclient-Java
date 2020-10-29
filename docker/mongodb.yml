@@ -1,6 +1,0 @@
-version: '2'
-services:
-    flareclient-mongodb:
-        image: mongo:3.6.3
-        ports:
-            - "27017:27017"

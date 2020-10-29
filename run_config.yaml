@@ -1,0 +1,10 @@
+env:
+- name: FLARECLIENT_DB_SVC_HOST
+  value: "flareclient-db"
+- name: FLARECLIENT_DB_SVC_PORT
+  value: "27017"
+- name: VERIFY_HOST
+  value: "false"
+build_script: "build-docker-image.sh"
+run_script: "run.sh"
+ready_string: "Started FLAREclient"

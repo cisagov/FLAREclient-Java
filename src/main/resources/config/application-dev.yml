@@ -41,6 +41,8 @@ spring:
         cache-duration: PT1S # 1 second, see the ISO 8601 standard
     thymeleaf:
         cache: false
+
+jhipster:
     async:
         core-pool-size: 8
         max-pool-size: 64

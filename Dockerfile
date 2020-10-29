@@ -1,25 +1,27 @@
-FROM openjdk:8-jre-alpine
+FROM docker.artifactory.apps.ecicd.dso.ncps.us-cert.gov/openjdk/openjdk-8-rhel8:1.3-2
 
-ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS \
-    JHIPSTER_SLEEP=0 \
-    JAVA_OPTS=""
+# USE_DEV_CERTS - when set to true, it is used to
+# load certificates for images created locally,
+# otherwise no certs / keys will be bundled into the image
+ARG USE_DEV_CERTS="false"
 
-# Add a user to run our application so that it doesn't need to run as root
-RUN adduser -D -s /bin/sh flare
-WORKDIR /home/flare
+# Add application
+ADD target/*SNAPSHOT.jar            /opt/app/app.jar
+ADD src/main/resources/schemas/     /opt/app/schemas/
+ADD src/main/resources/i18n/        /opt/app/i18n/
+ADD src/main/resources/templates/   /opt/app/templates/
+ADD src/main/resources/*            /opt/app/
+ADD docker/*                        /opt/app/
 
-ADD docker/entrypoint.sh entrypoint.sh
-RUN chmod 755 entrypoint.sh && chown flare:flare entrypoint.sh
-USER flare
+USER root
 
-ADD target/*.jar app.jar
-ADD src/main/resources/schemas/ schemas/
-ADD src/main/resources/i18n/ i18n/
-ADD src/main/resources/templates/ templates/
-ADD src/main/resources/* /home/flare/
-ADD docker/application.yml application.yml
+RUN chmod 755 /opt/app/entrypoint.sh
 
-ENTRYPOINT ["./entrypoint.sh"]
-
-EXPOSE 8080
+# Remove dev certs if not running locally
+#RUN if [ "${USE_DEV_CERTS}" = "false" ] ; then rm /opt/app/wso2carbon.jks-unique_file_must_exist_for_icam; rm /opt/app/*.jks; fi
+WORKDIR /opt/app/
+RUN chmod g+w /opt/app/
+RUN chown -R jboss:jboss /opt/app/*
+USER jboss
+ENTRYPOINT [ "./entrypoint.sh" ]
 

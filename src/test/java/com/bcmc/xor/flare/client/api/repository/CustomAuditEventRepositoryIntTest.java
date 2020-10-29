@@ -1,5 +1,6 @@
 package com.bcmc.xor.flare.client.api.repository;
 
+import com.bcmc.xor.flare.client.CustomTestExecutionListener;
 import com.bcmc.xor.flare.client.api.FlareclientApp;
 import com.bcmc.xor.flare.client.api.config.Constants;
 import com.bcmc.xor.flare.client.api.config.audit.AuditEventConverter;
@@ -13,7 +14,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import javax.servlet.http.HttpSession;
 import java.time.Instant;
@@ -31,8 +35,8 @@ import static com.bcmc.xor.flare.client.api.repository.CustomAuditEventRepositor
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = FlareclientApp.class)
+@TestExecutionListeners(value = {CustomTestExecutionListener.class, DependencyInjectionTestExecutionListener.class})
 public class CustomAuditEventRepositoryIntTest {
-
     @Autowired
     private PersistenceAuditEventRepository persistenceAuditEventRepository;
 
