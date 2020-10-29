@@ -25,6 +25,6 @@ public class ResponseUtil {
      */
     public static <X> ResponseEntity<X> wrapOrNotFound(Optional<X> maybeResponse, HttpHeaders header) {
         return maybeResponse.map(response -> ResponseEntity.ok().headers(header).body(response))
-                .orElse(new ResponseEntity(new EmptyJsonResponse(), HttpStatus.OK));
+                .orElse(new ResponseEntity(new EmptyJsonResponse(), HttpStatus.NOT_FOUND));
     }
 }

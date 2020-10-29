@@ -10,7 +10,9 @@ import com.bcmc.xor.flare.client.api.domain.server.TaxiiServer;
 import com.bcmc.xor.flare.client.api.service.CollectionService;
 import com.bcmc.xor.flare.client.api.service.ServerService;
 import com.bcmc.xor.flare.client.api.service.UserService;
+import com.bcmc.xor.flare.client.error.CollectionNotFoundException;
 import com.bcmc.xor.flare.client.error.NotFoundException;
+import com.bcmc.xor.flare.client.error.ServerNotFoundException;
 import com.bcmc.xor.flare.client.taxii.taxii11.Taxii11Association;
 import com.bcmc.xor.flare.client.taxii.taxii20.Taxii20Association;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -56,15 +58,15 @@ public class TaxiiAssociation <Server extends TaxiiServer, Collection extends Ta
     }
 
     public static TaxiiAssociation from(String label, String collectionId, ServerService serverService, CollectionService collectionService) {
-        TaxiiServer server = serverService.findOneByLabel(label).orElseThrow(NotFoundException::new);
-        TaxiiCollection collection = collectionService.findOneById(collectionId).orElseThrow(NotFoundException::new);
+        TaxiiServer server = serverService.findOneByLabel(label).orElseThrow(ServerNotFoundException::new);
+        TaxiiCollection collection = collectionService.findOneById(collectionId).orElseThrow(CollectionNotFoundException::new);
         switch (server.getVersion()) {
             case TAXII21:
                 return new Taxii20Association((Taxii20Server) server, (Taxii20Collection) collection, null);
             case TAXII11:
                 return new Taxii11Association((Taxii11Server) server, (Taxii11Collection) collection, null);
             default:
-                throw new IllegalStateException("Server does not have a verison: " + server.getId());
+                throw new IllegalStateException("Server does not have a version: " + server.getId());
         }
     }
 

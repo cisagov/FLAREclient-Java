@@ -10,6 +10,7 @@ import org.springframework.data.annotation.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.Instant;
+import java.util.HashSet;
 
 /**
  *  * A DTO representing a server
@@ -30,6 +31,9 @@ public class ServerDTO {
     @NotBlank
     @Size(max = 255)
     private String url;
+
+    @Size(max = 5000)
+    private String serverDescription;
 
     private Constants.TaxiiVersion version;
 
@@ -53,6 +57,10 @@ public class ServerDTO {
 
     private String password;
 
+    private String defaultApiRoot;
+
+    private HashSet<String> apiRoots;
+
     public ServerDTO() {
     }
 
@@ -61,6 +69,7 @@ public class ServerDTO {
         this.label = server.getLabel();
         this.url = server.getUrl() == null ? null : server.getUrl().toString();
         this.version = server.getVersion();
+        this.serverDescription = server.getServerDescription();
         this.isAvailable = server.isAvailable();
         this.hasReceivedServerInformation = server.hasReceivedServerInformation();
         this.hasReceivedCollectionInformation = server.hasReceivedCollectionInformation();
@@ -72,6 +81,8 @@ public class ServerDTO {
             this.hasCredentials = ServerCredentialsUtils.getInstance().getServerCredentialsMap().get(SecurityUtils.getCurrentUserLogin().get()) != null
                 && ServerCredentialsUtils.getInstance().getServerCredentialsMap().get(SecurityUtils.getCurrentUserLogin().get()).containsKey(this.getLabel());
         }
+        this.defaultApiRoot = server.getDefaultApiRoot();
+        this.apiRoots = server.getApiRoots();
     }
 
 
@@ -110,6 +121,14 @@ public class ServerDTO {
 
     public void setVersion(Constants.TaxiiVersion version) {
         this.version = version;
+    }
+
+    public String getServerDescription() {
+        return serverDescription;
+    }
+
+    public void setServerDescription(String serverDescription) {
+        this.serverDescription = serverDescription;
     }
 
     public boolean isAvailable() {
@@ -191,5 +210,21 @@ public class ServerDTO {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getDefaultApiRoot() {
+        return defaultApiRoot;
+    }
+
+    public void setDefaultApiRoot(String defaultApiRoot) {
+        this.defaultApiRoot = defaultApiRoot;
+    }
+
+    public HashSet<String> getApiRoots() {
+        return apiRoots;
+    }
+
+    public void setApiRoots(HashSet<String> apiRoots) {
+        this.apiRoots = apiRoots;
     }
 }

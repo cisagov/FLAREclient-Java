@@ -20,6 +20,7 @@ import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerF
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -33,6 +34,8 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 
 import static java.net.URLDecoder.decode;
@@ -47,14 +50,25 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
 
     private final Environment env;
     private String httpVersion;
+    private String allowedOrigins;
+    private boolean allowCredentials;
+    private long maxAge;
 
 
     private MetricRegistry metricRegistry;
 
-    public WebConfigurer(Environment env, @Value("${jhipster.http.version}") String httpVersion) {
+    public WebConfigurer(Environment env,
+                         @Value("${spring.http.version}") String httpVersion,
+                         @Value("${spring.http.cors.allowed-origins}") String allowedOrigins,
+                         @Value("${spring.http.cors.allow-credentials}") boolean allowCredentials,
+                         @Value("${spring.http.cors.max-age}") int maxAge
+    ) {
 
         this.env = env;
         this.httpVersion = httpVersion;
+        this.allowedOrigins = allowedOrigins;
+        this.allowCredentials = allowCredentials;
+        this.maxAge = maxAge;
     }
 
     @Override
@@ -97,7 +111,6 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
     private void setMimeMappings(WebServerFactory server) {
         if (server instanceof ConfigurableServletWebServerFactory) {
             MimeMappings mappings = new MimeMappings(MimeMappings.DEFAULT);
-            // IE issue, see https://github.com/jhipster/generator-jhipster/pull/711
             mappings.add("html", MediaType.TEXT_HTML_VALUE + ";charset=" + StandardCharsets.UTF_8.name().toLowerCase());
             // CloudFoundry issue, see https://github.com/cloudfoundry/gorouter/issues/64
             mappings.add("json", MediaType.TEXT_HTML_VALUE + ";charset=" + StandardCharsets.UTF_8.name().toLowerCase());
@@ -184,6 +197,15 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
+        config.applyPermitDefaultValues();
+        config.addAllowedMethod("PUT");
+        config.addAllowedMethod("DELETE");
+        config.addAllowedMethod("OPTIONS");
+        // config values from application.yml file
+        config.setAllowedOrigins(Collections.singletonList(allowedOrigins));
+        config.setAllowCredentials(allowCredentials);
+        config.setMaxAge(maxAge);
+
         if (config.getAllowedOrigins() != null && !config.getAllowedOrigins().isEmpty()) {
             log.debug("Registering CORS filter");
             source.registerCorsConfiguration("/api/**", config);

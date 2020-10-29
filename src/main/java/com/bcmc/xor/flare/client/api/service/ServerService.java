@@ -13,6 +13,7 @@ import com.bcmc.xor.flare.client.api.service.dto.ServerDTO;
 import com.bcmc.xor.flare.client.api.service.dto.ServersDTO;
 import com.bcmc.xor.flare.client.api.service.dto.UserDTO;
 import com.bcmc.xor.flare.client.error.*;
+import org.apache.commons.lang3.StringUtils;
 import org.mitre.taxii.messages.xml11.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,13 +26,13 @@ import xor.bcmc.taxii2.JsonHandler;
 import xor.bcmc.taxii2.resources.Collections;
 import xor.bcmc.taxii2.resources.Discovery;
 
+import javax.annotation.Nonnull;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("unused")
 @Service
 public class ServerService {
 
@@ -192,13 +193,14 @@ public class ServerService {
      * @return the updated server
      */
     private Taxii11Server refreshServer(Taxii11Server server) {
-        DiscoveryResponse response = null;
+        DiscoveryResponse response;
         try {
             response = getTaxiiService().getTaxii11RestTemplate().submitDiscovery(server);
         } catch (RequestException | RestClientException e) {
             if (e.getMessage().contains("Unauthorized")) {
                 log.info("Received a 401 - Unauthorized in response to a discovery request. This indicates bad Basic Auth credentials.");
                 removeServerCredential(server.getLabel());
+                throw new AuthenticationFailureException();
             }
             server.setAvailable(false);
             server.setHasReceivedServerInformation(false);
@@ -208,6 +210,7 @@ public class ServerService {
             serverRepository.save(server);
             clearServerCaches(server);
             eventService.createEvent(EventType.SERVER_UNAVAILABLE, String.format("Failed to update server information for '%s'. %s", server.getLabel(), e.getMessage()), server.getLabel());
+            throw new ServerDiscoveryException();
         }
         return refreshServer(server, response);
     }
@@ -257,7 +260,7 @@ public class ServerService {
             log.info("Received server information for server '{}' ({})", server.getLabel(), server.getId());
             server.setLastReceivedServerInformation(Instant.now());
         } else {
-            log.warn("Failed to retrieve server information for server '{}' ({})", server.getLabel(), server.getId());
+            log.error("Failed to retrieve server information for server '{}' ({})", server.getLabel(), server.getId());
         }
     }
 
@@ -409,17 +412,40 @@ public class ServerService {
      * @return the updated server
      */
     private Taxii20Server refreshServer(Taxii20Server server) {
-        return refreshServer(server, getTaxiiService().getTaxii20RestTemplate().discovery(server));
+
+        Discovery discovery;
+        try {
+            discovery = getTaxiiService().getTaxii20RestTemplate().discovery(server);
+        } catch (RequestException | RestClientException e) {
+            if (e.getMessage().contains("Unauthorized")) {
+                log.info("Received a 401 - Unauthorized in response to a discovery request. This indicates bad Basic Auth credentials.");
+                removeServerCredential(server.getLabel());
+                throw new AuthenticationFailureException();
+            }
+            server.setAvailable(false);
+            server.setHasReceivedServerInformation(false);
+            server.setHasReceivedCollectionInformation(false);
+
+            serverRepository.save(server);
+            clearServerCaches(server);
+            eventService.createEvent(EventType.SERVER_UNAVAILABLE, String.format("Failed to update server information for '%s'. %s", server.getLabel(), e.getMessage()), server.getLabel());
+            throw new ServerDiscoveryException();
+        }
+
+        Taxii20Server taxii20Server = refreshServer(server, discovery);
+        return taxii20Server;
     }
 
     /**
      * Updates all information for a server
      *
-     * @param server    the server to update
+     * @param server the server to update
+     * @param discovery - discovery endpoint information for the server
      * @return the updated server
      */
     private Taxii20Server refreshServer(Taxii20Server server, Discovery discovery) {
         log.info("Updating information for server '{}'", server.getLabel());
+
         updateServerInformation(server, discovery);
         if (server.hasReceivedServerInformation()) {
             updateApiRootInformation(server);
@@ -445,7 +471,7 @@ public class ServerService {
      *                                         Discovery requests
      */
     private Object attemptVersionDiscovery(ServerDTO serverDTO) {
-        checkNewServerCredentials(serverDTO);
+//        checkNewServerCredentials(serverDTO);
 
         Object discoveryObject = null;
 
@@ -453,20 +479,35 @@ public class ServerService {
         try {
             discoveryObject = taxiiService.getTaxii20RestTemplate().discovery(serverDTO);
         } catch (RequestException e) {
-            log.warn("Encountered request exception: {}", e.getMessage());
+            log.info("Encountered request exception: {}", e.getMessage());
+            if (StringUtils.containsIgnoreCase(e.getMessage(),"UNAUTHORIZED")) {
+                removeServerCredential(serverDTO.getLabel());
+                throw new ServerCredentialsUnauthorizedException();
+            }
         } catch (Exception e) {
-            e.printStackTrace();
-            log.warn("Couldn't parse response: {}", e.getMessage());
+            log.error("Couldn't parse response: {}", e.getMessage());
         }
 
-        log.info("Trying 1.1 discovery against '{}'...", serverDTO.getUrl());
-        try {
-            discoveryObject = taxiiService.getTaxii11RestTemplate().submitDiscovery(serverDTO);
-        } catch (RequestException e) {
-            log.warn("Encountered request exception: {}", e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.warn("Couldn't parse response: {}", e.getMessage());
+        if (discoveryObject == null) {
+            log.info("Trying 1.1 discovery against '{}'...", serverDTO.getUrl());
+            try {
+                discoveryObject = taxiiService.getTaxii11RestTemplate().submitDiscovery(serverDTO);
+            } catch (RequestException e) {
+                log.error("Encountered request exception: {}", e.getMessage());
+                if (StringUtils.containsIgnoreCase(e.getMessage(), "UNAUTHORIZED")) {
+                    removeServerCredential(serverDTO.getLabel());
+                    throw new ServerCredentialsUnauthorizedException();
+                } else {
+                    throw new ServerCreationException();
+                }
+            } catch (Exception e) {
+                log.error("Couldn't parse response: {}", e.getMessage());
+            }
+        }
+
+        if (discoveryObject == null) {
+            log.error("Discovery failed for {} and URL {}", serverDTO.getLabel(), serverDTO.getUrl());
+            throw new ServerDiscoveryException();
         }
 
         return discoveryObject;
@@ -481,6 +522,7 @@ public class ServerService {
      *                                         Discovery requests
      */
     public TaxiiServer createServer(ServerDTO serverDTO) {
+        checkNewServerCredentials(serverDTO);
         Object response = attemptVersionDiscovery(serverDTO);
         TaxiiServer server = null;
         if (response instanceof Discovery) {
@@ -496,13 +538,10 @@ public class ServerService {
         }
 
         if (server == null) {
-            eventService.createEvent(EventType.SERVER_UNAVAILABLE, String.format("Error configuring server '%s', or server unavailable", serverDTO.getLabel()), serverDTO.getLabel());
-            server = new TemporaryServer();
-            server.setLabel(serverDTO.getLabel());
-            server.setUrl(URI.create(serverDTO.getUrl()));
-            server.setVersion(Constants.TaxiiVersion.UNKNOWN);
-            ((TemporaryServer) server).setFailure(true);
-            server = serverRepository.save(server);
+            String errorMessage = String.format("Error configuring server '%s', or server unavailable", serverDTO.getLabel());
+            eventService.createEvent(EventType.SERVER_UNAVAILABLE, errorMessage, serverDTO.getLabel());
+            log.error(errorMessage);
+            throw new ServerCreationException();
         } else {
             eventService.createEvent(EventType.SERVER_ADDED, String.format("Created the '%s' server", serverDTO.getLabel()), serverDTO.getLabel());
             clearServerCaches(server);
@@ -565,13 +604,21 @@ public class ServerService {
     private void checkNewServerCredentials(ServerDTO serverDTO) {
         log.debug("Checking new server credentials for '{}'", serverDTO.getLabel());
         String login = SecurityUtils.getCurrentUserLogin().orElseThrow(IllegalStateException::new);
-        if (serverDTO.getRequiresBasicAuth()) {
+        if (serverDTO.getRequiresBasicAuth() && StringUtils.isNotBlank(serverDTO.getUsername()) && StringUtils.isNotBlank(serverDTO.getUsername())) {
+            // Check new server credentials
             User user = userService.getUserWithAuthoritiesByLogin(login).orElseThrow(NotFoundException::new);
             Map<String, String> serverCredentialsForUser = ServerCredentialsUtils.getInstance().getServerCredentialsMap().get(user.getLogin());
-
             if (serverCredentialsForUser == null || !serverCredentialsForUser.containsKey(serverDTO.getLabel())) {
+//                attemptVersionDiscovery(serverDTO);
                 addServerCredential(user, serverDTO.getLabel(), serverDTO.getUsername(), serverDTO.getPassword());
             }
+            if (Objects.requireNonNull(serverCredentialsForUser).containsKey(serverDTO.getLabel())) {
+                removeServerCredential(serverDTO.getLabel());
+                addServerCredential(user, serverDTO.getLabel(), serverDTO.getUsername(), serverDTO.getPassword());
+            }
+            attemptVersionDiscovery(serverDTO);
+        } else if (serverDTO.getRequiresBasicAuth() && (StringUtils.isBlank(serverDTO.getUsername()) || StringUtils.isBlank(serverDTO.getUsername()))) {
+            throw new IllegalStateException("checkNewServerCredentials was called with missing information in serverDTO");
         }
     }
 
@@ -585,17 +632,26 @@ public class ServerService {
     }
 
     public void addServerCredential(String label, String username, String password) {
-        User user = userService.getUserWithAuthoritiesByLogin(SecurityUtils.getCurrentUserLogin().orElseThrow(UserNotFoundException::new)).orElseThrow(UserNotFoundException::new);
-        addServerCredential(user, label, username, password);
+        Optional<User> optionalUser = userService.getUserWithAuthoritiesByLogin(SecurityUtils.getCurrentUserLogin().orElseThrow(UserNotFoundException::new));
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            addServerCredential(user, label, username, password);
+        }
     }
 
     public void removeServerCredential(String label) {
-        User user = userService.getUserWithAuthoritiesByLogin(SecurityUtils.getCurrentUserLogin().orElseThrow(UserNotFoundException::new)).orElseThrow(UserNotFoundException::new);
-        if (!user.getServerCredentials().isEmpty()) {
-            log.debug("Deleting server credential for user '{}' and server '{}'", user.getLogin(), label);
-            user.getServerCredentials().remove(label);
-            ServerCredentialsUtils.getInstance().getServerCredentialsMap().get(user.getLogin()).remove(label);
-            userService.updateUser(new UserDTO(user));
+        Optional<User> optionalUser = userService.getUserWithAuthoritiesByLogin(SecurityUtils.getCurrentUserLogin().orElseThrow(UserNotFoundException::new));
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            if (!user.getServerCredentials().isEmpty()) {
+                log.debug("Deleting server credential for user '{}' and server '{}'", user.getLogin(), label);
+                Map<String, Map<String, String>> serverCredentialMap = ServerCredentialsUtils.getInstance().getServerCredentialsMap();
+                if (!serverCredentialMap.isEmpty() && serverCredentialMap.get(user.getLogin()) != null) {
+                    serverCredentialMap.get(user.getLogin()).remove(label);
+                }
+                user.getServerCredentials().remove(label);
+                userService.updateUser(new UserDTO(user));
+            }
         }
     }
     // -------------------
@@ -643,26 +699,45 @@ public class ServerService {
     /**
      * Updates a server based on a ServerDTO
      *
-     * Will only update the label and url fields.
+     * Will only update the label, url, and serverDescription fields.
      * Will call {@link #refreshServer(Taxii11Server)} or {@link #refreshServer(Taxii20Server)} depending on the version.
      *
      * If the provided ServerDTO (must have an 'id') does not already exist, will call {@link #createServer(ServerDTO)}
      *
-     * @param serverDTO the ServerDTO containing an 'id', 'url', and 'label' for updating
+     * @param serverDTO the ServerDTO containing an 'id', 'url', 'serverDescription' and 'label' for updating
      * @return the created or updated server
      * @throws IllegalStateException if the provided server does not have a version
      */
-    public TaxiiServer updateServer(ServerDTO serverDTO) {
+    public TaxiiServer updateServer(@Nonnull ServerDTO serverDTO) {
         Optional<TaxiiServer> optionalServer = serverRepository.findOneById(serverDTO.getId());
         Optional<TaxiiServer> optionalServerByLabel = serverRepository.findOneByLabelIgnoreCase(serverDTO.getLabel());
+        // Server exists and server id was passed
         if (optionalServer.isPresent()) {
+            // Check for trying to change label to an existing label
+            if (optionalServerByLabel.isPresent()
+                    && StringUtils.equalsIgnoreCase(serverDTO.getLabel(), optionalServerByLabel.get().getLabel())
+                    && !serverDTO.getId().equals(optionalServerByLabel.get().getId())) {
+                throw new ServerLabelAlreadyExistsException();
+            }
             TaxiiServer taxiiServer = optionalServer.get();
-            taxiiServer.setLabel(serverDTO.getLabel());
             taxiiServer.setUrl(URI.create(serverDTO.getUrl()));
-            if (serverDTO.getRequiresBasicAuth()) {
+            taxiiServer.setServerDescription(serverDTO.getServerDescription());
+            if (serverDTO.getRequiresBasicAuth() && StringUtils.isNotBlank(serverDTO.getUsername()) && StringUtils.isNotBlank(serverDTO.getPassword())) {
                 checkNewServerCredentials(serverDTO);
                 taxiiServer.setRequiresBasicAuth(true);
+            } else if (!serverDTO.getRequiresBasicAuth()) {
+                taxiiServer.setRequiresBasicAuth(false);
+                this.removeServerCredential(serverDTO.getLabel());
             }
+            // Handle label change with credentials
+            if (!StringUtils.equalsIgnoreCase(serverDTO.getLabel(), taxiiServer.getLabel())
+                    && taxiiServer.getRequiresBasicAuth()
+                    && StringUtils.isBlank(serverDTO.getUsername())
+                    && StringUtils.isBlank(serverDTO.getPassword())) {
+                changeServerLabelForCredentials(serverDTO, taxiiServer);
+            }
+            taxiiServer.setLabel(serverDTO.getLabel());
+
             switch (taxiiServer.getVersion()) {
                 case TAXII21:
                     refreshServer((Taxii20Server) taxiiServer);
@@ -678,11 +753,28 @@ public class ServerService {
                     throw new IllegalStateException("Cannot update server; no version present");
             }
             return taxiiServer;
-        } else if (optionalServerByLabel.isPresent()) {
+        } else if (optionalServerByLabel.isPresent()) { // Server by id was not present but server exists by label
+            log.error("Server already exists and a Server ID was not provided for update");
             throw new ServerLabelAlreadyExistsException();
+        } else { // Server wasn't found by id or label
+            return createServer(serverDTO);
         }
+    }
 
-        return createServer(serverDTO);
+    private void changeServerLabelForCredentials(ServerDTO serverDTO, TaxiiServer taxiiServer) {
+        Optional<User> optionalUser = userService.getUserWithAuthoritiesByLogin(SecurityUtils.getCurrentUserLogin().orElseThrow(UserNotFoundException::new));
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            Map<String, String> serverCredentialsMap = user.getServerCredentials();
+            Map<String, String> newServerCredentialMap = new HashMap<>();
+            String oldCredentials = serverCredentialsMap.get(taxiiServer.getLabel());
+            // Add new credentials
+            serverCredentialsMap.put(serverDTO.getLabel(), oldCredentials);
+            // Remove old credentials
+            serverCredentialsMap.remove(taxiiServer.getLabel());
+            user.setServerCredentials(serverCredentialsMap);
+            userService.updateUser(user);
+        }
     }
     // -------------------
 
@@ -712,6 +804,8 @@ public class ServerService {
                     log.info("Deleting Server '{}'", label);
                     serverRepository.delete(server);
                     this.clearServerCaches(server);
+                    log.info("Delete server credentials for Server '{}'", label);
+                    this.removeServerCredential(label);
                     eventService.createEvent(EventType.SERVER_DELETED, String.format("Deleted the '%s' server", label), label);
             }
         });
@@ -723,8 +817,9 @@ public class ServerService {
      * @param server the TaxiiServer to clear caches for
      */
     private void clearServerCaches(TaxiiServer server) {
-        Objects.requireNonNull(cacheManager.getCache(ServerRepository.SERVERS_BY_ID_CACHE)).evict(server.getId());
-        Objects.requireNonNull(cacheManager.getCache(ServerRepository.SERVERS_BY_LABEL_CACHE)).evict(server.getLabel());
+        // TODO We need to investigate why evict() does not work here.
+        Objects.requireNonNull(cacheManager.getCache(ServerRepository.SERVERS_BY_ID_CACHE)).clear();
+        Objects.requireNonNull(cacheManager.getCache(ServerRepository.SERVERS_BY_LABEL_CACHE)).clear();
     }
 
     /**

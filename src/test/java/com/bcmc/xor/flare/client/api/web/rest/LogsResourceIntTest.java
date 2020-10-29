@@ -58,7 +58,7 @@ public class LogsResourceIntTest {
         restLogsMockMvc.perform(put("/management/logs")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(logger)))
-            .andExpect(status().isNoContent());
+            .andExpect(status().isOk());
     }
 
 //    @Test //we're not currently using logstash

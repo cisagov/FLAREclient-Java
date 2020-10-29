@@ -1,8 +1,7 @@
 # ===================================================================
 # Spring Boot configuration.
 #
-# More information on profiles: https://www.jhipster.tech/profiles/
-# More information on configuration properties: https://www.jhipster.tech/common-application-properties/
+# More information on profiles: https://docs.spring.io/spring-boot/docs/1.2.0.M1/reference/html/boot-features-profiles.html
 # ===================================================================
 
 # ===================================================================
@@ -33,13 +32,46 @@ spring:
         mongodb:
             uri: mongodb://admin:QWASZX23wesdxc@flareclient-db:27017
             database: flareclient
+    async:
+        core-pool-size: 8
+        max-pool-size: 64
+        queue-capacity: 10000
+    http:
+        version: V_1_1 # To use HTTP/2 (V_2_0) you will need SSL support (see above the "server.ssl" configuration)
+        # By default CORS is disabled. Uncomment to enable.
+        #cors:
+        #allowed-origins: "*"
+        #allowed-methods: "*"
+        #allowed-headers: "*"
+        #exposed-headers: "Authorization,Link,X-Total-Count"
+        #allow-credentials: true
+        #max-age: 1800
     mail:
         host: localhost
         port: 25
         username:
         password:
+        from: temp@localhost
+        base-url: http://127.0.0.1:8080 # Modify according to your server's URL
     thymeleaf:
         mode: HTML
+    metrics: # DropWizard Metrics configuration, used by MetricsConfiguration
+        jmx:
+            enabled: true
+        logs: # Reports Dropwizard metrics in the logs
+            enabled: false
+            report-frequency: 60 # in seconds
+    swagger:
+        default-include-pattern: /api/.*
+        title: temp API
+        description: temp API documentation
+        version: 0.0.1
+        terms-of-service-url:
+        contact-name:
+        contact-url:
+        contact-email:
+        license:
+        license-url:
 
 # ===================================================================
 # To enable SSL, generate a certificate using:
@@ -70,54 +102,8 @@ server:
         keyAlias: demouser
 
 # ===================================================================
-# JHipster specific properties
-#
-# Full reference is available at: https://www.jhipster.tech/common-application-properties/
-# ===================================================================
-
-jhipster:
-    async:
-        core-pool-size: 8
-        max-pool-size: 64
-        queue-capacity: 10000
-    http:
-        version: V_1_1 # To use HTTP/2 (V_2_0) you will need SSL support (see above the "server.ssl" configuration)
-    # By default CORS is disabled. Uncomment to enable.
-    #cors:
-        #allowed-origins: "*"
-        #allowed-methods: "*"
-        #allowed-headers: "*"
-        #exposed-headers: "Authorization,Link,X-Total-Count"
-        #allow-credentials: true
-        #max-age: 1800
-    mail:
-        from: temp@localhost
-        base-url: http://127.0.0.1:8080 # Modify according to your server's URL
-    metrics: # DropWizard Metrics configuration, used by MetricsConfiguration
-        jmx:
-            enabled: true
-        logs: # Reports Dropwizard metrics in the logs
-            enabled: false
-            report-frequency: 60 # in seconds
-    swagger:
-        default-include-pattern: /api/.*
-        title: temp API
-        description: temp API documentation
-        version: 0.0.1
-        terms-of-service-url:
-        contact-name:
-        contact-url:
-        contact-email:
-        license:
-        license-url:
-
-# ===================================================================
 # Application specific properties
 # Add your own application properties here, see the ApplicationProperties class
-# to have type-safe configuration, like in the JHipsterProperties above
-#
-# More documentation is available at:
-# https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
 # application:

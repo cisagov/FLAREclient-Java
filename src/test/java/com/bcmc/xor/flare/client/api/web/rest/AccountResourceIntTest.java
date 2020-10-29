@@ -104,7 +104,7 @@ public class AccountResourceIntTest {
         restUserMockMvc.perform(get("/api/authenticate")
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(content().string(""));
+            .andExpect(content().string("[null]"));
     }
 
     @Test
@@ -116,7 +116,7 @@ public class AccountResourceIntTest {
             })
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(content().string("test"));
+            .andExpect(content().string("[\"test\"]"));
     }
 
     @Test
@@ -130,7 +130,7 @@ public class AccountResourceIntTest {
         user.setLogin("test");
         user.setFirstName("john");
         user.setLastName("doe");
-        user.setEmail("john.doe@jhipster.com");
+        user.setEmail("john.doe@mail.com");
         user.setImageUrl("http://placehold.it/50x50");
         user.setLangKey("en");
         user.setAuthorities(authorities);
@@ -143,7 +143,7 @@ public class AccountResourceIntTest {
             .andExpect(jsonPath("$.login").value("test"))
             .andExpect(jsonPath("$.firstName").value("john"))
             .andExpect(jsonPath("$.lastName").value("doe"))
-            .andExpect(jsonPath("$.email").value("john.doe@jhipster.com"))
+            .andExpect(jsonPath("$.email").value("john.doe@mail.com"))
             .andExpect(jsonPath("$.imageUrl").value("http://placehold.it/50x50"))
             .andExpect(jsonPath("$.langKey").value("en"))
             .andExpect(jsonPath("$.authorities").value(AuthoritiesConstants.ADMIN));
@@ -250,30 +250,28 @@ public class AccountResourceIntTest {
         assertThat(user.isPresent()).isFalse();
     }
 
+    @Test
+    public void testRegisterNullPassword() throws Exception {
+        ManagedUserVM invalidUser = new ManagedUserVM();
+        invalidUser.setLogin("bob");
+        invalidUser.setPassword(""); 
+        invalidUser.setFirstName("Bob");
+        invalidUser.setLastName("Green");
+        invalidUser.setEmail("bob@example.com");
+        invalidUser.setActivated(true);
+        invalidUser.setImageUrl("http://placehold.it/50x50");
+        invalidUser.setLangKey(Constants.DEFAULT_LANGUAGE);
+        invalidUser.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
 
-    // TODO FIX THIS TEST
-//    @Test
-//    public void testRegisterNullPassword() throws Exception {
-//        ManagedUserVM invalidUser = new ManagedUserVM();
-//        invalidUser.setLogin("bob");
-//        invalidUser.setPassword(null);// invalid null password
-//        invalidUser.setFirstName("Bob");
-//        invalidUser.setLastName("Green");
-//        invalidUser.setEmail("bob@example.com");
-//        invalidUser.setActivated(true);
-//        invalidUser.setImageUrl("http://placehold.it/50x50");
-//        invalidUser.setLangKey(Constants.DEFAULT_LANGUAGE);
-//        invalidUser.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
-//
-//        restUserMockMvc.perform(
-//            post("/api/register")
-//                .contentType(TestUtil.APPLICATION_JSON_UTF8)
-//                .content(TestUtil.convertObjectToJsonBytes(invalidUser)))
-//            .andExpect(status().isBadRequest());
-//
-//        Optional<User> user = userRepository.findOneByLogin("bob");
-//        assertThat(user.isPresent()).isFalse();
-//    }
+	restUserMockMvc.perform(
+				post("/api/register")
+				.contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(invalidUser)))
+	    .andExpect(status().isBadRequest());
+
+	Optional<User> user = userRepository.findOneByLogin("bob");
+	assertThat(user.isPresent()).isFalse();
+    }
 
     @Test
     public void testRegisterDuplicateLogin() throws Exception {
@@ -432,7 +430,7 @@ public class AccountResourceIntTest {
         userRepository.save(user);
 
         restMvc.perform(get("/api/activate?key={activationKey}", activationKey))
-            .andExpect(status().isOk());
+            .andExpect(status().isCreated());
 
         user = userRepository.findOneByLogin(user.getLogin()).orElse(null);
         assertThat(user.getActivated()).isTrue();
@@ -441,7 +439,7 @@ public class AccountResourceIntTest {
     @Test
     public void testActivateAccountWithWrongKey() throws Exception {
         restMvc.perform(get("/api/activate?key=wrongActivationKey"))
-            .andExpect(status().isNotFound());
+            .andExpect(status().isConflict());
     }
 
     @Test
@@ -469,7 +467,7 @@ public class AccountResourceIntTest {
             post("/api/account")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(userDTO)))
-            .andExpect(status().isOk());
+            .andExpect(status().isAccepted());
 
         User updatedUser = userRepository.findOneByLogin(user.getLogin()).orElse(null);
         assertThat(updatedUser.getFirstName()).isEqualTo(userDTO.getFirstName());
@@ -576,7 +574,7 @@ public class AccountResourceIntTest {
             post("/api/account")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(userDTO)))
-            .andExpect(status().isOk());
+            .andExpect(status().isAccepted());
 
         User updatedUser = userRepository.findOneByLogin("save-existing-email-and-login").orElse(null);
         assertThat(updatedUser.getEmail()).isEqualTo("save-existing-email-and-login@example.com");
@@ -613,7 +611,7 @@ public class AccountResourceIntTest {
 
         restMvc.perform(post("/api/account/change-password").contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(new PasswordChangeDTO(currentPassword, "new password"))))
-                .andExpect(status().isOk());
+                .andExpect(status().isAccepted());
 
         User updatedUser = userRepository.findOneByLogin("change-password").orElse(null);
         assertThat(passwordEncoder.matches("new password", updatedUser.getPassword())).isTrue();

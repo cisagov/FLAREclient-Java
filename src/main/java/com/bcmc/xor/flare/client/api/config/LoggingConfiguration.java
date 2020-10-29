@@ -39,57 +39,13 @@ public class LoggingConfiguration {
     private final String serverPort;
 
     public LoggingConfiguration(@Value("${spring.application.name}") String appName, @Value("${server.port}") String serverPort,
-                                @Value("${jhipster.metrics.logs.enabled}") Boolean metricsLogsEnabled) {
+                                @Value("${spring.metrics.logs.enabled}") Boolean metricsLogsEnabled) {
         this.appName = appName;
         this.serverPort = serverPort;
-//        if (jHipsterProperties.getLogging().getLogstash().isEnabled()) {
-//            addLogstashAppender(context);
-//            addContextListener(context);
-//        }
         if (metricsLogsEnabled != null && metricsLogsEnabled) {
             setMetricsMarkerLogbackFilter(context);
         }
     }
-
-//    private void addContextListener(LoggerContext context) {
-//        LogbackLoggerContextListener loggerContextListener = new LogbackLoggerContextListener();
-//        loggerContextListener.setContext(context);
-//        context.addListener(loggerContextListener);
-//    }
-
-//    private void addLogstashAppender(LoggerContext context) {
-//        log.info("Initializing Logstash logging");
-//
-//        LogstashTcpSocketAppender logstashAppender = new LogstashTcpSocketAppender();
-//        logstashAppender.setName(LOGSTASH_APPENDER_NAME);
-//        logstashAppender.setContext(context);
-//        String customFields = "{\"app_name\":\"" + appName + "\",\"app_port\":\"" + serverPort + "\"}";
-//
-//        // More documentation is available at: https://github.com/logstash/logstash-logback-encoder
-//        LogstashEncoder logstashEncoder = new LogstashEncoder();
-//        // Set the Logstash appender config from JHipster properties
-//        logstashEncoder.setCustomFields(customFields);
-//        // Set the Logstash appender config from JHipster properties
-//        logstashAppender.addDestinations(new InetSocketAddress(jHipsterProperties.getLogging().getLogstash().getHost(), jHipsterProperties.getLogging().getLogstash().getPort()));
-//
-//        ShortenedThrowableConverter throwableConverter = new ShortenedThrowableConverter();
-//        throwableConverter.setRootCauseFirst(true);
-//        logstashEncoder.setThrowableConverter(throwableConverter);
-//        logstashEncoder.setCustomFields(customFields);
-//
-//        logstashAppender.setEncoder(logstashEncoder);
-//        logstashAppender.start();
-//
-//        // Wrap the appender in an Async appender for performance
-//        AsyncAppender asyncLogstashAppender = new AsyncAppender();
-//        asyncLogstashAppender.setContext(context);
-//        asyncLogstashAppender.setName(ASYNC_LOGSTASH_APPENDER_NAME);
-//        asyncLogstashAppender.setQueueSize(jHipsterProperties.getLogging().getLogstash().getQueueSize());
-//        asyncLogstashAppender.addAppender(logstashAppender);
-//        asyncLogstashAppender.start();
-//
-//        context.getLogger("ROOT").addAppender(asyncLogstashAppender);
-//    }
 
     // Configure a log filter to remove "metrics" logs from all appenders except the "LOGSTASH" appender
     private void setMetricsMarkerLogbackFilter(LoggerContext context) {

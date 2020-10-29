@@ -87,12 +87,10 @@ public class ServerResourceTest {
         serverDTO.setRequiresBasicAuth(true);
         serverDTO.setUsername("user");
         serverDTO.setPassword("user");
-
+        when(serverService.findOneByLabel(serverDTO.getLabel())).thenReturn(Optional.empty());
         when(serverService.updateServer(serverDTO)).thenReturn(TestData.taxii11Server);
 
         ResponseEntity<TaxiiServer> response = serverResource.createOrUpdateServer(serverDTO);
-        verify(serverService).addServerCredential(TestData.taxii11Server.getLabel(),
-            serverDTO.getUsername(), serverDTO.getPassword());
         assertEquals(TestData.taxii11Server.getLabel(), response.getBody().getLabel());
         assertEquals(TestData.taxii11Server.getUrl(), response.getBody().getUrl());
         assertEquals(TestData.taxii11Server.getVersion(), response.getBody().getVersion());
@@ -119,15 +117,11 @@ public class ServerResourceTest {
         ServerDTO serverDTO = new ServerDTO();
         serverDTO.setLabel(TestData.taxii20Server.getLabel());
         serverDTO.setUrl(TestData.taxii20Server.getUrl().toString());
-        serverDTO.setRequiresBasicAuth(true);
-        serverDTO.setUsername("user");
-        serverDTO.setPassword("user");
+        serverDTO.setRequiresBasicAuth(false);
 
         when(serverService.updateServer(serverDTO)).thenReturn(TestData.taxii20Server);
 
         ResponseEntity<TaxiiServer> response = serverResource.createOrUpdateServer(serverDTO);
-        verify(serverService).addServerCredential(TestData.taxii20Server.getLabel(),
-            serverDTO.getUsername(), serverDTO.getPassword());
         assertEquals(TestData.taxii20Server.getLabel(), response.getBody().getLabel());
         assertEquals(TestData.taxii20Server.getUrl(), response.getBody().getUrl());
         assertEquals(TestData.taxii20Server.getVersion(), response.getBody().getVersion());

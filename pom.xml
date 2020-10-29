@@ -45,6 +45,7 @@
         <frontend-maven-plugin.version>1.6</frontend-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.1</jacoco-maven-plugin.version>
         <scala-maven-plugin.version>3.4.1</scala-maven-plugin.version>
+        <sonar-maven-plugin.version>3.4.1.1168</sonar-maven-plugin.version>
         <git-commit-id-plugin.version>2.2.4</git-commit-id-plugin.version>
 
         <!--Dependency versions from JHipster Dependency 2.0.15 pom-->
@@ -247,7 +248,7 @@
             <artifactId>de.flapdoodle.embed.mongo</artifactId>
             <scope>test</scope>
         </dependency>
-	    <dependency>
+        <dependency>
             <groupId>javax.cache</groupId>
             <artifactId>cache-api</artifactId>
         </dependency>
@@ -295,6 +296,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -440,6 +445,40 @@
                     <!-- Force alphabetical order to have a reproducible build -->
                     <runOrder>alphabetical</runOrder>
                 </configuration>
+            </plugin>
+           <plugin>
+               <groupId>org.jacoco</groupId>
+               <artifactId>jacoco-maven-plugin</artifactId>
+               <version>${jacoco-maven-plugin.version}</version>
+               <executions>
+                   <execution>
+                       <id>pre-unit-tests</id>
+                       <goals>
+                           <goal>prepare-agent</goal>
+                       </goals>
+                       <configuration>
+                           <!--  Sets the path to the file which contains the execution data. -->
+                           <destFile>${project.testresult.directory}/jacoco/jacoco.exec</destFile>
+                       </configuration>
+                   </execution>
+				   <!-- Ensures that the code coverage report for unit tests is created after unit tests have been run  -->
+                   <execution>
+                       <id>post-unit-test</id>
+                       <phase>test</phase>
+                       <goals>
+                           <goal>report</goal>
+                       </goals>
+                       <configuration>
+                           <dataFile>${project.testresult.directory}/jacoco/jacoco.exec</dataFile>
+                           <outputDirectory>${project.testresult.directory}/jacoco</outputDirectory>
+                       </configuration>
+                   </execution>
+               </executions>
+           </plugin>
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>${sonar-maven-plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

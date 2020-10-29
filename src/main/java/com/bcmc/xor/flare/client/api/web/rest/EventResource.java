@@ -16,17 +16,19 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
  * REST controller for managing Event.
  */
-@SuppressWarnings("unused")
+@Validated
 @RestController
 @RequestMapping("/api")
 public class EventResource {
@@ -52,6 +54,7 @@ public class EventResource {
     @GetMapping("/events")
     @Timed
     public ResponseEntity<List<EventDTO>> getAllEvents(Pageable pageable) {
+        log.debug("REST request to get all Events with pageable {}", pageable);
         final Page<EventDTO> page = eventService.getAllEvents(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/events");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
@@ -72,12 +75,23 @@ public class EventResource {
                 .map(EventDTO::new));
     }
 
+    /**
+     * GET /servers/{serverLabel}/collections/{collectionId}/activities get the "events".
+     *
+     * @param serverLabel the label of the server to find
+     * @param collectionId the collection id to get events for
+     * @param pageable the pagination information
+     * @return the ResponseEntity with status 200 (OK) and with body the events, or with status 404 (Not Found)
+     */
     @GetMapping("/servers/{serverLabel}/collections/{collectionId}/activities")
     @Timed
-    public ResponseEntity<List<EventDTO>> getAllEventsByCollection(@PathVariable String serverLabel, @PathVariable String collectionId, Pageable pageable) {
+    public ResponseEntity<List<EventDTO>> getAllEventsByCollection(@PathVariable(value = "serverLabel") @Nonnull String serverLabel, @PathVariable @Nonnull String collectionId, Pageable pageable) {
+        log.debug("REST request to get all Events for server label {} - collection id {}", serverLabel, collectionId);
         TaxiiAssociation association = TaxiiAssociation.from(serverLabel, collectionId, serverService, collectionService);
         final Page<EventDTO> page = eventService.getEventsByCollectionAndServer(pageable, association.getCollection().getDisplayName(), serverLabel);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/servers/{serverLabel}/collections/{collectionId}/activities");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        HttpStatus httpStatus = HttpStatus.OK;
+        if (!page.hasContent()) { httpStatus = HttpStatus.NOT_FOUND;}
+        return new ResponseEntity<>(page.getContent(), headers, httpStatus);
     }
 }

@@ -8,12 +8,10 @@ import com.bcmc.xor.flare.client.api.domain.status.Status;
 import com.bcmc.xor.flare.client.taxii.TaxiiAssociation;
 import com.bcmc.xor.flare.client.taxii.taxii11.Taxii11Association;
 import com.bcmc.xor.flare.client.taxii.taxii20.Taxii20Association;
-import com.bcmc.xor.flare.client.util.HeaderUtil;
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
 import org.mitre.taxii.messages.xml11.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 import xor.flare.utils.util.DocumentUtils;
@@ -25,7 +23,7 @@ import java.time.ZonedDateTime;
 import java.util.*;
 
 /**
- * Status service
+ * Upload service
  */
 @Service
 public class UploadService {
@@ -53,7 +51,7 @@ public class UploadService {
         this.userService = userService;
     }
 
-    public ResponseEntity<String> publish(TaxiiAssociation association, Map<String, UploadedFile> fileMap) {
+    public String publish(TaxiiAssociation association, Map<String, UploadedFile> fileMap) {
         switch (association.getServer().getVersion()) {
             case TAXII21:
                 return publish((Taxii20Association) association, fileMap);
@@ -64,7 +62,7 @@ public class UploadService {
         }
     }
 
-    public ResponseEntity<String> publish(Taxii11Association association, Map<String, UploadedFile> fileMap) {
+    public String publish(Taxii11Association association, Map<String, UploadedFile> fileMap) {
 
         URI url = getUploadUrl(association);
 
@@ -117,14 +115,10 @@ public class UploadService {
 
         log.info("Received Status Message in response to TAXII 1.1 publish");
         log.info("Status Message: {} - {}", response.getStatusType(), response.getMessage());
-        if (response.getStatusType() != null && response.getStatusType().equals(StatusTypeEnum.SUCCESS.value())) {
-            return ResponseEntity.ok().headers(HeaderUtil.createStatusMessageAlert(response)).body(response.getMessage());
-        } else {
-            return ResponseEntity.status(500).headers(HeaderUtil.createStatusMessageAlert(response)).body(response.getMessage());
-        }
+        return response.getMessage();
     }
 
-    public ResponseEntity<String> publish(Taxii20Association association, Map<String, UploadedFile> fileMap) {
+    public String publish(Taxii20Association association, Map<String, UploadedFile> fileMap) {
         URI url = getUploadUrl(association);
         for (Map.Entry<String, UploadedFile> uploadedFile: fileMap.entrySet()) {
             String bundle = uploadedFile.getValue().getContent();
@@ -133,8 +127,7 @@ public class UploadService {
             if (response == null) {
                 String feedback = String.format("Failed to published %d bundle(s).", fileMap.values().size());
                 eventService.createEvent(EventType.PUBLISH_FAILED, feedback, association);
-                return ResponseEntity.status(500).headers(HeaderUtil.createFailureAlert(feedback,
-                    association.getCollection().getDisplayName())).body(feedback);
+                return feedback;
             }
 
             response.setAssociation(association);
@@ -143,7 +136,7 @@ public class UploadService {
         }
         String feedback = String.format("Successfully published %d bundle(s).", fileMap.values().size());
         eventService.createEvent(EventType.PUBLISHED, feedback, association);
-        return ResponseEntity.ok().headers(HeaderUtil.createAlert(feedback, "uploadContent")).body(feedback);
+        return feedback;
     }
 
     public URI getUploadUrl(Taxii11Association association) {
