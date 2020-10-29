@@ -23,7 +23,7 @@ spring:
             enabled: false
     data:
         mongodb:
-            uri: mongodb://admin:QWASZX23wesdxc@flareclient-db:27017
+            uri: mongodb://localhost:27017
             database: flareclient
     mail:
         host: localhost
