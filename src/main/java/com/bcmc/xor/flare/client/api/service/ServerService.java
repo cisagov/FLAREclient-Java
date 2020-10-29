@@ -206,6 +206,7 @@ public class ServerService {
             server.setHasReceivedServerInformation(false);
             server.setHasReceivedSubscriptionInformation(false);
             server.setHasReceivedCollectionInformation(false);
+            server.setUrl(null);
 
             serverRepository.save(server);
             clearServerCaches(server);
