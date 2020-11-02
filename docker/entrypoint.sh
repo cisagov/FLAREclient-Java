@@ -1,4 +1,3 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-echo "The application will start in ${JHIPSTER_SLEEP}s..." && sleep ${JHIPSTER_SLEEP}
-exec java ${JAVA_OPTS} -Djava.security.egd=file:/dev/./urandom -jar "${HOME}/app.jar" "$@"
+java $JAVA_OPTS -jar /opt/app/app.jar

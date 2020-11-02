@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.bcmc.xor.flare</groupId>
-    <artifactId>flareclient.backend</artifactId>
+    <artifactId>flareclient</artifactId>
     <version>0.0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -48,28 +48,7 @@
         <sonar-maven-plugin.version>3.4.1.1168</sonar-maven-plugin.version>
         <git-commit-id-plugin.version>2.2.4</git-commit-id-plugin.version>
 
-        <!-- Sonar properties -->
-        <sonar.issue.ignore.multicriteria>S3437,S4502,S4684,UndocumentedApi,BoldAndItalicTagsCheck</sonar.issue.ignore.multicriteria>
-        <!-- Rule https://sonarcloud.io/coding_rules?open=squid%3AS3437&rule_key=squid%3AS3437 is ignored, as a JPA-managed field cannot be transient -->
-        <sonar.issue.ignore.multicriteria.S3437.resourceKey>src/main/java/**/*</sonar.issue.ignore.multicriteria.S3437.resourceKey>
-        <sonar.issue.ignore.multicriteria.S3437.ruleKey>squid:S3437</sonar.issue.ignore.multicriteria.S3437.ruleKey>
-        <!-- Rule https://sonarcloud.io/coding_rules?open=squid%3AUndocumentedApi&rule_key=squid%3AUndocumentedApi is ignored, as we want to follow "clean code" guidelines and classes, methods and arguments names should be self-explanatory -->
-        <sonar.issue.ignore.multicriteria.UndocumentedApi.resourceKey>src/main/java/**/*</sonar.issue.ignore.multicriteria.UndocumentedApi.resourceKey>
-        <sonar.issue.ignore.multicriteria.UndocumentedApi.ruleKey>squid:UndocumentedApi</sonar.issue.ignore.multicriteria.UndocumentedApi.ruleKey>
-        <!-- Rule https://sonarcloud.io/coding_rules?open=squid%3AS4502&rule_key=squid%3AS4502 is ignored, as for JWT tokens we are not subject to CSRF attack -->
-        <sonar.issue.ignore.multicriteria.S4502.resourceKey>src/main/java/**/*</sonar.issue.ignore.multicriteria.S4502.resourceKey>
-        <sonar.issue.ignore.multicriteria.S4502.ruleKey>squid:S4502</sonar.issue.ignore.multicriteria.S4502.ruleKey>
-        <!-- Rule https://sonarcloud.io/coding_rules?open=squid%3AS4684&rule_key=squid%3AS4684 -->
-        <sonar.issue.ignore.multicriteria.S4684.resourceKey>src/main/java/**/*</sonar.issue.ignore.multicriteria.S4684.resourceKey>
-        <sonar.issue.ignore.multicriteria.S4684.ruleKey>squid:S4684</sonar.issue.ignore.multicriteria.S4684.ruleKey>
-        <sonar.jacoco.reportPaths>${project.testresult.directory}/coverage/jacoco/jacoco.exec</sonar.jacoco.reportPaths>
-        <sonar.java.codeCoveragePlugin>jacoco</sonar.java.codeCoveragePlugin>
-        <sonar.testExecutionReportPaths>${project.testresult.directory}/jest/TESTS-results-sonar.xml</sonar.testExecutionReportPaths>
-        <sonar.typescript.lcov.reportPaths>${project.testresult.directory}/lcov.info</sonar.typescript.lcov.reportPaths>
-        <sonar.sources>${project.basedir}/src/main/</sonar.sources>
-        <sonar.surefire.reportsPath>${project.testresult.directory}/surefire-reports</sonar.surefire.reportsPath>
-        <sonar.tests>${project.basedir}/src/test/</sonar.tests>
-
+        <!--Dependency versions from JHipster Dependency 2.0.15 pom-->
         <!-- Dependency versions -->
         <awsjavasdk.version>1.11.375</awsjavasdk.version>
         <bucket4j.version>4.0.1</bucket4j.version>
@@ -458,62 +437,6 @@
                     </rules>
                 </configuration>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-resources-plugin</artifactId>-->
-<!--                <version>${maven-resources-plugin.version}</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>default-resources</id>-->
-<!--                        <phase>validate</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>copy-resources</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <outputDirectory>target/classes</outputDirectory>-->
-<!--                            <useDefaultDelimiters>false</useDefaultDelimiters>-->
-<!--                            <delimiters>-->
-<!--                                <delimiter>#</delimiter>-->
-<!--                            </delimiters>-->
-<!--                            <resources>-->
-<!--                                <resource>-->
-<!--                                    <directory>src/main/resources/</directory>-->
-<!--                                    <filtering>true</filtering>-->
-<!--                                    <includes>-->
-<!--                                        <include>config/*.yml</include>-->
-<!--                                    </includes>-->
-<!--                                </resource>-->
-<!--                                <resource>-->
-<!--                                    <directory>src/main/resources/</directory>-->
-<!--                                    <filtering>false</filtering>-->
-<!--                                    <excludes>-->
-<!--                                        <exclude>config/*.yml</exclude>-->
-<!--                                    </excludes>-->
-<!--                                </resource>-->
-<!--                            </resources>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                    <execution>-->
-<!--                        <id>docker-resources</id>-->
-<!--                        <phase>validate</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>copy-resources</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <outputDirectory>target/</outputDirectory>-->
-<!--                            <resources>-->
-<!--                                <resource>-->
-<!--                                    <directory>src/main/docker/</directory>-->
-<!--                                    <filtering>false</filtering>-->
-<!--                                    <excludes>-->
-<!--                                        <exclude>**/*.yml</exclude>-->
-<!--                                    </excludes>-->
-<!--                                </resource>-->
-<!--                            </resources>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -568,70 +491,7 @@
                         </goals>
                     </execution>
                 </executions>
-<!--                <configuration>-->
-<!--                    <mainClass>${start-class}</mainClass>-->
-<!--                    <executable>true</executable>-->
-<!--                    <fork>true</fork>-->
-<!--                    &lt;!&ndash;-->
-<!--                    Enable the line below to have remote debugging of your application on port 5005-->
-<!--                    <jvmArguments>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005</jvmArguments>-->
-<!--                    &ndash;&gt;-->
-<!--                </configuration>-->
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>com.spotify</groupId>-->
-<!--                <artifactId>dockerfile-maven-plugin</artifactId>-->
-<!--                <version>${dockerfile-maven-plugin.version}</version>-->
-<!--                <executions>-->
-<!--                    &lt;!&ndash;-->
-<!--                     Uncomment the section below to build the docker image with mvn package and and push it with mvn deploy-->
-<!--                    <execution>-->
-<!--                        <id>default</id>-->
-<!--                        <goals>-->
-<!--                            <goal>build</goal>-->
-<!--                            <goal>push</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                    &ndash;&gt;-->
-<!--                    <execution>-->
-<!--                        <id>tag-latest</id>-->
-<!--                        <phase>none</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>build</goal>-->
-<!--                            <goal>tag</goal>-->
-<!--                            <goal>push</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                    <execution>-->
-<!--                        <id>version</id>-->
-<!--                        <phase>none</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>build</goal>-->
-<!--                            <goal>tag</goal>-->
-<!--&lt;!&ndash;                            <goal>push</goal>&ndash;&gt;-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <tag>${project.version}</tag>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--&lt;!&ndash;                    <execution>&ndash;&gt;-->
-<!--&lt;!&ndash;                        <id>commit</id>&ndash;&gt;-->
-<!--&lt;!&ndash;                        <phase>none</phase>&ndash;&gt;-->
-<!--&lt;!&ndash;                        <goals>&ndash;&gt;-->
-<!--&lt;!&ndash;                            <goal>build</goal>&ndash;&gt;-->
-<!--&lt;!&ndash;                            <goal>tag</goal>&ndash;&gt;-->
-<!--&lt;!&ndash;                            <goal>push</goal>&ndash;&gt;-->
-<!--&lt;!&ndash;                        </goals>&ndash;&gt;-->
-<!--&lt;!&ndash;                        <configuration>&ndash;&gt;-->
-<!--&lt;!&ndash;                            <tag>${git.commit.id.describe}</tag>&ndash;&gt;-->
-<!--&lt;!&ndash;                        </configuration>&ndash;&gt;-->
-<!--&lt;!&ndash;                    </execution>&ndash;&gt;-->
-<!--                </executions>-->
-<!--                <configuration>-->
-<!--                    <repository>flareclient</repository>-->
-<!--                    <contextDirectory>${project.build.directory}</contextDirectory>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>2.19</version>
@@ -651,54 +511,4 @@
             </plugins>
         </pluginManagement>
     </build>
-<!--    <profiles>-->
-<!--        <profile>-->
-<!--            <id>no-liquibase</id>-->
-<!--            <properties>-->
-<!--                <profile.no-liquibase>,no-liquibase</profile.no-liquibase>-->
-<!--            </properties>-->
-<!--        </profile>-->
-<!--        <profile>-->
-<!--            <id>swagger</id>-->
-<!--            <properties>-->
-<!--                <profile.swagger>,swagger</profile.swagger>-->
-<!--            </properties>-->
-<!--        </profile>-->
-<!--        <profile>-->
-<!--            <id>dev</id>-->
-<!--            <activation>-->
-<!--                <activeByDefault>true</activeByDefault>-->
-<!--            </activation>-->
-<!--            <dependencies>-->
-<!--                <dependency>-->
-<!--                    <groupId>org.springframework.boot</groupId>-->
-<!--                    <artifactId>spring-boot-starter-undertow</artifactId>-->
-<!--                </dependency>-->
-<!--                <dependency>-->
-<!--                    <groupId>org.springframework.boot</groupId>-->
-<!--                    <artifactId>spring-boot-devtools</artifactId>-->
-<!--                    <optional>true</optional>-->
-<!--                </dependency>-->
-<!--            </dependencies>-->
-<!--            <properties>-->
-<!--                &lt;!&ndash; default Spring profiles &ndash;&gt;-->
-<!--                <spring.profiles.active>dev${profile.no-liquibase}</spring.profiles.active>-->
-<!--            </properties>-->
-<!--        </profile>-->
-<!--        <profile>-->
-<!--            &lt;!&ndash;-->
-<!--                Profile for applying IDE-specific configuration.-->
-<!--                At the moment it configures MapStruct and Hibernate JPA Metamodel Generator, which you need when working-->
-<!--                with DTOs and entity filtering.-->
-<!--            &ndash;&gt;-->
-<!--            <id>IDE</id>-->
-<!--            <dependencies>-->
-<!--                <dependency>-->
-<!--                    <groupId>org.mapstruct</groupId>-->
-<!--                    <artifactId>mapstruct-processor</artifactId>-->
-<!--                    <version>${mapstruct.version}</version>-->
-<!--                </dependency>-->
-<!--            </dependencies>-->
-<!--        </profile>-->
-<!--    </profiles>-->
 </project>
