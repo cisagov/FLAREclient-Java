@@ -22,6 +22,7 @@ import com.mongodb.DuplicateKeyException;
 import org.mitre.taxii.messages.xml11.PollResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -33,14 +34,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
 
-
-@SuppressWarnings({"WeakerAccess", "CanBeFinal"})
 @Service
 public class AsyncFetchRequestService {
 
     private static final Logger log = LoggerFactory.getLogger(AsyncFetchRequestService.class);
     private AsyncFetchRequestRepository repository;
-    private CollectionService collectionService;
+    private final CollectionService collectionService;
     private DownloadService downloadService;
     private UserService userService;
     private EventService eventService;
@@ -51,7 +50,7 @@ public class AsyncFetchRequestService {
     @Value("${flare.fetch-chunk-page-size}")
     private int fetchChunkPageSize;
 
-    public AsyncFetchRequestService(AsyncFetchRequestRepository repository, CollectionService collectionService, DownloadService downloadService, UserService userService, EventService
+    public AsyncFetchRequestService(@Qualifier("async_fetch") AsyncFetchRequestRepository repository, CollectionService collectionService, DownloadService downloadService, UserService userService, EventService
         eventService) {
         this.repository = repository;
         this.collectionService = collectionService;
@@ -151,6 +150,7 @@ public class AsyncFetchRequestService {
             taxii11PollParameters.setStartDate(fetchChunk.getBegin().atZone(ZoneId.of("Z")));
             taxii11PollParameters.setEndDate(fetchChunk.getEnd().atZone(ZoneId.of("Z")));
 
+            // TODO throwing null pointer here
             PollResponse response = downloadService.fetchContent(taxiiAssociation, taxii11PollParameters);
 
             if (response == null) {
@@ -184,22 +184,20 @@ public class AsyncFetchRequestService {
             }
         }
 
+        String feedback;
         if (retryCount >= 3) {
-            String feedback =  "Async fetch match retries attempted.";
+            feedback = "Async fetch match retries attempted.";
             eventService.createEvent(EventType.ASYNC_FETCH_ERROR, feedback, taxiiAssociation);
             asyncFetch.setStatus(AsyncFetch.Status.ERROR);
-            asyncFetch.setCountResult(countResult);
-            repository.save(asyncFetch);
-            collectionService.save(taxiiAssociation.getCollection());
         } else {
-            String feedback = String.format("Async fetch complete. Retrieved and processed %d content blocks. Found %d duplicates. Saved %d.",
-                countResult.getContentCount(), countResult.getContentDuplicate(), countResult.getContentSaved());
+            feedback = String.format("Async fetch complete. Retrieved and processed %d content blocks. Found %d duplicates. Saved %d.",
+                    countResult.getContentCount(), countResult.getContentDuplicate(), countResult.getContentSaved());
             eventService.createEvent(EventType.ASYNC_FETCH_COMPLETE, feedback, taxiiAssociation);
             asyncFetch.setStatus(AsyncFetch.Status.COMPLETE);
-            asyncFetch.setCountResult(countResult);
-            repository.save(asyncFetch);
-            collectionService.save(taxiiAssociation.getCollection());
         }
+        asyncFetch.setCountResult(countResult);
+        repository.save(asyncFetch);
+        collectionService.save(taxiiAssociation.getCollection());
         log.info("--- TAXII 1.1 Async fetch complete '{}' ---", asyncFetch.getId());
     }
 
@@ -228,7 +226,6 @@ public class AsyncFetchRequestService {
         return repository;
     }
 
-    @SuppressWarnings("unused")
     public void setRepository(AsyncFetchRequestRepository repository) {
         this.repository = repository;
     }

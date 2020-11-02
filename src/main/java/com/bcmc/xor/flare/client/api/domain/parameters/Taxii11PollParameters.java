@@ -13,6 +13,7 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,7 +39,11 @@ public class Taxii11PollParameters extends ApiParameters implements Serializable
     }
 
     private List<String> getContentBindings() {
-        return contentBindings;
+        if (contentBindings == null) {
+            return new ArrayList<>(Constants.ContentBindings.contentBindingMap.keySet());
+        } else {
+            return contentBindings;
+        }
     }
 
     public void setContentBindings(List<String> contentBindings) {
@@ -82,8 +87,8 @@ public class Taxii11PollParameters extends ApiParameters implements Serializable
     }
 
     public PollRequest buildPollRequestForCollection(String collectionName) {
+        log.debug("Building poll request for collection '{}'", collectionName);
         PollParametersType pollParametersType = new PollParametersType();
-
         pollParametersType.withContentBindings(this.getContentBindings().stream()
             .map(contentBinding -> new ContentBindingIDType(null, Constants.ContentBindings.contentBindingMap.get(contentBinding)))
             .collect(Collectors.toList()));

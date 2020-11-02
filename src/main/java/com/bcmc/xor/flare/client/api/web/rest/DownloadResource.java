@@ -13,9 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import xor.bcmc.taxii2.JsonHandler;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unchecked", "rawtypes"})
 @RestController
 @RequestMapping("/api/servers/{serverLabel}/collections/{collectionId}/download")
 class DownloadResource {
@@ -36,11 +35,9 @@ class DownloadResource {
 
     @PostMapping
     public <T extends ApiParameters> ResponseEntity<String> fetchContent(@PathVariable String serverLabel, @PathVariable String collectionId, @RequestBody T fetchParams) {
-
         log.debug("Received fetch content request");
         log.debug("Server Label: {}", serverLabel);
         log.debug("Collection ID: {}", collectionId);
-        log.debug("Fetch params: {}", JsonHandler.getInstance().toJson(fetchParams));
         TaxiiAssociation association = TaxiiAssociation.from(serverLabel, collectionId, serverService, collectionService);
 
         if (fetchParams.getServerLabel() == null || fetchParams.getServerLabel().isEmpty()) {
@@ -50,11 +47,10 @@ class DownloadResource {
 
         if (fetchParams.getRepeat()) {
             recurringFetchService.startRecurringFetch(new RecurringFetch(fetchParams));
-            return ResponseEntity.ok().headers(HeaderUtil.createAlert("Started async fetch", null)).body("Started async fetch");
         } else {
             asyncFetchRequestService.startAsyncFetch(association, fetchParams);
-            return ResponseEntity.ok().headers(HeaderUtil.createAlert("Started async fetch", null)).body("Started async fetch");
         }
+        return ResponseEntity.ok().headers(HeaderUtil.createAlert("Started async fetch", null)).body("Started async fetch");
     }
 }
 
