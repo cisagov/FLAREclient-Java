@@ -35,9 +35,7 @@ class DownloadResource {
 
     @PostMapping
     public <T extends ApiParameters> ResponseEntity<String> fetchContent(@PathVariable String serverLabel, @PathVariable String collectionId, @RequestBody T fetchParams) {
-        log.debug("Received fetch content request");
-        log.debug("Server Label: {}", serverLabel);
-        log.debug("Collection ID: {}", collectionId);
+        log.debug("REST Request to fetch content for Server Label: {} and Collection Id: {}", serverLabel, collectionId);
         TaxiiAssociation association = TaxiiAssociation.from(serverLabel, collectionId, serverService, collectionService);
 
         if (fetchParams.getServerLabel() == null || fetchParams.getServerLabel().isEmpty()) {
