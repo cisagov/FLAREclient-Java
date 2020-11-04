@@ -52,8 +52,6 @@ class StatusResource {
     @GetMapping("/status/{id}")
     public ResponseEntity<StatusDTO> getStatus(@PathVariable String id) {
         log.debug("REST request to get Status : {}", id);
-        return ResponseUtil.wrapOrNotFound(
-            statusService.getStatusById(id)
-                .map(StatusDTO::new));
+        return ResponseUtil.wrapOrNotFound(statusService.getStatusById(id).map(StatusDTO::new));
     }
 }
