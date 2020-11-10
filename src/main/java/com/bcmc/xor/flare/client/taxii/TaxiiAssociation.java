@@ -53,7 +53,7 @@ public class TaxiiAssociation <Server extends TaxiiServer, Collection extends Ta
             case TAXII11:
                 return new Taxii11Association((Taxii11Server) server, (Taxii11Collection) collection, user);
             default:
-                throw new IllegalStateException("Server does not have a verison: " + server.getId());
+                throw new IllegalStateException("Server does not have a version: " + server.getId());
         }
     }
 

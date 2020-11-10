@@ -18,10 +18,10 @@ import com.bcmc.xor.flare.client.api.service.scheduled.async.AsyncFetchRequestSe
 import com.bcmc.xor.flare.client.taxii.TaxiiAssociation;
 import com.bcmc.xor.flare.client.taxii.taxii11.Taxii11Association;
 import com.bcmc.xor.flare.client.taxii.taxii20.Taxii20Association;
-import com.bcmc.xor.flare.client.util.HeaderUtil;
 import com.mongodb.DuplicateKeyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -54,7 +54,7 @@ public class RecurringFetchService {
 
     private static final Logger log = LoggerFactory.getLogger(RecurringFetchService.class);
 
-    public RecurringFetchService(RecurringFetchRepository repository, ServerService serverService, CollectionService collectionService, UserService userService, EventService eventService, AsyncFetchRequestService asyncFetchRequestService) {
+    public RecurringFetchService(@Qualifier("recurring_fetch") RecurringFetchRepository repository, ServerService serverService, CollectionService collectionService, UserService userService, EventService eventService, AsyncFetchRequestService asyncFetchRequestService) {
         this.repository = repository;
         this.serverService = serverService;
         this.collectionService = collectionService;
@@ -160,10 +160,10 @@ public class RecurringFetchService {
         if (recurringFetch != null) {
             repository.delete(recurringFetch);
             deleteRecurringFetch(recurringFetch.getId());
-            eventService.createEvent(EventType.RECURRING_POLL_STOPPED, String.format("Stopped recurring fetch with ID '%s'", recurringFetch.getId()), recurringFetch.getAssociation());
+            eventService.createEvent(EventType.RECURRING_POLL_DELETED, String.format("Deleted recurring fetch with ID '%s'", recurringFetch.getId()), recurringFetch.getAssociation());
         }
-        String feedback = "Stopped recurring fetch.";
-        return ResponseEntity.ok().headers(HeaderUtil.createAlert(feedback, "downloadContent")).body(feedback);
+        String feedback = "Deleted recurring fetch.";
+        return ResponseEntity.ok().body(feedback);
     }
 
     /**
@@ -177,8 +177,8 @@ public class RecurringFetchService {
         if (params.isPresent()) {
             return deleteRecurringFetch(params.get());
         } else {
-            String feedback = "Successfully stopped recurring fetch.";
-            return ResponseEntity.ok().headers(HeaderUtil.createAlert(feedback, "downloadContent")).body(feedback);
+            String feedback = "Successfully deleted recurring fetch.";
+            return ResponseEntity.ok().body(feedback);
         }
     }
 
@@ -194,7 +194,7 @@ public class RecurringFetchService {
         } else {
             String feedback = String.format("No recurring fetch exists for server '%s' and collection '%s'",
                 association.getServer().getLabel(), association.getCollection().getDisplayName());
-            return ResponseEntity.notFound().headers(HeaderUtil.createAlert(feedback, "downloadContent")).build();
+            return ResponseEntity.badRequest().body(feedback);
         }
     }
 
