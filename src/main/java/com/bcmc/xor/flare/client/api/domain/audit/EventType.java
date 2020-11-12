@@ -14,7 +14,7 @@ public enum EventType {
     ASYNC_FETCH_UPDATE,
     ASYNC_FETCH_COMPLETE,
     ASYNC_FETCH_ERROR,
-    RECURRING_POLL_STOPPED,
+    RECURRING_POLL_DELETED,
     VALIDATION,
 
     // Content Upload
