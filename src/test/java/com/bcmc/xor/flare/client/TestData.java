@@ -80,6 +80,8 @@ public class TestData {
     public static Collection taxii20CollectionObject;
     public static CollectionInformationResponse collectionInformationResponse;
     public static Status taxii20Status;
+    public static String manifest;
+    public static String filterString;
 
     static {
         user = new User();
@@ -168,8 +170,15 @@ public class TestData {
         taxii20Server.setLabel("Test TAXII 2.0 Server");
         taxii20Server.setUrl(URI.create("http://localhost:5000/taxii/"));
 
-
-
+        // Manifest
+        manifest = "{\"more\": false, \"objects\": [{\"date_added\": \"2020-10-21T20:09:10.331994Z\", " +
+                "\"id\": \"marking-definition--5e57c739-391a-4eb3-b6be-7d15ca92d5ed\", \"media_type\": " +
+                "\"application/stix+json;version=2.1\", \"version\": \"2017-01-20T00:00:00.000Z\"}, " +
+                "{\"date_added\": \"2020-10-21T20:09:10.331994Z\", \"id\": \"identity--f8d34e5b-fbf0-451c-9fa3-d1312372bef2\", " +
+                "\"media_type\": \"application/stix+json;version=2.1\", \"version\": \"2020-06-14T02:04:17.000Z\"}, " +
+                "{\"date_added\": \"2020-10-21T20:09:10.331994Z\", \"id\": \"attack-pattern--592c0542-45e3-474a-84c7-e6a705547ce2\", " +
+                "\"media_type\": \"application/stix+json;version=2.1\", \"version\": \"2021-04-04T09:29:35.000Z\"}]}";
+        filterString = "{\"queryString\":\"match[id]=marking-definition--5e57c739-391a-4eb3-b6be-7d15ca92d5ed\"}";
 
         // Establish test data: Taxii20 ApiRoot
         xor.bcmc.taxii2.resources.ApiRoot apiRootObject = new xor.bcmc.taxii2.resources.ApiRoot()
@@ -420,7 +429,7 @@ public class TestData {
                 .withTitle("Test")
                 .withContact("Test")
                 .withDefaultApiRoot("test")
-                .withApiRoots(Arrays.asList("test"))
+                .withApiRoots(Collections.singletonList("test"))
                 .withDescription("Test");
         taxii20Server.updateFromDiscovery(taxii20Discovery);
 
@@ -429,7 +438,7 @@ public class TestData {
                 .withTitle("Test")
                 .withDescription("Test")
                 .withMaxContentLength(1000000000)
-                .withVersions(Arrays.asList(Constants.HEADER_TAXII20_JSON));
+                .withVersions(Collections.singletonList(Constants.HEADER_TAXII20_JSON));
         HashSet<ApiRoot> apiRootObjects = new HashSet<>();
         apiRootObjects.add(apiRoot);
         taxii20Server.setApiRootObjects(apiRootObjects);
@@ -439,7 +448,7 @@ public class TestData {
                 .withId(UUID.randomUUID().toString())
                 .withTitle("Test")
                 .withDescription("Test")
-                .withMediaTypes(Arrays.asList(Constants.HEADER_STIX20_JSON))
+                .withMediaTypes(Collections.singletonList(Constants.HEADER_STIX20_JSON))
                 .withCanRead(true)
                 .withCanWrite(true);
 
