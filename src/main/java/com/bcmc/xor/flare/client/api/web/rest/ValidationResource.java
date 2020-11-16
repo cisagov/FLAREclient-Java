@@ -19,7 +19,6 @@ import java.util.Map;
 /**
  * Created by allenpreville on 6/9/17.
  */
-@SuppressWarnings("unused")
 @RestController
 @RequestMapping("/api/servers/{serverLabel}/collections/{collectionId}/validate")
 public class ValidationResource {
