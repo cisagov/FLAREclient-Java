@@ -45,10 +45,10 @@ public class Taxii20RestTemplate extends FlareRestTemplate {
     public Discovery discovery(TaxiiServer server) {
         ResponseEntity<String> responseEntity = executeGet(TaxiiHeaders.fromServer(server), server.getServerInformationUrl());
         if (responseEntity.getStatusCode().isError()) {
-            TaxiiError taxiiError = JsonHandler.getInstance().fromJson(responseEntity.getBody(), TaxiiError.class);
+            TaxiiError taxiiError = JsonHandler.fromJson(responseEntity.getBody(), TaxiiError.class);
             throw new TaxiiErrorResponseException(taxiiError);
         } else {
-            return JsonHandler.getInstance().fromJson(responseEntity.getBody(), Discovery.class);
+            return JsonHandler.fromJson(responseEntity.getBody(), Discovery.class);
         }
     }
 
@@ -63,10 +63,10 @@ public class Taxii20RestTemplate extends FlareRestTemplate {
         log.info("Attempting to get ApiRoot information from '{}'", uri.toString());
         ResponseEntity<String> responseEntity = executeGet(TaxiiHeaders.fromServer(server), uri);
         if (responseEntity.getStatusCode().isError()) {
-            TaxiiError taxiiError = JsonHandler.getInstance().fromJson(responseEntity.getBody(), TaxiiError.class);
+            TaxiiError taxiiError = JsonHandler.fromJson(responseEntity.getBody(), TaxiiError.class);
             throw new TaxiiErrorResponseException(taxiiError);
         } else {
-            return JsonHandler.getInstance().fromJson(responseEntity.getBody(), ApiRoot.class);
+            return JsonHandler.fromJson(responseEntity.getBody(), ApiRoot.class);
         }
     }
 
@@ -74,10 +74,10 @@ public class Taxii20RestTemplate extends FlareRestTemplate {
         log.info("Attempting to get Collection information from '{}'", uri.toString());
         ResponseEntity<String> responseEntity = executeGet(TaxiiHeaders.fromServer(server), uri);
         if (responseEntity.getStatusCode().isError()) {
-            TaxiiError taxiiError = JsonHandler.getInstance().fromJson(responseEntity.getBody(), TaxiiError.class);
+            TaxiiError taxiiError = JsonHandler.fromJson(responseEntity.getBody(), TaxiiError.class);
             throw new TaxiiErrorResponseException(taxiiError);
         } else {
-            return JsonHandler.getInstance().fromJson(responseEntity.getBody(), Collections.class);
+            return JsonHandler.fromJson(responseEntity.getBody(), Collections.class);
         }
     }
 
@@ -85,7 +85,7 @@ public class Taxii20RestTemplate extends FlareRestTemplate {
         log.info("Attempting to get Status from '{}'", uri.toString());
         ResponseEntity<String> responseEntity = executeGet(TaxiiHeaders.fromServer(server), uri);
         if (responseEntity.getStatusCode().isError()) {
-            TaxiiError taxiiError = JsonHandler.getInstance().fromJson(responseEntity.getBody(), TaxiiError.class);
+            TaxiiError taxiiError = JsonHandler.fromJson(responseEntity.getBody(), TaxiiError.class);
             throw new TaxiiErrorResponseException(taxiiError);
         } else {
             return JsonHandler.getInstance().getGson().fromJson(responseEntity.getBody(), Status.class);
@@ -98,7 +98,7 @@ public class Taxii20RestTemplate extends FlareRestTemplate {
          ResponseEntity<String> responseEntity = executePost(bundle, headers, uri);
 
         if (responseEntity.getStatusCode().isError()) {
-            TaxiiError taxiiError = JsonHandler.getInstance().fromJson(responseEntity.getBody(), TaxiiError.class);
+            TaxiiError taxiiError = JsonHandler.fromJson(responseEntity.getBody(), TaxiiError.class);
             throw new TaxiiErrorResponseException(taxiiError);
         } else {
             return JsonHandler.getInstance().getGson().fromJson(responseEntity.getBody(), Status.class);
@@ -109,7 +109,7 @@ public class Taxii20RestTemplate extends FlareRestTemplate {
         log.info("Attempting to GET manifest to '{}'", uri.toString());
         ResponseEntity<String> responseEntity = executeGet(TaxiiHeaders.fromServer(server).withHeader("Accept", Arrays.asList(Constants.HEADER_STIX21_JSON, Constants.HEADER_TAXII21_JSON)), uri);
         if (responseEntity.getStatusCode().isError()) {
-            TaxiiError taxiiError = JsonHandler.getInstance().fromJson(responseEntity.getBody(), TaxiiError.class);
+            TaxiiError taxiiError = JsonHandler.fromJson(responseEntity.getBody(), TaxiiError.class);
             throw new TaxiiErrorResponseException(taxiiError);
         } else {
             return responseEntity.getBody();

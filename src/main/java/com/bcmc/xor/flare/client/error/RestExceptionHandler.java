@@ -37,6 +37,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 		return buildResponseEntity(apiError);
 	}
 
+	@ExceptionHandler(ManifestNotSupportedException.class)
+	protected ResponseEntity<Object> handleManifestNotSupportedException(ManifestNotSupportedException ex) {
+		APIError apiError = new APIError(HttpStatus.BAD_REQUEST);
+		apiError.setMessage(ex.getMessage());
+		return buildResponseEntity(apiError);
+	}
+
 	@ExceptionHandler(ServerDiscoveryException.class)
 	protected ResponseEntity<Object> handleServerCredentialsUnauthorizedException(ServerDiscoveryException ex) {
 		APIError apiError = new APIError(HttpStatus.BAD_REQUEST);

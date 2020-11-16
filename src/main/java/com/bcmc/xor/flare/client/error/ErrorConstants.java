@@ -39,6 +39,7 @@ public final class ErrorConstants {
     public static final String SERVER_NOT_FOUND = "Server was not found.";
     public static final String SERVER_DISCOVERY_FAILED = "Server discovery information was not returned. Check server discovery URL.";
     public static final String SERVER_NOT_CREATED = "Server was not created.  Check server details.";
+    public static final String MANIFEST_NOT_SUPPORTED = "Manifest is not not supported for this TAXII version";
     public static final String SERVER_LABEL_ALREADY_USED = "Server label already exists.";
     public static final String CREDENTIALS_NOT_FOUND = "No server credentials exist for the user.";
     public static final String SERVER_CREDENTIALS_UNAUTHORIZED = "Server credentials returned Unauthorized from the server.  Check credentials.";
