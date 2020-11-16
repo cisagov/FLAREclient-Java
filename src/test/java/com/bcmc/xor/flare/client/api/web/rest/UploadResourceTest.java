@@ -1,6 +1,7 @@
 package com.bcmc.xor.flare.client.api.web.rest;
 
 import com.bcmc.xor.flare.client.TestData;
+import com.bcmc.xor.flare.client.api.domain.parameters.UploadedFile;
 import com.bcmc.xor.flare.client.api.service.CollectionService;
 import com.bcmc.xor.flare.client.api.service.ServerService;
 import com.bcmc.xor.flare.client.api.service.TaxiiService;
@@ -17,14 +18,13 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -58,13 +58,16 @@ public class UploadResourceTest {
 
     @Test
     public void testPublishStix20() throws Exception {
-        MockMultipartFile file = new MockMultipartFile("rawStix20","rawStix20", TestData.rawStix20, TestData.rawStix20.getBytes());
+        Map<String, UploadedFile> fileMap = new HashMap<>();
+        UploadedFile uploadedFile = new UploadedFile();
+        uploadedFile.setFilename("1");
+        uploadedFile.setContent(TestData.rawStix20);
 
         PowerMockito.mockStatic(TaxiiAssociation.class);
         when(TaxiiAssociation.from(any(String.class),any(String.class),any(ServerService.class), any(CollectionService.class))).thenReturn(TestData.taxii20Association);
         when(uploadService.publish(any(TaxiiAssociation.class), any(HashMap.class))).thenReturn("Success");
 
-        ResponseEntity<String> response = uploadResource.publish(file, "testFileName", "testServerLabel", "testCollectionId");
+        ResponseEntity<String> response = uploadResource.publish(fileMap,  "testServerLabel", "testCollectionId");
         assertTrue(response.getStatusCode().is2xxSuccessful());
         assertNotNull(response.getBody());
         assertTrue(response.getBody().contains("Success"));
@@ -72,42 +75,50 @@ public class UploadResourceTest {
 
     @Test
     public void testPublishStix20_invalid() throws Exception {
-        MockMultipartFile file = new MockMultipartFile("rawStix20","rawStix20", TestData.rawStix20, "Bad data".getBytes());
+        Map<String, UploadedFile> fileMap = new HashMap<>();
+        UploadedFile uploadedFile = new UploadedFile();
+        uploadedFile.setFilename("1");
+        uploadedFile.setContent(TestData.rawStix20);
 
         PowerMockito.mockStatic(TaxiiAssociation.class);
         when(TaxiiAssociation.from(any(String.class),any(String.class),any(ServerService.class), any(CollectionService.class))).thenReturn(TestData.taxii20Association);
         when(uploadService.publish(any(TaxiiAssociation.class), any(HashMap.class))).thenReturn("Failed");
 
-        ResponseEntity<String> response = uploadResource.publish(file, "testFileName", "testServerLabel", "testCollectionId");
-        assertTrue(response.getStatusCode().value() == 500);
+        ResponseEntity<String> response = uploadResource.publish(fileMap, "testServerLabel", "testCollectionId");
+        assertEquals(500, response.getStatusCode().value());
         assertNotNull(response.getBody());
         assertTrue(response.getBody().contains("Failed"));
     }
 
     @Test
     public void testPublishStix11() throws Exception {
-        MockMultipartFile file = new MockMultipartFile("rawStix11","rawStix11", TestData.rawStix111, TestData.rawStix111.getBytes());
+        Map<String, UploadedFile> fileMap = new HashMap<>();
+        UploadedFile uploadedFile = new UploadedFile();
+        uploadedFile.setFilename("1");
+        uploadedFile.setContent(TestData.rawStix111);
 
         PowerMockito.mockStatic(TaxiiAssociation.class);
         when(TaxiiAssociation.from(any(String.class),any(String.class),any(ServerService.class), any(CollectionService.class))).thenReturn(TestData.taxii11Association);
         when(uploadService.publish(any(TaxiiAssociation.class), any(HashMap.class))).thenReturn("Success");
 
-        ResponseEntity<String> response = uploadResource.publish(file, "testFileName", "testServerLabel", "testCollectionId");
+        ResponseEntity<String> response = uploadResource.publish(fileMap, "testServerLabel", "testCollectionId");
         assertTrue(response.getStatusCode().is2xxSuccessful());
         assertNotNull(response.getBody());
         assertTrue(response.getBody().contains("Success"));
     }
 
     @Test
-    public void testPublishStix11_invalid() throws Exception {
-        MockMultipartFile file = new MockMultipartFile("rawStix11","rawStix11", TestData.rawStix111, TestData.rawStix111.getBytes());
-
+    public void testPublishStix11_invalid()  {
+        Map<String, UploadedFile> fileMap = new HashMap<>();
+        UploadedFile uploadedFile = new UploadedFile();
+        uploadedFile.setFilename("1");
+        uploadedFile.setContent(TestData.rawStix111);
         PowerMockito.mockStatic(TaxiiAssociation.class);
         when(TaxiiAssociation.from(any(String.class),any(String.class),any(ServerService.class), any(CollectionService.class))).thenReturn(TestData.taxii11Association);
         when(uploadService.publish(any(TaxiiAssociation.class), any(HashMap.class))).thenReturn("Fail");
 
-        ResponseEntity<String> response = uploadResource.publish(file, "testFileName", "testServerLabel", "testCollectionId");
-        assertTrue(response.getStatusCode().value() == 500);
+        ResponseEntity<String> response = uploadResource.publish(fileMap, "testServerLabel", "testCollectionId");
+        assertEquals(500, response.getStatusCode().value());
         assertNotNull(response.getBody());
         assertTrue(response.getBody().contains("Fail"));
     }
