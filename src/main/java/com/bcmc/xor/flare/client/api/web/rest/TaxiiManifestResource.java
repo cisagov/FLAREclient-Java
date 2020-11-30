@@ -7,7 +7,7 @@ import com.bcmc.xor.flare.client.api.service.ServerService;
 import com.bcmc.xor.flare.client.api.service.TaxiiService;
 import com.bcmc.xor.flare.client.error.ManifestNotSupportedException;
 import com.bcmc.xor.flare.client.taxii.taxii20.Taxii20Association;
-import com.fasterxml.jackson.databind.JsonNode;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -42,17 +42,24 @@ class TaxiiManifestResource {
         this.collectionService = collectionService;
     }
 
-    @GetMapping("/{serverLabel}/collections/{collectionId}/manifest")
+    @GetMapping(value = "/{serverLabel}/collections/{collectionId}/manifest")
     public ResponseEntity<Map<String, String>> fetchManifestResource(@PathVariable String serverLabel,
-              @PathVariable String collectionId, @Nullable @RequestBody JsonNode queryString) {
-        String filters = null;
-        if (queryString != null) {
-             filters = queryString.get("queryString").textValue();
-        }
-        log.debug("Received request query string: {}", queryString);
+                                                                     @PathVariable String collectionId,
+                                                                     @Nullable @RequestParam Map<String, String> filters) {
+
         log.debug("Received fetch Manifest request");
         log.debug("Server Label: {}", serverLabel);
         log.debug("Collection ID: {}", collectionId);
+        StringBuilder queryFilters = new StringBuilder();
+        if (filters != null && !filters.isEmpty()) {
+            log.debug("Received query filters: {}", filters.toString());
+
+            for (Map.Entry<String, String> entry : filters.entrySet()) {
+                 queryFilters.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
+            }
+            queryFilters.deleteCharAt(queryFilters.length()-1);
+            log.debug("queryFilters={}", queryFilters.toString());
+        }
 
         Optional<TaxiiServer> taxiiServer = serverService.getServerRepository().findOneByLabelIgnoreCase(serverLabel);
         if (taxiiServer.isPresent()) {
@@ -72,10 +79,10 @@ class TaxiiManifestResource {
                 association.getServer(),
                 new URI(association.getApiRoot().getUrl().toString() + manifestEndpoint));
 
-            if (filters != null) {
+            if (StringUtils.isNotBlank(queryFilters.toString())) {
                 manifest = taxiiService.getTaxii20RestTemplate().getManifest(
                         association.getServer(),
-                        new URI(association.getApiRoot().getUrl().toString() + manifestEndpoint + "?" + filters));
+                        new URI(association.getApiRoot().getUrl().toString() + manifestEndpoint + "?" + queryFilters));
             }
 
             log.debug("Returning ManifestResource {}", JsonHandler.toJson(manifest));

@@ -81,7 +81,8 @@ public class TestData {
     public static CollectionInformationResponse collectionInformationResponse;
     public static Status taxii20Status;
     public static String manifest;
-    public static String filterString;
+    public static String filterStringKey;
+    public static String filterStringValue;
 
     static {
         user = new User();
@@ -178,7 +179,8 @@ public class TestData {
                 "\"media_type\": \"application/stix+json;version=2.1\", \"version\": \"2020-06-14T02:04:17.000Z\"}, " +
                 "{\"date_added\": \"2020-10-21T20:09:10.331994Z\", \"id\": \"attack-pattern--592c0542-45e3-474a-84c7-e6a705547ce2\", " +
                 "\"media_type\": \"application/stix+json;version=2.1\", \"version\": \"2021-04-04T09:29:35.000Z\"}]}";
-        filterString = "{\"queryString\":\"match[id]=marking-definition--5e57c739-391a-4eb3-b6be-7d15ca92d5ed\"}";
+        filterStringKey = "match[id]=";
+        filterStringValue = "marking-definition--5e57c739-391a-4eb3-b6be-7d15ca92d5ed";
 
         // Establish test data: Taxii20 ApiRoot
         xor.bcmc.taxii2.resources.ApiRoot apiRootObject = new xor.bcmc.taxii2.resources.ApiRoot()

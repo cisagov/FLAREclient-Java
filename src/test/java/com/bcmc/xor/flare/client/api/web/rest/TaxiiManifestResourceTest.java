@@ -8,8 +8,6 @@ import com.bcmc.xor.flare.client.api.service.TaxiiService;
 import com.bcmc.xor.flare.client.error.ErrorConstants;
 import com.bcmc.xor.flare.client.error.ManifestNotSupportedException;
 import com.bcmc.xor.flare.client.taxii.TaxiiAssociation;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -26,8 +24,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.IOException;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -84,15 +82,15 @@ public class TaxiiManifestResourceTest {
     }
 
     @Test
-    public void fetchManifestResource_Filtering() throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode filterObject = objectMapper.readTree(TestData.filterString);
+    public void fetchManifestResource_Filtering() {
+        Map<String, String> filterMap = new HashMap<>();
+        filterMap.put(TestData.filterStringKey, TestData.filterStringValue);
         when(serverService.getServerRepository().findOneByLabelIgnoreCase(any(String.class))).thenReturn(Optional.of(taxii20Server));
         PowerMockito.mockStatic(TaxiiAssociation.class);
         PowerMockito.when(TaxiiAssociation.from(any(String.class),any(String.class),any(ServerService.class), any(CollectionService.class))).thenReturn(TestData.taxii20Association);
         when(taxiiService.getTaxii20RestTemplate().getManifest(any(Taxii20Server.class),any(URI.class))).thenReturn(TestData.manifest);
 
-        ResponseEntity<Map<String, String>> response = taxiiManifestResource.fetchManifestResource(taxii20Server.getLabel(),collectionId, filterObject);
+        ResponseEntity<Map<String, String>> response = taxiiManifestResource.fetchManifestResource(taxii20Server.getLabel(),collectionId, filterMap);
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(Objects.requireNonNull(response.getBody()).containsKey(collectionId));
