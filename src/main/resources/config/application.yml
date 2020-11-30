@@ -51,7 +51,7 @@ spring:
         cors:
             allowed-origins: "*"
             allowed-headers: "*"
-#            exposed-headers: "Authorization,Link,X-Total-Count"
+            exposed-headers: "Authorization,Link,X-Total-Count"
             allow-credentials: true
             max-age: 1800
     metrics: # DropWizard Metrics configuration, used by MetricsConfiguration

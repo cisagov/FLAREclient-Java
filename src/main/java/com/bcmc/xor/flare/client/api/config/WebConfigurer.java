@@ -53,6 +53,7 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
     private String allowedOrigins;
     private boolean allowCredentials;
     private long maxAge;
+    private String exposedHeaders;
 
 
     private MetricRegistry metricRegistry;
@@ -61,7 +62,8 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
                          @Value("${spring.http.version}") String httpVersion,
                          @Value("${spring.http.cors.allowed-origins}") String allowedOrigins,
                          @Value("${spring.http.cors.allow-credentials}") boolean allowCredentials,
-                         @Value("${spring.http.cors.max-age}") int maxAge
+                         @Value("${spring.http.cors.max-age}") int maxAge,
+                         @Value("${spring.http.cors.exposed-headers}") String exposedHeaders
     ) {
 
         this.env = env;
@@ -69,6 +71,7 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
         this.allowedOrigins = allowedOrigins;
         this.allowCredentials = allowCredentials;
         this.maxAge = maxAge;
+        this.exposedHeaders = exposedHeaders;
     }
 
     @Override
@@ -205,6 +208,7 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
         config.setAllowedOrigins(Collections.singletonList(allowedOrigins));
         config.setAllowCredentials(allowCredentials);
         config.setMaxAge(maxAge);
+        config.setExposedHeaders(Collections.singletonList(exposedHeaders));
 
         if (config.getAllowedOrigins() != null && !config.getAllowedOrigins().isEmpty()) {
             log.debug("Registering CORS filter");
