@@ -79,15 +79,24 @@ spring:
 #        key-alias: flareclient
 # ===================================================================
 server:
-    port: 8083
+    port: 8443
     ssl:
-        key-store: src/main/resources/demouser_ks.jks
+        key-store: src/main/resources/devKeystore.p12
         key-store-password: 12qwaszx@#WESDXC
-        key-store-provider: SUN
-        key-store-type: JKS
-        trust-store: src/main/resources/ca.jks
+        key-store-type: PKCS12
+        trust-store: src/main/resources/keystore.p12
         trust-store-password: 12qwaszx@#WESDXC
-        keyAlias: demouser
+        key-alias: localhost
+#server:
+#    port: 8083
+#    ssl:
+#        key-store: src/main/resources/demouser_ks.jks
+#        key-store-password: 12qwaszx@#WESDXC
+#        key-store-provider: SUN
+#        key-store-type: JKS
+#        trust-store: src/main/resources/ca.jks
+#        trust-store-password: 12qwaszx@#WESDXC
+#        keyAlias: demouser
 
 # ===================================================================
 # Application specific properties
