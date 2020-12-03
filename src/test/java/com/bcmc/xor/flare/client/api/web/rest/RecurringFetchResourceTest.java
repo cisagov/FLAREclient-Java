@@ -93,7 +93,7 @@ public class RecurringFetchResourceTest {
                 TestData.taxii11Server.getLabel(),
                 TestData.taxii11Collection.getId());
         assertNotNull(response.getBody());
-        assertTrue(response.getStatusCode().is4xxClientError());
+        assertTrue(response.getStatusCode().is2xxSuccessful());
     }
 
     @Test
