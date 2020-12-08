@@ -1,7 +1,7 @@
 package com.bcmc.xor.flare.client.api.domain.server;
 
 import com.bcmc.xor.flare.client.api.config.Constants;
-import com.bcmc.xor.flare.client.api.domain.collection.Taxii20Collection;
+import com.bcmc.xor.flare.client.api.domain.collection.Taxii21Collection;
 import com.bcmc.xor.flare.client.api.service.dto.ServerDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +19,9 @@ import java.util.Objects;
 
 
 @Document(collection = Constants.RepositoryLabels.SERVER)
-public class Taxii20Server extends TaxiiServer {
+public class Taxii21Server extends TaxiiServer {
 
-    private static final Logger log = LoggerFactory.getLogger(Taxii20Server.class);
+    private static final Logger log = LoggerFactory.getLogger(Taxii21Server.class);
 
     @Size(min = 1, max = 140)
     @Field("title")
@@ -45,7 +45,7 @@ public class Taxii20Server extends TaxiiServer {
 
     @DBRef
     @Field("collections")
-    private HashSet<Taxii20Collection> collections;
+    private HashSet<Taxii21Collection> collections;
 
     @Field("has_received_api_root_information")
     private boolean hasReceivedApiRootInformation = false;
@@ -53,11 +53,11 @@ public class Taxii20Server extends TaxiiServer {
     @Field("last_received_api_root_information")
     private Instant lastReceivedApiRootInformation = null;
 
-    public Taxii20Server() {
+    public Taxii21Server() {
         setVersion(Constants.TaxiiVersion.TAXII21);
     }
 
-    public Taxii20Server(ServerDTO serverDTO) {
+    public Taxii21Server(ServerDTO serverDTO) {
         super(serverDTO);
         setVersion(Constants.TaxiiVersion.TAXII21);
         URI uri = URI.create(serverDTO.getUrl());
@@ -68,7 +68,7 @@ public class Taxii20Server extends TaxiiServer {
         }
     }
 
-    public Taxii20Server updateFromDiscovery(Discovery discovery) {
+    public Taxii21Server updateFromDiscovery(Discovery discovery) {
         if (discovery == null) {
             log.error("Tried to update from a null discovery object");
             return this;
@@ -142,11 +142,11 @@ public class Taxii20Server extends TaxiiServer {
         this.apiRootObjects = apiRootObjects;
     }
 
-    public HashSet<Taxii20Collection> getCollections() {
+    public HashSet<Taxii21Collection> getCollections() {
         return collections;
     }
 
-    public void setCollections(HashSet<Taxii20Collection> collections) {
+    public void setCollections(HashSet<Taxii21Collection> collections) {
         this.collections = collections;
     }
 

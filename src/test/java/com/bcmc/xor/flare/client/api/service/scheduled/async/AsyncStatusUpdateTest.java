@@ -6,8 +6,8 @@ import com.bcmc.xor.flare.client.api.domain.audit.EventType;
 import com.bcmc.xor.flare.client.api.service.EventService;
 import com.bcmc.xor.flare.client.api.service.StatusService;
 import com.bcmc.xor.flare.client.api.service.TaxiiService;
-import com.bcmc.xor.flare.client.taxii.taxii20.Taxii20Association;
-import com.bcmc.xor.flare.client.taxii.taxii20.Taxii20RestTemplate;
+import com.bcmc.xor.flare.client.taxii.taxii21.Taxii21Association;
+import com.bcmc.xor.flare.client.taxii.taxii21.Taxii21RestTemplate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,21 +44,21 @@ public class AsyncStatusUpdateTest {
     private TaxiiService taxiiService;
 
     @MockBean
-    private Taxii20RestTemplate taxii20RestTemplate;
+    private Taxii21RestTemplate taxii21RestTemplate;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        taxiiService.setTaxii20RestTemplate(taxii20RestTemplate);
+        taxiiService.setTaxii21RestTemplate(taxii21RestTemplate);
         asyncStatusUpdateService = new AsyncStatusUpdateService(eventService, taxiiService, statusService);
     }
 
     @Test
     public void checkStatus() {
         when(statusService.getPending()).thenReturn(Collections.singletonList(TestData.taxii20Status));
-        when(taxii20RestTemplate.getStatus(eq(TestData.taxii20Server), any())).thenReturn(TestData.taxii20Status);
+        when(taxii21RestTemplate.getStatus(eq(TestData.taxii21Server), any())).thenReturn(TestData.taxii20Status);
         asyncStatusUpdateService.checkStatus();
-        verify(eventService).createEvent(eq(EventType.STATUS_UPDATED), any(), any(Taxii20Association.class));
+        verify(eventService).createEvent(eq(EventType.STATUS_UPDATED), any(), any(Taxii21Association.class));
         verify(statusService).save(TestData.taxii20Status);
 
     }

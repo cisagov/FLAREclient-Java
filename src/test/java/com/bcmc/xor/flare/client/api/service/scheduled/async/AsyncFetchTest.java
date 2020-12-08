@@ -5,14 +5,14 @@ import com.bcmc.xor.flare.client.api.FlareclientApp;
 import com.bcmc.xor.flare.client.api.config.Constants;
 import com.bcmc.xor.flare.client.api.domain.async.AsyncFetch;
 import com.bcmc.xor.flare.client.api.domain.async.Taxii11AsyncFetch;
-import com.bcmc.xor.flare.client.api.domain.async.Taxii20AsyncFetch;
+import com.bcmc.xor.flare.client.api.domain.async.Taxii21AsyncFetch;
 import com.bcmc.xor.flare.client.api.domain.content.CountResult;
 import com.bcmc.xor.flare.client.api.repository.AsyncFetchRequestRepository;
 import com.bcmc.xor.flare.client.api.service.CollectionService;
 import com.bcmc.xor.flare.client.api.service.DownloadService;
 import com.bcmc.xor.flare.client.api.service.EventService;
 import com.bcmc.xor.flare.client.api.service.UserService;
-import com.bcmc.xor.flare.client.taxii.taxii20.Taxii20Association;
+import com.bcmc.xor.flare.client.taxii.taxii21.Taxii21Association;
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -63,7 +63,7 @@ public class AsyncFetchTest {
     private EventService eventService;
 
     private static Taxii11AsyncFetch asyncFetch11;
-    private static Taxii20AsyncFetch asyncFetch20;
+    private static Taxii21AsyncFetch asyncFetch20;
     private static List<AsyncFetch> asyncFetches;
 
 
@@ -71,7 +71,7 @@ public class AsyncFetchTest {
     @BeforeClass
     public static void init() throws Exception {
         asyncFetch11 = Mockito.spy(new Taxii11AsyncFetch(TestData.pollParameters, 60000));
-        asyncFetch20 = Mockito.spy(new Taxii20AsyncFetch(TestData.getParameters));
+        asyncFetch20 = Mockito.spy(new Taxii21AsyncFetch(TestData.getParameters));
         asyncFetches = Arrays.asList(asyncFetch11, asyncFetch20);
     }
 
@@ -86,8 +86,8 @@ public class AsyncFetchTest {
     public void startAsyncFetch() {
         asyncFetchRequestService.startAsyncFetch(TestData.taxii11Association, TestData.pollParameters);
         verify(asyncFetchRequestService, times(1)).startAsyncFetch(any(Taxii11AsyncFetch.class));
-        asyncFetchRequestService.startAsyncFetch(TestData.taxii20Association, TestData.getParameters);
-        verify(asyncFetchRequestService, times(1)).startAsyncFetch(any(Taxii20AsyncFetch.class));
+        asyncFetchRequestService.startAsyncFetch(TestData.taxii21Association, TestData.getParameters);
+        verify(asyncFetchRequestService, times(1)).startAsyncFetch(any(Taxii21AsyncFetch.class));
     }
 
     @Test
@@ -167,6 +167,6 @@ public class AsyncFetchTest {
     @Test
     public void processAsyncFetch20() {
         asyncFetchRequestService.processAsyncFetch(asyncFetch20);
-        verify(downloadService).fetchContent(any(Taxii20Association.class), any(), any(), any());
+        verify(downloadService).fetchContent(any(Taxii21Association.class), any(), any(), any());
     }
 }

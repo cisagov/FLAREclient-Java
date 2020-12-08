@@ -2,7 +2,7 @@ package com.bcmc.xor.flare.client.api.repository;
 
 import com.bcmc.xor.flare.client.api.config.Constants;
 import com.bcmc.xor.flare.client.api.domain.server.Taxii11Server;
-import com.bcmc.xor.flare.client.api.domain.server.Taxii20Server;
+import com.bcmc.xor.flare.client.api.domain.server.Taxii21Server;
 import com.bcmc.xor.flare.client.api.domain.server.TaxiiServer;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -36,10 +36,10 @@ public interface ServerRepository extends MongoRepository<TaxiiServer, String> {
     Optional<Taxii11Server> findOneTaxii11ByLabelIgnoreCase(String label);
 
     @Cacheable(cacheNames = SERVERS_BY_ID_CACHE)
-    Optional<Taxii20Server> findOneTaxii20ById(String id);
+    Optional<Taxii21Server> findOneTaxii20ById(String id);
 
     @Cacheable(cacheNames = SERVERS_BY_LABEL_CACHE)
-    Optional<Taxii20Server> findOneTaxii20ByLabelIgnoreCase(String label);
+    Optional<Taxii21Server> findOneTaxii20ByLabelIgnoreCase(String label);
 
     boolean existsByLabelIgnoreCase(String label);
 

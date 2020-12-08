@@ -72,8 +72,8 @@ public class RecurringFetchResourceTest {
         PowerMockito.when(TaxiiAssociation.from(any(String.class),any(String.class),any(ServerService.class), any(CollectionService.class))).thenReturn(TestData.taxii11Association);
         when(serverService.findOneByLabel(TestData.taxii11Server.getLabel())).thenReturn(Optional.of(TestData.taxii11Server));
         when(collectionService.findOneById(TestData.taxii11Collection.getId())).thenReturn(Optional.of(TestData.taxii11Collection));
-        when(serverService.findOneByLabel(TestData.taxii20Server.getLabel())).thenReturn(Optional.of(TestData.taxii20Server));
-        when(collectionService.findOneById(TestData.taxii20Collection.getId())).thenReturn(Optional.of(TestData.taxii20Collection));
+        when(serverService.findOneByLabel(TestData.taxii21Server.getLabel())).thenReturn(Optional.of(TestData.taxii21Server));
+        when(collectionService.findOneById(TestData.taxii21Collection.getId())).thenReturn(Optional.of(TestData.taxii21Collection));
     }
 
     @Test

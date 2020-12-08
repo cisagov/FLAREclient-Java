@@ -1,18 +1,18 @@
 package com.bcmc.xor.flare.client.api.domain.async;
 
 import com.bcmc.xor.flare.client.api.config.Constants;
-import com.bcmc.xor.flare.client.api.domain.parameters.Taxii20GetParameters;
+import com.bcmc.xor.flare.client.api.domain.parameters.Taxii21GetParameters;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = Constants.RepositoryLabels.ASYNC_FETCH)
-public class Taxii20AsyncFetch extends AsyncFetch<Taxii20GetParameters> {
+public class Taxii21AsyncFetch extends AsyncFetch<Taxii21GetParameters> {
 
     private String apiRootRef;
 
-    public Taxii20AsyncFetch() {
+    public Taxii21AsyncFetch() {
     }
 
-    public Taxii20AsyncFetch(Taxii20GetParameters fetchParams) {
+    public Taxii21AsyncFetch(Taxii21GetParameters fetchParams) {
         super(fetchParams, 0);
     }
 

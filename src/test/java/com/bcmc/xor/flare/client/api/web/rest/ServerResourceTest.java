@@ -99,32 +99,32 @@ public class ServerResourceTest {
     @Test
     public void testCreateTaxii20ServerNoAuth() throws Exception {
         ServerDTO serverDTO = new ServerDTO();
-        serverDTO.setLabel(TestData.taxii20Server.getLabel());
-        serverDTO.setUrl(TestData.taxii20Server.getUrl().toString());
+        serverDTO.setLabel(TestData.taxii21Server.getLabel());
+        serverDTO.setUrl(TestData.taxii21Server.getUrl().toString());
         serverDTO.setRequiresBasicAuth(false);
 
-        when(serverService.updateServer(serverDTO)).thenReturn(TestData.taxii20Server);
+        when(serverService.updateServer(serverDTO)).thenReturn(TestData.taxii21Server);
 
         ResponseEntity<TaxiiServer> response = serverResource.createOrUpdateServer(serverDTO);
 
-        assertEquals(TestData.taxii20Server.getLabel(), response.getBody().getLabel());
-        assertEquals(TestData.taxii20Server.getUrl(), response.getBody().getUrl());
-        assertEquals(TestData.taxii20Server.getVersion(), response.getBody().getVersion());
+        assertEquals(TestData.taxii21Server.getLabel(), response.getBody().getLabel());
+        assertEquals(TestData.taxii21Server.getUrl(), response.getBody().getUrl());
+        assertEquals(TestData.taxii21Server.getVersion(), response.getBody().getVersion());
     }
 
     @Test
     public void testCreateTaxii20ServerAuth() throws Exception {
         ServerDTO serverDTO = new ServerDTO();
-        serverDTO.setLabel(TestData.taxii20Server.getLabel());
-        serverDTO.setUrl(TestData.taxii20Server.getUrl().toString());
+        serverDTO.setLabel(TestData.taxii21Server.getLabel());
+        serverDTO.setUrl(TestData.taxii21Server.getUrl().toString());
         serverDTO.setRequiresBasicAuth(false);
 
-        when(serverService.updateServer(serverDTO)).thenReturn(TestData.taxii20Server);
+        when(serverService.updateServer(serverDTO)).thenReturn(TestData.taxii21Server);
 
         ResponseEntity<TaxiiServer> response = serverResource.createOrUpdateServer(serverDTO);
-        assertEquals(TestData.taxii20Server.getLabel(), response.getBody().getLabel());
-        assertEquals(TestData.taxii20Server.getUrl(), response.getBody().getUrl());
-        assertEquals(TestData.taxii20Server.getVersion(), response.getBody().getVersion());
+        assertEquals(TestData.taxii21Server.getLabel(), response.getBody().getLabel());
+        assertEquals(TestData.taxii21Server.getUrl(), response.getBody().getUrl());
+        assertEquals(TestData.taxii21Server.getVersion(), response.getBody().getVersion());
     }
 
     @Test

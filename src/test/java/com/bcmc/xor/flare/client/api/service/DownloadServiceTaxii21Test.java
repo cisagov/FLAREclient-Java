@@ -6,11 +6,11 @@ import com.bcmc.xor.flare.client.api.domain.async.FetchChunk;
 import com.bcmc.xor.flare.client.api.domain.audit.Event;
 import com.bcmc.xor.flare.client.api.domain.audit.EventType;
 import com.bcmc.xor.flare.client.api.domain.content.CountResult;
-import com.bcmc.xor.flare.client.api.domain.parameters.Taxii20GetParameters;
+import com.bcmc.xor.flare.client.api.domain.parameters.Taxii21GetParameters;
 import com.bcmc.xor.flare.client.api.repository.CollectionRepository;
 import com.bcmc.xor.flare.client.api.repository.ServerRepository;
 import com.bcmc.xor.flare.client.error.RequestException;
-import com.bcmc.xor.flare.client.taxii.taxii20.Taxii20RestTemplate;
+import com.bcmc.xor.flare.client.taxii.taxii21.Taxii21RestTemplate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,7 +35,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = FlareclientApp.class)
-public class DownloadServiceTaxii20Test {
+public class DownloadServiceTaxii21Test {
 
     @Autowired
     private DownloadService downloadService;
@@ -50,7 +50,7 @@ public class DownloadServiceTaxii20Test {
     private EventService eventService;
 
     @MockBean
-    private Taxii20RestTemplate taxii20RestTemplate;
+    private Taxii21RestTemplate taxii21RestTemplate;
 
     @Autowired
     ServerRepository serverRepository;
@@ -66,14 +66,14 @@ public class DownloadServiceTaxii20Test {
 
     @Before
     public void init() {
-        taxiiService.setTaxii20RestTemplate(taxii20RestTemplate);
+        taxiiService.setTaxii21RestTemplate(taxii21RestTemplate);
         downloadService.setTaxiiService(taxiiService);
         downloadService.setEventService(eventService);
         downloadService.setMongoTemplate(mongoTemplate);
         MockitoAnnotations.initMocks(this);
 
-        serverRepository.save(TestData.taxii20Server);
-        collectionRepository.save(TestData.taxii20Collection);
+        serverRepository.save(TestData.taxii21Server);
+        collectionRepository.save(TestData.taxii21Collection);
         TestData.setLoggedInUser(securityContext, userService);
 
         mongoTemplate.remove(new Query(), "content");
@@ -82,13 +82,13 @@ public class DownloadServiceTaxii20Test {
     @Test
     public void fetchContentSuccess() {
         // Establish Spy for parameters
-        Taxii20GetParameters spyParameters = Mockito.spy(TestData.getParameters);
+        Taxii21GetParameters spyParameters = Mockito.spy(TestData.getParameters);
 
         // Respond with a bundle response for mocked external request
-        when(taxiiService.getTaxii20RestTemplate().executeGet(any(), any())).thenReturn(TestData.taxii20GetResponse);
+        when(taxiiService.getTaxii21RestTemplate().executeGet(any(), any())).thenReturn(TestData.taxii20GetResponse);
 
         // Verify PollResponse is returned
-        CountResult countResult = downloadService.fetchContent(TestData.taxii20Association, TestData.getParameters,
+        CountResult countResult = downloadService.fetchContent(TestData.taxii21Association, TestData.getParameters,
             new FetchChunk<>(0, 0), new CountResult());
 
         assertEquals(4, countResult.getContentCount());
@@ -97,7 +97,7 @@ public class DownloadServiceTaxii20Test {
     @Test
     public void fetchContentSuccessWithRange() {
         // Establish Spy for parameters
-        Taxii20GetParameters spyParameters = Mockito.spy(TestData.getParameters);
+        Taxii21GetParameters spyParameters = Mockito.spy(TestData.getParameters);
 
         // Mock response headers from server, returning pages of items
         HttpHeaders responseHeaders1 = new HttpHeaders();
@@ -108,7 +108,7 @@ public class DownloadServiceTaxii20Test {
         responseHeaders3.set("Content-Range", "items 8-11/12");
 
         // Respond with sequential bundle responses, with headers to denote pages
-        when(taxiiService.getTaxii20RestTemplate().executeGet(any(), any()))
+        when(taxiiService.getTaxii21RestTemplate().executeGet(any(), any()))
             .thenReturn(
                 ResponseEntity.status(206).headers(responseHeaders1).body(TestData.rawStix20),
                 ResponseEntity.status(206).headers(responseHeaders2).body(TestData.rawStix20),
@@ -116,7 +116,7 @@ public class DownloadServiceTaxii20Test {
 
 
         // Verify PollResponse is returned
-        CountResult countResult = downloadService.fetchContent(TestData.taxii20Association, TestData.getParameters,
+        CountResult countResult = downloadService.fetchContent(TestData.taxii21Association, TestData.getParameters,
             new FetchChunk<>(0, 0), new CountResult());
 
         assertEquals(12, countResult.getContentCount());
@@ -126,15 +126,15 @@ public class DownloadServiceTaxii20Test {
     public void fetchContentFailureRequestException() {
         // Respond with a PollResponse for mocked external request
         RequestException requestException = new RequestException("test", "test", "test");
-        when(taxiiService.getTaxii20RestTemplate().executeGet(any(), any()))
+        when(taxiiService.getTaxii21RestTemplate().executeGet(any(), any()))
             .thenThrow(requestException);
 
         // Mock event service creation
-        when(eventService.createEvent(eq(EventType.ASYNC_FETCH_ERROR), eq(requestException.getMessage()), eq(TestData.taxii20Association)))
-            .thenReturn(Event.from(EventType.ASYNC_FETCH_ERROR, requestException.getMessage(), TestData.taxii20Server.getLabel(), TestData.taxii20Collection.getDisplayName()));
+        when(eventService.createEvent(eq(EventType.ASYNC_FETCH_ERROR), eq(requestException.getMessage()), eq(TestData.taxii21Association)))
+            .thenReturn(Event.from(EventType.ASYNC_FETCH_ERROR, requestException.getMessage(), TestData.taxii21Server.getLabel(), TestData.taxii21Collection.getDisplayName()));
 
         // Make method call
-        downloadService.fetchContent(TestData.taxii20Association, TestData.getParameters, new FetchChunk<>(0, 0), new CountResult());
+        downloadService.fetchContent(TestData.taxii21Association, TestData.getParameters, new FetchChunk<>(0, 0), new CountResult());
 
         // Verify that an event was created for the failure
         verify(Mockito.spy(eventService)).createEvent(eq(EventType.ASYNC_FETCH_ERROR), eq(requestException.getMessage()), eq(TestData.taxii11Association));
@@ -145,13 +145,13 @@ public class DownloadServiceTaxii20Test {
     @Test(expected = HttpClientErrorException.class)
     public void fetchContentResponseNull() {
         // Respond with an empty response body
-        when(taxiiService.getTaxii20RestTemplate().executeGet(any(), any())).thenReturn(ResponseEntity.ok(""));
+        when(taxiiService.getTaxii21RestTemplate().executeGet(any(), any())).thenReturn(ResponseEntity.ok(""));
 
         // Make method call
-        downloadService.fetchContent(TestData.taxii20Association, TestData.getParameters, new FetchChunk<>(0, 0), new CountResult());
+        downloadService.fetchContent(TestData.taxii21Association, TestData.getParameters, new FetchChunk<>(0, 0), new CountResult());
 
         // Verify that an event was created for the failure
-        verify(Mockito.spy(eventService)).createEvent(eq(EventType.ASYNC_FETCH_ERROR), any(), eq(TestData.taxii20Association));
+        verify(Mockito.spy(eventService)).createEvent(eq(EventType.ASYNC_FETCH_ERROR), any(), eq(TestData.taxii21Association));
 
         // Expect exception to be thrown
     }
@@ -160,7 +160,7 @@ public class DownloadServiceTaxii20Test {
     public void processTaxii20Content() {
 
         // Call method under test
-        CountResult result = downloadService.processTaxii20Content(TestData.jsonStix20, TestData.taxii20Association);
+        CountResult result = downloadService.processTaxii20Content(TestData.jsonStix20, TestData.taxii21Association);
 
         assertEquals(4, result.getContentCount());
         assertEquals(4, result.getContentSaved());
@@ -170,8 +170,8 @@ public class DownloadServiceTaxii20Test {
     public void processTaxii20ContentDuplicate() {
 
         // Call method under test
-        downloadService.processTaxii20Content(TestData.jsonStix20, TestData.taxii20Association);
-        CountResult secondResult = downloadService.processTaxii20Content(TestData.jsonStix20, TestData.taxii20Association);
+        downloadService.processTaxii20Content(TestData.jsonStix20, TestData.taxii21Association);
+        CountResult secondResult = downloadService.processTaxii20Content(TestData.jsonStix20, TestData.taxii21Association);
 
         assertEquals(4, secondResult.getContentCount());
         assertEquals(4, secondResult.getContentDuplicate());

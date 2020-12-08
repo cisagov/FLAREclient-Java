@@ -3,7 +3,7 @@ package com.bcmc.xor.flare.client.api.domain.status;
 import com.bcmc.xor.flare.client.api.config.Constants;
 import com.bcmc.xor.flare.client.api.domain.audit.AbstractAuditingEntity;
 import com.bcmc.xor.flare.client.api.service.dto.StatusDTO;
-import com.bcmc.xor.flare.client.taxii.taxii20.Taxii20Association;
+import com.bcmc.xor.flare.client.taxii.taxii21.Taxii21Association;
 import com.google.gson.annotations.Expose;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.data.annotation.Id;
@@ -70,7 +70,7 @@ public class Status extends AbstractAuditingEntity implements Serializable {
     private String url;
 
     @Expose
-    private Taxii20Association association;
+    private Taxii21Association association;
 
     public Status() { this.id = UUID.randomUUID().toString(); }
 
@@ -174,11 +174,11 @@ public class Status extends AbstractAuditingEntity implements Serializable {
         return serialVersionUID;
     }
 
-    public Taxii20Association getAssociation() {
+    public Taxii21Association getAssociation() {
         return association;
     }
 
-    public void setAssociation(Taxii20Association association) {
+    public void setAssociation(Taxii21Association association) {
         this.association = association;
     }
 

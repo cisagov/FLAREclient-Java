@@ -3,11 +3,11 @@ package com.bcmc.xor.flare.client.api.service.scheduled;
 import com.bcmc.xor.flare.client.api.domain.async.AsyncFetch;
 import com.bcmc.xor.flare.client.api.domain.async.RecurringFetch;
 import com.bcmc.xor.flare.client.api.domain.async.Taxii11AsyncFetch;
-import com.bcmc.xor.flare.client.api.domain.async.Taxii20AsyncFetch;
+import com.bcmc.xor.flare.client.api.domain.async.Taxii21AsyncFetch;
 import com.bcmc.xor.flare.client.api.domain.audit.EventType;
 import com.bcmc.xor.flare.client.api.domain.parameters.ApiParameters;
 import com.bcmc.xor.flare.client.api.domain.parameters.Taxii11PollParameters;
-import com.bcmc.xor.flare.client.api.domain.parameters.Taxii20GetParameters;
+import com.bcmc.xor.flare.client.api.domain.parameters.Taxii21GetParameters;
 import com.bcmc.xor.flare.client.api.repository.RecurringFetchRepository;
 import com.bcmc.xor.flare.client.api.security.ServerCredentialsUtils;
 import com.bcmc.xor.flare.client.api.service.CollectionService;
@@ -17,7 +17,7 @@ import com.bcmc.xor.flare.client.api.service.UserService;
 import com.bcmc.xor.flare.client.api.service.scheduled.async.AsyncFetchRequestService;
 import com.bcmc.xor.flare.client.taxii.TaxiiAssociation;
 import com.bcmc.xor.flare.client.taxii.taxii11.Taxii11Association;
-import com.bcmc.xor.flare.client.taxii.taxii20.Taxii20Association;
+import com.bcmc.xor.flare.client.taxii.taxii21.Taxii21Association;
 import com.mongodb.DuplicateKeyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,7 +101,7 @@ public class RecurringFetchService {
         }
     }
 
-    private void processRecurringFetch(Taxii20Association association, RecurringFetch<Taxii20GetParameters> recurringFetch) {
+    private void processRecurringFetch(Taxii21Association association, RecurringFetch<Taxii21GetParameters> recurringFetch) {
         log.debug("Processing recurring fetch for server '{}' and collection '{}'", association.getServer().getLabel(), association.getCollection().getDisplayName());
         Optional<AsyncFetch> existingAsyncFetch = asyncFetchRequestService.findExisting(association);
         if (!existingAsyncFetch.isPresent()) {
@@ -111,7 +111,7 @@ public class RecurringFetchService {
                 association.getCollection().setLatestFetch(Instant.now()); //Set latest fetch to now. It was null if first time poll
 //                log.info("Recurring fetch: " + recurringFetch);
                 recurringFetch.getApiParameters().setAddedAfter(association.getCollection().getLatestFetch().atZone(ZoneId.of("Z")));
-                asyncFetchRequestService.startAsyncFetch(new Taxii20AsyncFetch(recurringFetch.getApiParameters()));
+                asyncFetchRequestService.startAsyncFetch(new Taxii21AsyncFetch(recurringFetch.getApiParameters()));
                 repository.save(recurringFetch);
             }
         }
@@ -136,7 +136,7 @@ public class RecurringFetchService {
                     switch (taxiiAssociation.getCollection().getTaxiiVersion()) {
                         case TAXII21:
                             //noinspection unchecked
-                            processRecurringFetch((Taxii20Association) taxiiAssociation, recurringFetch);
+                            processRecurringFetch((Taxii21Association) taxiiAssociation, recurringFetch);
                             break;
                         case TAXII11:
                             //noinspection unchecked

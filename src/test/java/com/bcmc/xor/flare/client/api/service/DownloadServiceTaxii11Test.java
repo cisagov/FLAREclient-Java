@@ -75,8 +75,8 @@ public class DownloadServiceTaxii11Test {
         downloadService.setMongoTemplate(mongoTemplate);
         MockitoAnnotations.initMocks(this);
 
-        serverRepository.save(TestData.taxii20Server);
-        collectionRepository.save(TestData.taxii20Collection);
+        serverRepository.save(TestData.taxii21Server);
+        collectionRepository.save(TestData.taxii21Collection);
         TestData.setLoggedInUser(securityContext, userService);
 
         mongoTemplate.remove(new Query(), "content");

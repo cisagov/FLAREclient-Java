@@ -6,7 +6,7 @@ import com.bcmc.xor.flare.client.api.service.CollectionService;
 import com.bcmc.xor.flare.client.api.service.ServerService;
 import com.bcmc.xor.flare.client.api.service.TaxiiService;
 import com.bcmc.xor.flare.client.error.ManifestNotSupportedException;
-import com.bcmc.xor.flare.client.taxii.taxii20.Taxii20Association;
+import com.bcmc.xor.flare.client.taxii.taxii21.Taxii21Association;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,19 +68,19 @@ class TaxiiManifestResource {
             }
         }
 
-        Taxii20Association association = (Taxii20Association) Taxii20Association.from(serverLabel,
+        Taxii21Association association = (Taxii21Association) Taxii21Association.from(serverLabel,
                 collectionId, serverService, collectionService);
         final String manifestEndpoint = "collections/"
                 + association.getCollection().getCollectionObject().getId() + "/manifest/";
 
         Map<String, String> response = new HashMap<>();
         try {
-            String manifest = taxiiService.getTaxii20RestTemplate().getManifest(
+            String manifest = taxiiService.getTaxii21RestTemplate().getManifest(
                 association.getServer(),
                 new URI(association.getApiRoot().getUrl().toString() + manifestEndpoint));
 
             if (StringUtils.isNotBlank(queryFilters.toString())) {
-                manifest = taxiiService.getTaxii20RestTemplate().getManifest(
+                manifest = taxiiService.getTaxii21RestTemplate().getManifest(
                         association.getServer(),
                         new URI(association.getApiRoot().getUrl().toString() + manifestEndpoint + "?" + queryFilters));
             }

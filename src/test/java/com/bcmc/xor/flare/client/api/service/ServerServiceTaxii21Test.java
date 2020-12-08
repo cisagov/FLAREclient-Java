@@ -2,7 +2,7 @@ package com.bcmc.xor.flare.client.api.service;
 
 import com.bcmc.xor.flare.client.TestData;
 import com.bcmc.xor.flare.client.api.FlareclientApp;
-import com.bcmc.xor.flare.client.api.domain.server.Taxii20Server;
+import com.bcmc.xor.flare.client.api.domain.server.Taxii21Server;
 import com.bcmc.xor.flare.client.api.domain.server.TaxiiServer;
 import com.bcmc.xor.flare.client.api.repository.EventRepository;
 import com.bcmc.xor.flare.client.api.repository.ServerRepository;
@@ -10,7 +10,7 @@ import com.bcmc.xor.flare.client.api.repository.UserRepository;
 import com.bcmc.xor.flare.client.api.security.ServerCredentialsUtils;
 import com.bcmc.xor.flare.client.api.service.dto.ServerDTO;
 import com.bcmc.xor.flare.client.api.service.dto.ServersDTO;
-import com.bcmc.xor.flare.client.taxii.taxii20.Taxii20RestTemplate;
+import com.bcmc.xor.flare.client.taxii.taxii21.Taxii21RestTemplate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,10 +32,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.bcmc.xor.flare.client.TestData.taxii20Discovery;
-import static com.bcmc.xor.flare.client.TestData.taxii20Server;
+import static com.bcmc.xor.flare.client.TestData.taxii21Server;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 /**
@@ -45,7 +44,7 @@ import static org.mockito.Mockito.when;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = FlareclientApp.class)
-public class ServerServiceTaxii20Test {
+public class ServerServiceTaxii21Test {
 
     private final Logger log = LoggerFactory.getLogger(ServerServiceTaxii11Test.class);
 
@@ -66,7 +65,7 @@ public class ServerServiceTaxii20Test {
     private TaxiiService taxiiService;
 
     @MockBean
-    private Taxii20RestTemplate taxii20RestTemplate;
+    private Taxii21RestTemplate taxii21RestTemplate;
 
     @Autowired
     private ApiRootService apiRootService;
@@ -90,7 +89,7 @@ public class ServerServiceTaxii20Test {
     public void setup() {
         serverService.setServerRepository(serverRepository);
         serverService.setUserService(userService);
-        taxiiService.setTaxii20RestTemplate(taxii20RestTemplate);
+        taxiiService.setTaxii21RestTemplate(taxii21RestTemplate);
         serverService.setTaxiiService(taxiiService);
         serverService.setApiRootService(apiRootService);
         serverService.setCollectionService(collectionService);
@@ -110,22 +109,22 @@ public class ServerServiceTaxii20Test {
     @Test
     public void testCreateTaxii20Server() {
         ServerDTO serverDTO = new ServerDTO();
-        serverDTO.setLabel(taxii20Server.getLabel());
+        serverDTO.setLabel(taxii21Server.getLabel());
         serverDTO.setRequiresBasicAuth(false);
         serverDTO.setUrl("https://example.com");
 
-        when(taxiiService.getTaxii20RestTemplate().discovery(serverDTO)).thenReturn(TestData.taxii20Discovery);
-        when(taxiiService.getTaxii20RestTemplate().getApiRoot(any(), any())).thenReturn(TestData.taxii20ApiRoot);
-        when(taxiiService.getTaxii20RestTemplate().getCollections(any(), any())).thenReturn(new Collections(Arrays.asList(TestData.taxii20CollectionObject)));
+        when(taxiiService.getTaxii21RestTemplate().discovery(serverDTO)).thenReturn(TestData.taxii20Discovery);
+        when(taxiiService.getTaxii21RestTemplate().getApiRoot(any(), any())).thenReturn(TestData.taxii20ApiRoot);
+        when(taxiiService.getTaxii21RestTemplate().getCollections(any(), any())).thenReturn(new Collections(Arrays.asList(TestData.taxii20CollectionObject)));
 
         serverRepository.deleteAll();
         assertTrue(serverRepository.findAll().isEmpty());
         serverService.createServer(serverDTO);
         assertFalse(serverRepository.findAll().isEmpty());
 
-        Optional<Taxii20Server> maybeServer = serverRepository.findOneTaxii20ByLabelIgnoreCase(taxii20Server.getLabel());
+        Optional<Taxii21Server> maybeServer = serverRepository.findOneTaxii20ByLabelIgnoreCase(taxii21Server.getLabel());
         assertTrue(maybeServer.isPresent());
-        assertEquals("label", taxii20Server.getLabel(), maybeServer.get().getLabel());
+        assertEquals("label", taxii21Server.getLabel(), maybeServer.get().getLabel());
         assertEquals("api roots", new HashSet<>(taxii20Discovery.getApiRoots()), maybeServer.get().getApiRoots());
         assertEquals("description", taxii20Discovery.getDescription(), maybeServer.get().getDescription());
         assertEquals("title", taxii20Discovery.getTitle(), maybeServer.get().getTitle());
@@ -140,40 +139,40 @@ public class ServerServiceTaxii20Test {
     public void testCreateTaxii20ServerWithBasicAuth() {
 
         ServerDTO serverDTO = new ServerDTO();
-        serverDTO.setLabel(taxii20Server.getLabel());
+        serverDTO.setLabel(taxii21Server.getLabel());
         serverDTO.setRequiresBasicAuth(true);
         serverDTO.setUsername("user");
         serverDTO.setPassword("pass");
         serverDTO.setUrl("https://example.com");
 
-        when(taxiiService.getTaxii20RestTemplate().discovery(serverDTO)).thenReturn(TestData.taxii20Discovery);
-        when(taxiiService.getTaxii20RestTemplate().getApiRoot(any(), any())).thenReturn(TestData.taxii20ApiRoot);
-        when(taxiiService.getTaxii20RestTemplate().getCollections(any(), any())).thenReturn(new Collections(Arrays.asList(TestData.taxii20CollectionObject)));
+        when(taxiiService.getTaxii21RestTemplate().discovery(serverDTO)).thenReturn(TestData.taxii20Discovery);
+        when(taxiiService.getTaxii21RestTemplate().getApiRoot(any(), any())).thenReturn(TestData.taxii20ApiRoot);
+        when(taxiiService.getTaxii21RestTemplate().getCollections(any(), any())).thenReturn(new Collections(Arrays.asList(TestData.taxii20CollectionObject)));
 
         serverRepository.deleteAll();
         assertTrue(serverRepository.findAll().isEmpty());
         serverService.createServer(serverDTO);
         assertFalse(serverRepository.findAll().isEmpty());
 
-        Optional<Taxii20Server> maybeServer = serverRepository.findOneTaxii20ByLabelIgnoreCase(taxii20Server.getLabel());
+        Optional<Taxii21Server> maybeServer = serverRepository.findOneTaxii20ByLabelIgnoreCase(taxii21Server.getLabel());
         assertTrue(maybeServer.isPresent());
-        assertFalse(ServerCredentialsUtils.getInstance().getServerCredentialsMap().get("user").get(taxii20Server.getLabel()).isEmpty());
+        assertFalse(ServerCredentialsUtils.getInstance().getServerCredentialsMap().get("user").get(taxii21Server.getLabel()).isEmpty());
     }
 
     @Test
     public void testRefreshTaxii20Server() {
 
         ServerDTO serverDTO = new ServerDTO();
-        serverDTO.setLabel(taxii20Server.getLabel());
+        serverDTO.setLabel(taxii21Server.getLabel());
         serverDTO.setRequiresBasicAuth(false);
         serverDTO.setUrl("https://example.com");
 
-        when(taxiiService.getTaxii20RestTemplate().discovery(any(Taxii20Server.class))).thenReturn(TestData.taxii20Discovery);
-        when(taxiiService.getTaxii20RestTemplate().getApiRoot(any(), any())).thenReturn(TestData.taxii20ApiRoot);
-        when(taxiiService.getTaxii20RestTemplate().getCollections(any(), any())).thenReturn(new Collections(Arrays.asList(TestData.taxii20CollectionObject)));
+        when(taxiiService.getTaxii21RestTemplate().discovery(any(Taxii21Server.class))).thenReturn(TestData.taxii20Discovery);
+        when(taxiiService.getTaxii21RestTemplate().getApiRoot(any(), any())).thenReturn(TestData.taxii20ApiRoot);
+        when(taxiiService.getTaxii21RestTemplate().getCollections(any(), any())).thenReturn(new Collections(Arrays.asList(TestData.taxii20CollectionObject)));
 
 
-        Taxii20Server server = newTaxii20Server("RefreshServer");
+        Taxii21Server server = newTaxii20Server("RefreshServer");
         serverRepository.save(server);
         TaxiiServer refreshedServer = serverService.refreshServer(server.getLabel());
         assertTrue(refreshedServer.hasReceivedServerInformation());
@@ -183,15 +182,15 @@ public class ServerServiceTaxii20Test {
 
     @Test
     public void testUpdateTaxii20ServerCreate() {
-        serverService.deleteServer(taxii20Server.getLabel());
+        serverService.deleteServer(taxii21Server.getLabel());
         ServerDTO serverDTO = new ServerDTO();
-        serverDTO.setLabel(taxii20Server.getLabel());
+        serverDTO.setLabel(taxii21Server.getLabel());
         serverDTO.setRequiresBasicAuth(false);
         serverDTO.setUrl("https://example.com");
 
-        when(taxiiService.getTaxii20RestTemplate().discovery(serverDTO)).thenReturn(TestData.taxii20Discovery);
-        when(taxiiService.getTaxii20RestTemplate().getApiRoot(any(), any())).thenReturn(TestData.taxii20ApiRoot);
-        when(taxiiService.getTaxii20RestTemplate().getCollections(any(), any())).thenReturn(new Collections(Arrays.asList(TestData.taxii20CollectionObject)));
+        when(taxiiService.getTaxii21RestTemplate().discovery(serverDTO)).thenReturn(TestData.taxii20Discovery);
+        when(taxiiService.getTaxii21RestTemplate().getApiRoot(any(), any())).thenReturn(TestData.taxii20ApiRoot);
+        when(taxiiService.getTaxii21RestTemplate().getCollections(any(), any())).thenReturn(new Collections(Arrays.asList(TestData.taxii20CollectionObject)));
 
         TaxiiServer updatedServer = serverService.updateServer(serverDTO);
         assertTrue(updatedServer.hasReceivedServerInformation());
@@ -201,15 +200,15 @@ public class ServerServiceTaxii20Test {
 
     @Test
     public void testUpdateTaxii20ServerUpdate() {
-        serverService.deleteServer(taxii20Server.getLabel());
+        serverService.deleteServer(taxii21Server.getLabel());
         ServerDTO createServerDTO = new ServerDTO();
-        createServerDTO.setLabel(taxii20Server.getLabel());
+        createServerDTO.setLabel(taxii21Server.getLabel());
         createServerDTO.setRequiresBasicAuth(false);
         createServerDTO.setUrl("https://example.com");
 
-        when(taxiiService.getTaxii20RestTemplate().discovery(createServerDTO)).thenReturn(TestData.taxii20Discovery);
-        when(taxiiService.getTaxii20RestTemplate().getApiRoot(any(), any())).thenReturn(TestData.taxii20ApiRoot);
-        when(taxiiService.getTaxii20RestTemplate().getCollections(any(), any())).thenReturn(new Collections(Arrays.asList(TestData.taxii20CollectionObject)));
+        when(taxiiService.getTaxii21RestTemplate().discovery(createServerDTO)).thenReturn(TestData.taxii20Discovery);
+        when(taxiiService.getTaxii21RestTemplate().getApiRoot(any(), any())).thenReturn(TestData.taxii20ApiRoot);
+        when(taxiiService.getTaxii21RestTemplate().getCollections(any(), any())).thenReturn(new Collections(Arrays.asList(TestData.taxii20CollectionObject)));
 
         TaxiiServer createdServer = serverService.createServer(createServerDTO);
 
@@ -227,13 +226,13 @@ public class ServerServiceTaxii20Test {
     @Test
     public void testDeleteTaxii20Server() {
         ServerDTO serverDTO = new ServerDTO();
-        serverDTO.setLabel(taxii20Server.getLabel());
+        serverDTO.setLabel(taxii21Server.getLabel());
         serverDTO.setRequiresBasicAuth(false);
         serverDTO.setUrl("https://example.com");
 
-        when(taxiiService.getTaxii20RestTemplate().discovery(serverDTO)).thenReturn(TestData.taxii20Discovery);
-        when(taxiiService.getTaxii20RestTemplate().getApiRoot(any(), any())).thenReturn(TestData.taxii20ApiRoot);
-        when(taxiiService.getTaxii20RestTemplate().getCollections(any(), any())).thenReturn(new Collections(Arrays.asList(TestData.taxii20CollectionObject)));
+        when(taxiiService.getTaxii21RestTemplate().discovery(serverDTO)).thenReturn(TestData.taxii20Discovery);
+        when(taxiiService.getTaxii21RestTemplate().getApiRoot(any(), any())).thenReturn(TestData.taxii20ApiRoot);
+        when(taxiiService.getTaxii21RestTemplate().getCollections(any(), any())).thenReturn(new Collections(Arrays.asList(TestData.taxii20CollectionObject)));
 
         TaxiiServer createdServer = serverService.createServer(serverDTO);
 
@@ -243,8 +242,8 @@ public class ServerServiceTaxii20Test {
 
     @Test
     public void testGetAllServers() {
-        Taxii20Server server1 = newTaxii20Server("Server1");
-        Taxii20Server server2 = newTaxii20Server("Server2");
+        Taxii21Server server1 = newTaxii20Server("Server1");
+        Taxii21Server server2 = newTaxii20Server("Server2");
 
         serverRepository.save(server1);
         serverRepository.save(server2);
@@ -258,7 +257,7 @@ public class ServerServiceTaxii20Test {
 
     @Test
     public void testGetServerByLabel() {
-        Taxii20Server server1 = newTaxii20Server("Server1");
+        Taxii21Server server1 = newTaxii20Server("Server1");
         serverRepository.save(server1);
         Optional<? extends TaxiiServer> maybeServer = serverService.findOneByLabel("Server1");
         assertTrue(maybeServer.isPresent());
@@ -267,15 +266,15 @@ public class ServerServiceTaxii20Test {
 
     @Test
     public void testGetServerById() {
-        Taxii20Server server1 = newTaxii20Server("Server1");
+        Taxii21Server server1 = newTaxii20Server("Server1");
         serverRepository.save(server1);
         Optional<? extends TaxiiServer> maybeServer = serverService.findOneById(server1.getId());
         assertTrue(maybeServer.isPresent());
         assertEquals(server1.getId(), maybeServer.get().getId());
     }
 
-    private Taxii20Server newTaxii20Server(String label) {
-        Taxii20Server server = new Taxii20Server();
+    private Taxii21Server newTaxii20Server(String label) {
+        Taxii21Server server = new Taxii21Server();
         server.setId(UUID.randomUUID().toString());
         server.setLabel(label);
         server.setAvailable(true);

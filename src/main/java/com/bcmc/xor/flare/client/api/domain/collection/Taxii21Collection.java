@@ -14,9 +14,9 @@ import java.util.Objects;
  * TAXII 2.0 implementation of a TaxiiCollection
  */
 @Document(collection = Constants.RepositoryLabels.TAXII_COLLECTION)
-public class Taxii20Collection extends TaxiiCollection {
+public class Taxii21Collection extends TaxiiCollection {
 
-    private static final Logger log = LoggerFactory.getLogger(Taxii20Collection.class);
+    private static final Logger log = LoggerFactory.getLogger(Taxii21Collection.class);
 
     @Field("collection_object")
     private Collection collectionObject;
@@ -30,7 +30,7 @@ public class Taxii20Collection extends TaxiiCollection {
     @Field("api_url")
     private URI apiUrl;
 
-    public Taxii20Collection(Collection collectionObject, String serverRef, String apiRootRef) {
+    public Taxii21Collection(Collection collectionObject, String serverRef, String apiRootRef) {
         this.collectionObject = collectionObject;
         this.setServerRef(serverRef);
         this.apiRootRef = apiRootRef;
@@ -67,7 +67,7 @@ public class Taxii20Collection extends TaxiiCollection {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        Taxii20Collection that = (Taxii20Collection) o;
+        Taxii21Collection that = (Taxii21Collection) o;
         return Objects.equals(collectionObject, that.collectionObject);
     }
 

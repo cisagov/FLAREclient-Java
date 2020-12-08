@@ -1,7 +1,7 @@
-package com.bcmc.xor.flare.client.taxii.taxii20;
+package com.bcmc.xor.flare.client.taxii.taxii21;
 
 import com.bcmc.xor.flare.client.api.config.Constants;
-import com.bcmc.xor.flare.client.api.domain.server.Taxii20Server;
+import com.bcmc.xor.flare.client.api.domain.server.Taxii21Server;
 import com.bcmc.xor.flare.client.api.domain.server.TaxiiServer;
 import com.bcmc.xor.flare.client.api.domain.status.Status;
 import com.bcmc.xor.flare.client.api.service.ServerService;
@@ -27,11 +27,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Taxii20RestTemplate extends FlareRestTemplate {
+public class Taxii21RestTemplate extends FlareRestTemplate {
 
     private static final Logger log = LoggerFactory.getLogger(ServerService.class);
 
-    public Taxii20RestTemplate(Environment env) {
+    public Taxii21RestTemplate(Environment env) {
         super(env);
         // Setup for message conversion
         HttpMessageConverter taxii20gson = new GsonHttpMessageConverter(xor.bcmc.taxii2.JsonHandler.getInstance().getGson());
@@ -54,12 +54,12 @@ public class Taxii20RestTemplate extends FlareRestTemplate {
 
     public Discovery discovery(ServerDTO serverDTO) {
         this.setTimeouts(5000);
-        Discovery response = discovery(new Taxii20Server(serverDTO));
+        Discovery response = discovery(new Taxii21Server(serverDTO));
         this.setTimeouts(60000);
         return response;
     }
 
-    public ApiRoot getApiRoot(Taxii20Server server, URI uri) {
+    public ApiRoot getApiRoot(Taxii21Server server, URI uri) {
         log.info("Attempting to get ApiRoot information from '{}'", uri.toString());
         ResponseEntity<String> responseEntity = executeGet(TaxiiHeaders.fromServer(server), uri);
         if (responseEntity.getStatusCode().isError()) {
@@ -70,7 +70,7 @@ public class Taxii20RestTemplate extends FlareRestTemplate {
         }
     }
 
-    public Collections getCollections(Taxii20Server server, URI uri) {
+    public Collections getCollections(Taxii21Server server, URI uri) {
         log.info("Attempting to get Collection information from '{}'", uri.toString());
         ResponseEntity<String> responseEntity = executeGet(TaxiiHeaders.fromServer(server), uri);
         if (responseEntity.getStatusCode().isError()) {
@@ -81,7 +81,7 @@ public class Taxii20RestTemplate extends FlareRestTemplate {
         }
     }
 
-    public Status getStatus(Taxii20Server server, URI uri) {
+    public Status getStatus(Taxii21Server server, URI uri) {
         log.info("Attempting to get Status from '{}'", uri.toString());
         ResponseEntity<String> responseEntity = executeGet(TaxiiHeaders.fromServer(server), uri);
         if (responseEntity.getStatusCode().isError()) {
@@ -92,9 +92,9 @@ public class Taxii20RestTemplate extends FlareRestTemplate {
         }
     }
 
-    public Status postBundle(Taxii20Server server, URI uri, String bundle) {
+    public Status postBundle(Taxii21Server server, URI uri, String bundle) {
         log.info("Attempting to POST content to '{}' with Content-Type: {}", uri.toString(), Constants.HEADER_TAXII21_JSON_VERSION_21);
-        TaxiiHeaders headers = Taxii20Headers.fromServer(server).withHeader("Content-Type", Constants.HEADER_TAXII21_JSON_VERSION_21);
+        TaxiiHeaders headers = Taxii21Headers.fromServer(server).withHeader("Content-Type", Constants.HEADER_TAXII21_JSON_VERSION_21);
          ResponseEntity<String> responseEntity = executePost(bundle, headers, uri);
 
         if (responseEntity.getStatusCode().isError()) {
@@ -105,7 +105,7 @@ public class Taxii20RestTemplate extends FlareRestTemplate {
         }
     }
 
-    public String getManifest(Taxii20Server server, URI uri) {
+    public String getManifest(Taxii21Server server, URI uri) {
         log.info("Attempting to GET manifest to '{}'", uri.toString());
         ResponseEntity<String> responseEntity = executeGet(TaxiiHeaders.fromServer(server).withHeader("Accept", Arrays.asList(Constants.HEADER_STIX21_JSON, Constants.HEADER_TAXII21_JSON)), uri);
         if (responseEntity.getStatusCode().isError()) {

@@ -13,9 +13,9 @@ import java.time.ZonedDateTime;
  * TAXII 2.0 Fetch parameters
  */
 @JsonTypeName("TAXII21")
-public class Taxii20GetParameters extends ApiParameters implements Serializable {
+public class Taxii21GetParameters extends ApiParameters implements Serializable {
 
-    private static final Logger log = LoggerFactory.getLogger(Taxii20GetParameters.class);
+    private static final Logger log = LoggerFactory.getLogger(Taxii21GetParameters.class);
 
     @Field("added_after")
     private ZonedDateTime addedAfter;
@@ -26,7 +26,7 @@ public class Taxii20GetParameters extends ApiParameters implements Serializable 
     @Field("queryString")
     private String queryString;
 
-    public Taxii20GetParameters() {
+    public Taxii21GetParameters() {
 
     }
 

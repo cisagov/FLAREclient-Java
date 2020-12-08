@@ -18,7 +18,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -79,8 +78,8 @@ public class UploadServiceTaxii11Test {
         uploadService.setUserService(userService);
         MockitoAnnotations.initMocks(this);
 
-        serverRepository.save(TestData.taxii20Server);
-        collectionRepository.save(TestData.taxii20Collection);
+        serverRepository.save(TestData.taxii21Server);
+        collectionRepository.save(TestData.taxii21Collection);
         TestData.setLoggedInUser(securityContext, userService);
     }
 

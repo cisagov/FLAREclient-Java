@@ -64,7 +64,7 @@ public class UploadResourceTest {
         uploadedFile.setContent(TestData.rawStix20);
 
         PowerMockito.mockStatic(TaxiiAssociation.class);
-        when(TaxiiAssociation.from(any(String.class),any(String.class),any(ServerService.class), any(CollectionService.class))).thenReturn(TestData.taxii20Association);
+        when(TaxiiAssociation.from(any(String.class),any(String.class),any(ServerService.class), any(CollectionService.class))).thenReturn(TestData.taxii21Association);
         when(uploadService.publish(any(TaxiiAssociation.class), any(HashMap.class))).thenReturn("Success");
 
         ResponseEntity<String> response = uploadResource.publish(fileMap,  "testServerLabel", "testCollectionId");
@@ -81,7 +81,7 @@ public class UploadResourceTest {
         uploadedFile.setContent(TestData.rawStix20);
 
         PowerMockito.mockStatic(TaxiiAssociation.class);
-        when(TaxiiAssociation.from(any(String.class),any(String.class),any(ServerService.class), any(CollectionService.class))).thenReturn(TestData.taxii20Association);
+        when(TaxiiAssociation.from(any(String.class),any(String.class),any(ServerService.class), any(CollectionService.class))).thenReturn(TestData.taxii21Association);
         when(uploadService.publish(any(TaxiiAssociation.class), any(HashMap.class))).thenReturn("Failed");
 
         ResponseEntity<String> response = uploadResource.publish(fileMap, "testServerLabel", "testCollectionId");

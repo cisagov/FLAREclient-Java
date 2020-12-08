@@ -27,11 +27,6 @@ public final class Constants {
     public static final String HEADER_TAXII11_SERVICES = "urn:taxii.mitre.org:services:1.1";
     public static final String HEADER_TAXII11_PROTOCOL = "urn:taxii.mitre.org:protocol:https:1.0";
 
-    public static final String HEADER_TAXII20_JSON = "application/vnd.oasis.taxii+json";
-    public static final String HEADER_TAXII20_JSON_VERSION_20 = "application/vnd.oasis.taxii+json;version=2.0";
-    public static final String HEADER_STIX20_JSON = "application/vnd.oasis.stix+json";
-    public static final String HEADER_STIX20_JSON_VERSION_20 = "application/vnd.oasis.stix+json;version=2.0";
-
     public static final String HEADER_TAXII21_JSON = "application/taxii+json;version=2.1";
     public static final String HEADER_TAXII21_JSON_VERSION_21 = "application/taxii+json;version=2.1";
     public static final String HEADER_STIX21_JSON = "application/stix+json";

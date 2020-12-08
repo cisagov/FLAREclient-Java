@@ -2,7 +2,7 @@ package com.bcmc.xor.flare.client.api.repository;
 
 import com.bcmc.xor.flare.client.api.config.Constants;
 import com.bcmc.xor.flare.client.api.domain.collection.Taxii11Collection;
-import com.bcmc.xor.flare.client.api.domain.collection.Taxii20Collection;
+import com.bcmc.xor.flare.client.api.domain.collection.Taxii21Collection;
 import com.bcmc.xor.flare.client.api.domain.collection.TaxiiCollection;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -27,7 +27,7 @@ public interface CollectionRepository extends MongoRepository<TaxiiCollection, S
     Optional<Taxii11Collection> findOneTaxii11ById(String id);
 
     @Cacheable(cacheNames = COLLECTIONS_BY_ID_CACHE)
-    Optional<Taxii20Collection> findOneTaxii20ById(String id);
+    Optional<Taxii21Collection> findOneTaxii20ById(String id);
 
     Optional<TaxiiCollection> findOneByDisplayName(String displayName);
 

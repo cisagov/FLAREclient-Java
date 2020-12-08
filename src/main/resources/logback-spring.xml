@@ -28,7 +28,7 @@
 -->
     <logger name="com.bcmc.xor.flare.client.taxii.FlareRestTemplate" level="INFO"/>
     <logger name="com.bcmc.xor.flare.client.taxii.taxii11.Taxii11RestTemplate" level="INFO"/>
-    <logger name="com.bcmc.xor.flare.client.taxii.taxii20.Taxii20RestTemplate" level="INFO"/>
+    <logger name="com.bcmc.xor.flare.client.taxii.taxii21.Taxii21RestTemplate" level="INFO"/>
     <logger name="javax.activation" level="WARN"/>
     <logger name="javax.mail" level="WARN"/>
     <logger name="javax.management.remote" level="WARN"/>

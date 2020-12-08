@@ -71,8 +71,8 @@ public class StatusServiceTest {
         statusService.setCacheManager(cacheManager);
         statusService.setStatusRepository(statusRepository);
 
-        serverRepository.save(TestData.taxii20Server);
-        collectionRepository.save(TestData.taxii20Collection);
+        serverRepository.save(TestData.taxii21Server);
+        collectionRepository.save(TestData.taxii21Collection);
         TestData.setLoggedInUser(securityContext, userService);
     }
 
