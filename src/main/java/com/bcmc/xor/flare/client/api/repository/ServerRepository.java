@@ -36,10 +36,10 @@ public interface ServerRepository extends MongoRepository<TaxiiServer, String> {
     Optional<Taxii11Server> findOneTaxii11ByLabelIgnoreCase(String label);
 
     @Cacheable(cacheNames = SERVERS_BY_ID_CACHE)
-    Optional<Taxii21Server> findOneTaxii20ById(String id);
+    Optional<Taxii21Server> findOneTaxii21ById(String id);
 
     @Cacheable(cacheNames = SERVERS_BY_LABEL_CACHE)
-    Optional<Taxii21Server> findOneTaxii20ByLabelIgnoreCase(String label);
+    Optional<Taxii21Server> findOneTaxii21ByLabelIgnoreCase(String label);
 
     boolean existsByLabelIgnoreCase(String label);
 

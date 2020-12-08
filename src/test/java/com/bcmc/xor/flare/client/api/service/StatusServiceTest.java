@@ -81,8 +81,8 @@ public class StatusServiceTest {
      */
     @Test
     public void testSave() {
-        statusService.save(TestData.taxii20Status);
-        assertTrue(statusRepository.findOneById(TestData.taxii20Status.getId()).isPresent());
+        statusService.save(TestData.taxii21Status);
+        assertTrue(statusRepository.findOneById(TestData.taxii21Status.getId()).isPresent());
     }
 
     /**
@@ -90,8 +90,8 @@ public class StatusServiceTest {
      */
     @Test
     public void testGetStatusById() {
-        statusRepository.save(TestData.taxii20Status);
-        assertTrue(statusService.getStatusById(TestData.taxii20Status.getId()).isPresent());
+        statusRepository.save(TestData.taxii21Status);
+        assertTrue(statusService.getStatusById(TestData.taxii21Status.getId()).isPresent());
     }
 
     /**
@@ -99,7 +99,7 @@ public class StatusServiceTest {
      */
     @Test
     public void testGetAllStatus() {
-        Status status = statusRepository.save(TestData.taxii20Status);
+        Status status = statusRepository.save(TestData.taxii21Status);
         Page<StatusDTO> page = statusService.getAllStatus(PageRequest.of(0, 10));
         assertEquals(status.getStatus(), page.getContent().get(0).getStatus());
     }

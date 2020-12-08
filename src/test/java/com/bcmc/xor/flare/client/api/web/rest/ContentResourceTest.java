@@ -70,7 +70,7 @@ public class ContentResourceTest {
         returnPage11 = new PageImpl<>(Collections.singletonList(content11), page11, 1);
 
         content20 = new ArrayList<>();
-        TestData.jsonStix20.getAsJsonObject().get("objects").getAsJsonArray().forEach(object -> {
+        TestData.jsonStix21.getAsJsonObject().get("objects").getAsJsonArray().forEach(object -> {
             Stix2ContentWrapper contentWrapper = new Stix2ContentWrapper(object.toString(), TestData.taxii21Association);
             contentWrapper.setValidationResult(new ValidationResult(ValidationResult.Status.PENDING, null));
             contentWrapper.setLastRetrieved(Instant.now());

@@ -78,7 +78,7 @@ public class Taxii21Collection extends TaxiiCollection {
 
     @Override
     public String toString() {
-        return "Taxii20Collection{" +
+        return "Taxii21Collection{" +
             "collectionObject=" + collectionObject +
             ", apiRootRef='" + apiRootRef + '\'' +
             ", apiUrl=" + apiUrl +

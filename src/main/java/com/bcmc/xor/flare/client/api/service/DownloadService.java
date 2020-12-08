@@ -142,7 +142,7 @@ public class DownloadService {
             throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "Bundle is null");
         }
 
-        CountResult thisCount = processTaxii20Content(jsonContent, association);
+        CountResult thisCount = processTaxii21Content(jsonContent, association);
         countResult.add(thisCount);
 
         eventService.createEvent(EventType.ASYNC_FETCH_UPDATE, String.format("Fetch retrieved and processed %d content blocks. Found %d duplicates. Saved %d.",
@@ -259,7 +259,7 @@ public class DownloadService {
         return results;
     }
 
-    public CountResult processTaxii20Content(Object response, Taxii21Association association) {
+    public CountResult processTaxii21Content(Object response, Taxii21Association association) {
         JsonElement bundle = (JsonElement) response;
 
         if (bundle.isJsonNull() || !bundle.getAsJsonObject().has("objects")) {

@@ -38,8 +38,8 @@ public class CollectionService {
         return collectionRepository.findOneTaxii11ById(id);
     }
 
-    public Optional<Taxii21Collection> findOneTaxii20ById(String id) {
-        return collectionRepository.findOneTaxii20ById(id);
+    public Optional<Taxii21Collection> findOneTaxii21ById(String id) {
+        return collectionRepository.findOneTaxii21ById(id);
     }
 
     public <T extends TaxiiCollection> T save(T collection) {

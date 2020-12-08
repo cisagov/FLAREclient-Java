@@ -61,7 +61,7 @@ public class UploadResourceTest {
         Map<String, UploadedFile> fileMap = new HashMap<>();
         UploadedFile uploadedFile = new UploadedFile();
         uploadedFile.setFilename("1");
-        uploadedFile.setContent(TestData.rawStix20);
+        uploadedFile.setContent(TestData.rawStix21);
 
         PowerMockito.mockStatic(TaxiiAssociation.class);
         when(TaxiiAssociation.from(any(String.class),any(String.class),any(ServerService.class), any(CollectionService.class))).thenReturn(TestData.taxii21Association);
@@ -78,7 +78,7 @@ public class UploadResourceTest {
         Map<String, UploadedFile> fileMap = new HashMap<>();
         UploadedFile uploadedFile = new UploadedFile();
         uploadedFile.setFilename("1");
-        uploadedFile.setContent(TestData.rawStix20);
+        uploadedFile.setContent(TestData.rawStix21);
 
         PowerMockito.mockStatic(TaxiiAssociation.class);
         when(TaxiiAssociation.from(any(String.class),any(String.class),any(ServerService.class), any(CollectionService.class))).thenReturn(TestData.taxii21Association);

@@ -97,7 +97,7 @@ public class ServerResourceTest {
     }
 
     @Test
-    public void testCreateTaxii20ServerNoAuth() throws Exception {
+    public void testCreateTaxii21ServerNoAuth() throws Exception {
         ServerDTO serverDTO = new ServerDTO();
         serverDTO.setLabel(TestData.taxii21Server.getLabel());
         serverDTO.setUrl(TestData.taxii21Server.getUrl().toString());

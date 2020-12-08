@@ -85,7 +85,7 @@ public class DownloadServiceTaxii21Test {
         Taxii21GetParameters spyParameters = Mockito.spy(TestData.getParameters);
 
         // Respond with a bundle response for mocked external request
-        when(taxiiService.getTaxii21RestTemplate().executeGet(any(), any())).thenReturn(TestData.taxii20GetResponse);
+        when(taxiiService.getTaxii21RestTemplate().executeGet(any(), any())).thenReturn(TestData.taxii21GetResponse);
 
         // Verify PollResponse is returned
         CountResult countResult = downloadService.fetchContent(TestData.taxii21Association, TestData.getParameters,
@@ -110,9 +110,9 @@ public class DownloadServiceTaxii21Test {
         // Respond with sequential bundle responses, with headers to denote pages
         when(taxiiService.getTaxii21RestTemplate().executeGet(any(), any()))
             .thenReturn(
-                ResponseEntity.status(206).headers(responseHeaders1).body(TestData.rawStix20),
-                ResponseEntity.status(206).headers(responseHeaders2).body(TestData.rawStix20),
-                ResponseEntity.status(206).headers(responseHeaders3).body(TestData.rawStix20));
+                ResponseEntity.status(206).headers(responseHeaders1).body(TestData.rawStix21),
+                ResponseEntity.status(206).headers(responseHeaders2).body(TestData.rawStix21),
+                ResponseEntity.status(206).headers(responseHeaders3).body(TestData.rawStix21));
 
 
         // Verify PollResponse is returned
@@ -157,21 +157,21 @@ public class DownloadServiceTaxii21Test {
     }
 
     @Test
-    public void processTaxii20Content() {
+    public void processTaxii21Content() {
 
         // Call method under test
-        CountResult result = downloadService.processTaxii20Content(TestData.jsonStix20, TestData.taxii21Association);
+        CountResult result = downloadService.processTaxii21Content(TestData.jsonStix21, TestData.taxii21Association);
 
         assertEquals(4, result.getContentCount());
         assertEquals(4, result.getContentSaved());
     }
 
     @Test
-    public void processTaxii20ContentDuplicate() {
+    public void processTaxii21ContentDuplicate() {
 
         // Call method under test
-        downloadService.processTaxii20Content(TestData.jsonStix20, TestData.taxii21Association);
-        CountResult secondResult = downloadService.processTaxii20Content(TestData.jsonStix20, TestData.taxii21Association);
+        downloadService.processTaxii21Content(TestData.jsonStix21, TestData.taxii21Association);
+        CountResult secondResult = downloadService.processTaxii21Content(TestData.jsonStix21, TestData.taxii21Association);
 
         assertEquals(4, secondResult.getContentCount());
         assertEquals(4, secondResult.getContentDuplicate());

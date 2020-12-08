@@ -67,7 +67,7 @@ public class DownloadResourceTest {
     }
 
     @Test
-    public void testFetchTaxii20Content() {
+    public void testFetchTaxii21Content() {
         ResponseEntity<String> response = downloadResource.fetchContent(
             TestData.taxii21Server.getLabel(),
             TestData.taxii21Collection.getId(), TestData.getParameters);

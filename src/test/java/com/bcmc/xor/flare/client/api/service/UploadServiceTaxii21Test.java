@@ -100,10 +100,10 @@ public class UploadServiceTaxii21Test {
     public void publish() {
 
         when(taxiiService.getTaxii21RestTemplate().postBundle(eq(TestData.taxii21Server), any(), any()))
-            .thenReturn(TestData.taxii20Status);
+            .thenReturn(TestData.taxii21Status);
 
         UploadedFile uploadedFile = new UploadedFile();
-        uploadedFile.setContent(TestData.rawStix20);
+        uploadedFile.setContent(TestData.rawStix21);
         uploadedFile.setFilename("test.json");
         uploadedFile.setHash(1);
 
@@ -123,7 +123,7 @@ public class UploadServiceTaxii21Test {
             .thenReturn(null);
 
         UploadedFile uploadedFile = new UploadedFile();
-        uploadedFile.setContent(TestData.rawStix20);
+        uploadedFile.setContent(TestData.rawStix21);
         uploadedFile.setFilename("test.json");
         uploadedFile.setHash(1);
 

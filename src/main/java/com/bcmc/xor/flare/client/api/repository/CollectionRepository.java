@@ -27,7 +27,7 @@ public interface CollectionRepository extends MongoRepository<TaxiiCollection, S
     Optional<Taxii11Collection> findOneTaxii11ById(String id);
 
     @Cacheable(cacheNames = COLLECTIONS_BY_ID_CACHE)
-    Optional<Taxii21Collection> findOneTaxii20ById(String id);
+    Optional<Taxii21Collection> findOneTaxii21ById(String id);
 
     Optional<TaxiiCollection> findOneByDisplayName(String displayName);
 

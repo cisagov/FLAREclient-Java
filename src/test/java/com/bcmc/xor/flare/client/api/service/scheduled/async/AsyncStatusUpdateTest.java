@@ -55,11 +55,11 @@ public class AsyncStatusUpdateTest {
 
     @Test
     public void checkStatus() {
-        when(statusService.getPending()).thenReturn(Collections.singletonList(TestData.taxii20Status));
-        when(taxii21RestTemplate.getStatus(eq(TestData.taxii21Server), any())).thenReturn(TestData.taxii20Status);
+        when(statusService.getPending()).thenReturn(Collections.singletonList(TestData.taxii21Status));
+        when(taxii21RestTemplate.getStatus(eq(TestData.taxii21Server), any())).thenReturn(TestData.taxii21Status);
         asyncStatusUpdateService.checkStatus();
         verify(eventService).createEvent(eq(EventType.STATUS_UPDATED), any(), any(Taxii21Association.class));
-        verify(statusService).save(TestData.taxii20Status);
+        verify(statusService).save(TestData.taxii21Status);
 
     }
 

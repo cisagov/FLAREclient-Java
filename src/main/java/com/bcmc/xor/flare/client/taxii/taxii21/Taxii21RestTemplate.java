@@ -34,11 +34,11 @@ public class Taxii21RestTemplate extends FlareRestTemplate {
     public Taxii21RestTemplate(Environment env) {
         super(env);
         // Setup for message conversion
-        HttpMessageConverter taxii20gson = new GsonHttpMessageConverter(xor.bcmc.taxii2.JsonHandler.getInstance().getGson());
-        List<HttpMessageConverter<?>> taxii20converters = new ArrayList<>();
-        taxii20converters.add(new StringHttpMessageConverter());
-        taxii20converters.add(taxii20gson);
-        this.setMessageConverters(taxii20converters);
+        HttpMessageConverter taxii21gson = new GsonHttpMessageConverter(xor.bcmc.taxii2.JsonHandler.getInstance().getGson());
+        List<HttpMessageConverter<?>> taxii21converters = new ArrayList<>();
+        taxii21converters.add(new StringHttpMessageConverter());
+        taxii21converters.add(taxii21gson);
+        this.setMessageConverters(taxii21converters);
 
     }
 
