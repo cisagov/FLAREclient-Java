@@ -135,30 +135,30 @@ public class ServerServiceTaxii21Test {
 
     }
 
-//    @Test
-//    public void testCreateTaxii21ServerWithBasicAuth() {
-//
-//        ServerDTO serverDTO = new ServerDTO();
-//        serverDTO.setLabel(taxii21Server.getLabel());
-//        serverDTO.setRequiresBasicAuth(true);
-//        serverDTO.setUsername("user");
-//        serverDTO.setPassword("pass");
-//        serverDTO.setUrl("https://example.com");
-//
-//        when(taxiiService.getTaxii21RestTemplate().discovery(serverDTO)).thenReturn(TestData.taxii21Discovery);
-//        when(taxiiService.getTaxii21RestTemplate().getApiRoot(any(), any())).thenReturn(TestData.taxii21ApiRoot);
-//        when(taxiiService.getTaxii21RestTemplate().getCollections(any(), any())).thenReturn(new Collections(Arrays.asList(TestData.taxii21CollectionObject)));
-//
-//
-//        serverRepository.deleteAll();
-//        assertTrue(serverRepository.findAll().isEmpty());
-//        serverService.createServer(serverDTO);
-//        assertFalse(serverRepository.findAll().isEmpty());
-//
-//        Optional<Taxii21Server> maybeServer = serverRepository.findOneTaxii21ByLabelIgnoreCase(taxii21Server.getLabel());
-//        assertTrue(maybeServer.isPresent());
-//        assertFalse(ServerCredentialsUtils.getInstance().getServerCredentialsMap().get("user").get(taxii21Server.getLabel()).isEmpty());
-//    }
+    @Test
+    public void testCreateTaxii21ServerWithBasicAuth() {
+
+        ServerDTO serverDTO = new ServerDTO();
+        serverDTO.setLabel(taxii21Server.getLabel());
+        serverDTO.setRequiresBasicAuth(true);
+        serverDTO.setUsername("user");
+        serverDTO.setPassword("pass");
+        serverDTO.setUrl("https://example.com");
+
+        when(taxiiService.getTaxii21RestTemplate().discovery(serverDTO)).thenReturn(TestData.taxii21Discovery);
+        when(taxiiService.getTaxii21RestTemplate().getApiRoot(any(), any())).thenReturn(TestData.taxii21ApiRoot);
+        when(taxiiService.getTaxii21RestTemplate().getCollections(any(), any())).thenReturn(new Collections(Arrays.asList(TestData.taxii21CollectionObject)));
+
+
+        serverRepository.deleteAll();
+        assertTrue(serverRepository.findAll().isEmpty());
+        serverService.createServer(serverDTO);
+        assertFalse(serverRepository.findAll().isEmpty());
+
+        Optional<Taxii21Server> maybeServer = serverRepository.findOneTaxii21ByLabelIgnoreCase(taxii21Server.getLabel());
+        assertTrue(maybeServer.isPresent());
+        assertFalse(ServerCredentialsUtils.getInstance().getServerCredentialsMap().get("user").get(taxii21Server.getLabel()).isEmpty());
+    }
 
     @Test
     public void testRefreshTaxii21Server() {
