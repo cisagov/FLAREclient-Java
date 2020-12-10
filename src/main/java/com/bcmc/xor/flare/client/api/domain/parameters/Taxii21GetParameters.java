@@ -10,7 +10,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 /**
- * TAXII 2.0 Fetch parameters
+ * TAXII 2.1 Fetch parameters
  */
 @JsonTypeName("TAXII21")
 public class Taxii21GetParameters extends ApiParameters implements Serializable {

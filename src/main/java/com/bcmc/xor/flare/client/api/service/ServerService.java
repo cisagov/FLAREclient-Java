@@ -240,17 +240,17 @@ public class ServerService {
     // -------------------
 
 
-    // TAXII 2.0 ---------
+    // TAXII 2.1 ---------
 
     /**
-     * Update the server information for a TAXII 2.0 server
+     * Update the server information for a TAXII 2.1 server
      *
      * @param server            the server to update
      * @param discoveryResponse the discovery response object that will be used to update the server's information
      */
     private void updateServerInformation(Taxii21Server server, Discovery discoveryResponse) {
         log.info("Requesting Discovery information for server '{}' ({})", server.getLabel(), server.getId());
-        log.debug("TAXII 2.0 Discovery Response: {}", JsonHandler.getInstance().toJson(discoveryResponse));
+        log.debug("TAXII 2.1 Discovery Response: {}", JsonHandler.getInstance().toJson(discoveryResponse));
 
         // Based on the information, update the passed Server object
         server.updateFromDiscovery(discoveryResponse);
@@ -267,7 +267,7 @@ public class ServerService {
     }
 
     /**
-     * Update API Root information for a TAXII 2.0server
+     * Update API Root information for a TAXII 2.1 server
      *
      * @param server the server to update API Root information for
      */
@@ -528,7 +528,7 @@ public class ServerService {
         Object response = attemptVersionDiscovery(serverDTO);
         TaxiiServer server = null;
         if (response instanceof Discovery) {
-            log.info("Got TAXII 2.0 Discovery response!");
+            log.info("Got TAXII 2.1 Discovery response!");
             server = new Taxii21Server(serverDTO);
             server = serverRepository.save(server);
             server = refreshServer((Taxii21Server) server, (Discovery) response);

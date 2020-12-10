@@ -11,7 +11,7 @@ import java.net.URI;
 import java.util.Objects;
 
 /**
- * TAXII 2.0 implementation of a TaxiiCollection
+ * TAXII 2.1 implementation of a TaxiiCollection
  */
 @Document(collection = Constants.RepositoryLabels.TAXII_COLLECTION)
 public class Taxii21Collection extends TaxiiCollection {

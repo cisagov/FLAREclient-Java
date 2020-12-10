@@ -202,7 +202,7 @@ public class AsyncFetchRequestService {
     }
 
     public void processAsyncFetch(Taxii21AsyncFetch asyncFetch) {
-        log.info("--- TAXII 2.0 Async fetch started: '{}' ---", asyncFetch.getId());
+        log.info("--- TAXII 2.1 Async fetch started: '{}' ---", asyncFetch.getId());
         Taxii21GetParameters taxii21GetParameters = asyncFetch.getInitialFetchParams();
         Taxii21Association taxiiAssociation = (Taxii21Association) asyncFetch.getAssociation();
 
@@ -212,7 +212,7 @@ public class AsyncFetchRequestService {
         String feedback = String.format("Fetch complete. Retrieved and processed %d content blocks. Found %d duplicates. Saved %d.",
             countResult.getContentCount(), countResult.getContentDuplicate(), countResult.getContentSaved());
         eventService.createEvent(EventType.ASYNC_FETCH_COMPLETE, feedback, taxiiAssociation);
-        log.info("--- TAXII 2.0 Async fetch complete '{}' ---", asyncFetch.getId());
+        log.info("--- TAXII 2.1 Async fetch complete '{}' ---", asyncFetch.getId());
     }
 
     public Optional<AsyncFetch> findExisting(TaxiiAssociation taxiiAssociation) {

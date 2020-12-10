@@ -20,7 +20,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * An object for representing the current status of TAXII 2.0 publish/upload requests
+ * An object for representing the current status of TAXII 2.1 publish/upload requests
  */
 @Document(collection = Constants.RepositoryLabels.STATUS)
 public class Status extends AbstractAuditingEntity implements Serializable {
