@@ -52,8 +52,8 @@ public class DownloadResourceTest {
 
         when(serverService.findOneByLabel(TestData.taxii11Server.getLabel())).thenReturn(Optional.of(TestData.taxii11Server));
         when(collectionService.findOneById(TestData.taxii11Collection.getId())).thenReturn(Optional.of(TestData.taxii11Collection));
-        when(serverService.findOneByLabel(TestData.taxii20Server.getLabel())).thenReturn(Optional.of(TestData.taxii20Server));
-        when(collectionService.findOneById(TestData.taxii20Collection.getId())).thenReturn(Optional.of(TestData.taxii20Collection));
+        when(serverService.findOneByLabel(TestData.taxii21Server.getLabel())).thenReturn(Optional.of(TestData.taxii21Server));
+        when(collectionService.findOneById(TestData.taxii21Collection.getId())).thenReturn(Optional.of(TestData.taxii21Collection));
     }
 
     @Test
@@ -67,11 +67,11 @@ public class DownloadResourceTest {
     }
 
     @Test
-    public void testFetchTaxii20Content() {
+    public void testFetchTaxii21Content() {
         ResponseEntity<String> response = downloadResource.fetchContent(
-            TestData.taxii20Server.getLabel(),
-            TestData.taxii20Collection.getId(), TestData.getParameters);
-        verify(asyncFetchRequestService).startAsyncFetch(TestData.taxii20Association, TestData.getParameters);
+            TestData.taxii21Server.getLabel(),
+            TestData.taxii21Collection.getId(), TestData.getParameters);
+        verify(asyncFetchRequestService).startAsyncFetch(TestData.taxii21Association, TestData.getParameters);
         assertNotNull(response.getBody());
         assertTrue(response.getStatusCode().is2xxSuccessful());
     }

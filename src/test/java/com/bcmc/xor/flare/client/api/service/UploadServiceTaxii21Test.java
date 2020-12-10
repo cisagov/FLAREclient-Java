@@ -6,7 +6,7 @@ import com.bcmc.xor.flare.client.api.domain.parameters.UploadedFile;
 import com.bcmc.xor.flare.client.api.repository.CollectionRepository;
 import com.bcmc.xor.flare.client.api.repository.ServerRepository;
 import com.bcmc.xor.flare.client.api.repository.StatusRepository;
-import com.bcmc.xor.flare.client.taxii.taxii20.Taxii20RestTemplate;
+import com.bcmc.xor.flare.client.taxii.taxii21.Taxii21RestTemplate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cache.CacheManager;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -29,7 +28,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = FlareclientApp.class)
-public class UploadServiceTaxii20Test {
+public class UploadServiceTaxii21Test {
 
     @Autowired
     private UploadService uploadService;
@@ -41,7 +40,7 @@ public class UploadServiceTaxii20Test {
     private EventService eventService;
 
     @MockBean
-    private Taxii20RestTemplate taxii20RestTemplate;
+    private Taxii21RestTemplate taxii21RestTemplate;
 
     @Autowired
     private StatusService statusService;
@@ -72,7 +71,7 @@ public class UploadServiceTaxii20Test {
 
     @Before
     public void init() {
-        taxiiService.setTaxii20RestTemplate(taxii20RestTemplate);
+        taxiiService.setTaxii21RestTemplate(taxii21RestTemplate);
         uploadService.setEventService(eventService);
         uploadService.setTaxiiService(taxiiService);
         uploadService.setStatusService(statusService);
@@ -85,33 +84,33 @@ public class UploadServiceTaxii20Test {
 
         MockitoAnnotations.initMocks(this);
 
-        serverRepository.save(TestData.taxii20Server);
-        collectionRepository.save(TestData.taxii20Collection);
+        serverRepository.save(TestData.taxii21Server);
+        collectionRepository.save(TestData.taxii21Collection);
         TestData.setLoggedInUser(securityContext, userService);
     }
 
     @Test
     public void getUploadUrl() {
         assertEquals(
-            TestData.taxii20Association.getServer().getCollectionObjectsUrl(TestData.apiRoot.getEndpoint(), TestData.taxii20Association.getCollection().getCollectionObject().getId()),
-            uploadService.getUploadUrl(TestData.taxii20Association));
+            TestData.taxii21Association.getServer().getCollectionObjectsUrl(TestData.apiRoot.getEndpoint(), TestData.taxii21Association.getCollection().getCollectionObject().getId()),
+            uploadService.getUploadUrl(TestData.taxii21Association));
     }
 
     @Test
     public void publish() {
 
-        when(taxiiService.getTaxii20RestTemplate().postBundle(eq(TestData.taxii20Server), any(), any()))
-            .thenReturn(TestData.taxii20Status);
+        when(taxiiService.getTaxii21RestTemplate().postBundle(eq(TestData.taxii21Server), any(), any()))
+            .thenReturn(TestData.taxii21Status);
 
         UploadedFile uploadedFile = new UploadedFile();
-        uploadedFile.setContent(TestData.rawStix20);
+        uploadedFile.setContent(TestData.rawStix21);
         uploadedFile.setFilename("test.json");
         uploadedFile.setHash(1);
 
         Map<String, UploadedFile> fileMap = new HashMap<>();
         fileMap.put("test.json", uploadedFile);
 
-        String response = uploadService.publish(TestData.taxii20Association, fileMap);
+        String response = uploadService.publish(TestData.taxii21Association, fileMap);
 
         assertEquals("Successfully published 1 bundle(s).", response);
 
@@ -120,18 +119,18 @@ public class UploadServiceTaxii20Test {
     @Test
     public void publishFailure() {
 
-        when(taxiiService.getTaxii20RestTemplate().postBundle(eq(TestData.taxii20Server), any(), any()))
+        when(taxiiService.getTaxii21RestTemplate().postBundle(eq(TestData.taxii21Server), any(), any()))
             .thenReturn(null);
 
         UploadedFile uploadedFile = new UploadedFile();
-        uploadedFile.setContent(TestData.rawStix20);
+        uploadedFile.setContent(TestData.rawStix21);
         uploadedFile.setFilename("test.json");
         uploadedFile.setHash(1);
 
         Map<String, UploadedFile> fileMap = new HashMap<>();
         fileMap.put("test.json", uploadedFile);
 
-        String response = uploadService.publish(TestData.taxii20Association, fileMap);
+        String response = uploadService.publish(TestData.taxii21Association, fileMap);
 
         assertEquals("Failed to published 1 bundle(s).", response);
 

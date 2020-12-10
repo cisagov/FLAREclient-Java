@@ -22,7 +22,7 @@ import java.net.URI;
 )
 @JsonSubTypes({
     @JsonSubTypes.Type(value = Taxii11PollParameters.class, name = "TAXII11"),
-    @JsonSubTypes.Type(value = Taxii20GetParameters.class, name = "TAXII21")
+    @JsonSubTypes.Type(value = Taxii21GetParameters.class, name = "TAXII21")
 })
 public class ApiParameters implements Serializable {
 

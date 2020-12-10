@@ -1,7 +1,7 @@
 package com.bcmc.xor.flare.client.api.service;
 
 import com.bcmc.xor.flare.client.api.domain.collection.Taxii11Collection;
-import com.bcmc.xor.flare.client.api.domain.collection.Taxii20Collection;
+import com.bcmc.xor.flare.client.api.domain.collection.Taxii21Collection;
 import com.bcmc.xor.flare.client.api.domain.collection.TaxiiCollection;
 import com.bcmc.xor.flare.client.api.repository.CollectionRepository;
 import org.slf4j.Logger;
@@ -38,8 +38,8 @@ public class CollectionService {
         return collectionRepository.findOneTaxii11ById(id);
     }
 
-    public Optional<Taxii20Collection> findOneTaxii20ById(String id) {
-        return collectionRepository.findOneTaxii20ById(id);
+    public Optional<Taxii21Collection> findOneTaxii21ById(String id) {
+        return collectionRepository.findOneTaxii21ById(id);
     }
 
     public <T extends TaxiiCollection> T save(T collection) {

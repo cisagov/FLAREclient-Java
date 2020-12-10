@@ -4,7 +4,7 @@ import com.bcmc.xor.flare.client.api.config.Constants;
 import com.bcmc.xor.flare.client.api.domain.audit.EventType;
 import com.bcmc.xor.flare.client.api.domain.auth.User;
 import com.bcmc.xor.flare.client.api.domain.collection.Taxii11Collection;
-import com.bcmc.xor.flare.client.api.domain.collection.Taxii20Collection;
+import com.bcmc.xor.flare.client.api.domain.collection.Taxii21Collection;
 import com.bcmc.xor.flare.client.api.domain.server.*;
 import com.bcmc.xor.flare.client.api.repository.ServerRepository;
 import com.bcmc.xor.flare.client.api.security.SecurityUtils;
@@ -13,6 +13,7 @@ import com.bcmc.xor.flare.client.api.service.dto.ServerDTO;
 import com.bcmc.xor.flare.client.api.service.dto.ServersDTO;
 import com.bcmc.xor.flare.client.api.service.dto.UserDTO;
 import com.bcmc.xor.flare.client.error.*;
+import com.bcmc.xor.flare.client.taxii.taxii21.Taxii21RestTemplate;
 import org.apache.commons.lang3.StringUtils;
 import org.mitre.taxii.messages.xml11.*;
 import org.slf4j.Logger;
@@ -247,7 +248,7 @@ public class ServerService {
      * @param server            the server to update
      * @param discoveryResponse the discovery response object that will be used to update the server's information
      */
-    private void updateServerInformation(Taxii20Server server, Discovery discoveryResponse) {
+    private void updateServerInformation(Taxii21Server server, Discovery discoveryResponse) {
         log.info("Requesting Discovery information for server '{}' ({})", server.getLabel(), server.getId());
         log.debug("TAXII 2.0 Discovery Response: {}", JsonHandler.getInstance().toJson(discoveryResponse));
 
@@ -270,7 +271,7 @@ public class ServerService {
      *
      * @param server the server to update API Root information for
      */
-    private void updateApiRootInformation(Taxii20Server server) {
+    private void updateApiRootInformation(Taxii21Server server) {
         log.info("Requesting API Root information for server '{}' ({})", server.getLabel(), server.getId());
 
         // If not exists
@@ -292,7 +293,7 @@ public class ServerService {
                 URI apiRootUrl = server.getApiRootUrl(apiRootString);
                 // Request information for that specific ApiRoot via REST
                 log.info("Attempting to get API root information from '{}'", apiRootUrl.toString());
-                xor.bcmc.taxii2.resources.ApiRoot apiRootResponse = getTaxiiService().getTaxii20RestTemplate().getApiRoot(server, apiRootUrl);
+                xor.bcmc.taxii2.resources.ApiRoot apiRootResponse = getTaxiiService().getTaxii21RestTemplate().getApiRoot(server, apiRootUrl);
                 log.debug("API Root Resource: {}", JsonHandler.getInstance().getGson().toJson(apiRootResponse));
 
                 // Check whether or not we have a local version of API Root. If we do, update it, else, create a new one.
@@ -336,7 +337,7 @@ public class ServerService {
      *
      * @param server the server to update collection information for
      */
-    private void updateCollectionInformation(Taxii20Server server) {
+    private void updateCollectionInformation(Taxii21Server server) {
         log.info("Requesting Collection information for server '{}' ({})", server.getLabel(), server.getId());
         if (server.getCollections() == null) {
             server.setCollections(new HashSet<>());
@@ -346,27 +347,27 @@ public class ServerService {
         for (ApiRoot apiRoot : server.getApiRootObjects()) {
             URI collectionUrl = server.getCollectionInformationUrl(apiRoot.getEndpoint());
             try {
-                Collections collectionsResponse = getTaxiiService().getTaxii20RestTemplate().getCollections(server, collectionUrl);
+                Collections collectionsResponse = getTaxiiService().getTaxii21RestTemplate().getCollections(server, collectionUrl);
                 log.debug("Collection information: {}", JsonHandler.getInstance().toJson(collectionsResponse));
 
                 if (collectionsResponse != null) {
                     if (collectionsResponse.getCollections() == null || collectionsResponse.getCollections().isEmpty()) {
                         getApiRootService().save(apiRoot);
                     } else {
-                        HashSet<Taxii20Collection> collections = new HashSet<>();
+                        HashSet<Taxii21Collection> collections = new HashSet<>();
                         // For each 'TaxiiCollection' object in the response, create a new GUI Domain TaxiiCollection object
                         // and update its fields; save them in the Collections repository
                         for (xor.bcmc.taxii2.resources.Collection collectionObject : collectionsResponse.getCollections()) {
-                            Optional<Taxii20Collection> existingCollection =
-                                apiRoot.getCollections().stream().map(Taxii20Collection.class::cast)
+                            Optional<Taxii21Collection> existingCollection =
+                                apiRoot.getCollections().stream().map(Taxii21Collection.class::cast)
                                     .filter(collection -> collection.getCollectionObject().getId().equals(collectionObject.getId())).findAny();
-                            Taxii20Collection collection;
+                            Taxii21Collection collection;
                             if (existingCollection.isPresent()) {
                                 collection = existingCollection.get();
                                 log.debug("Existing collection will be updated: {}", collection.getId());
                                 collection.setCollectionObject(collectionObject);
                             } else {
-                                collection = new Taxii20Collection(collectionObject, server.getId(), apiRoot.getEndpoint());
+                                collection = new Taxii21Collection(collectionObject, server.getId(), apiRoot.getEndpoint());
                                 collection.setApiUrl(collectionUrl.resolve(collectionObject.getId()));
                                 collections.add(collection);
                             }
@@ -406,17 +407,17 @@ public class ServerService {
     /**
      * Updates all information for a server
      * <p>
-     * This method will first call {@link com.bcmc.xor.flare.client.taxii.taxii20.Taxii20RestTemplate#discovery(TaxiiServer)}
+     * This method will first call {@link Taxii21RestTemplate#discovery(TaxiiServer)}
      * to obtain a {@link Discovery} object, which will then be used to update the server and collection information.
      *
      * @param server the server to be updated
      * @return the updated server
      */
-    private Taxii20Server refreshServer(Taxii20Server server) {
+    private Taxii21Server refreshServer(Taxii21Server server) {
 
         Discovery discovery;
         try {
-            discovery = getTaxiiService().getTaxii20RestTemplate().discovery(server);
+            discovery = getTaxiiService().getTaxii21RestTemplate().discovery(server);
         } catch (RequestException | RestClientException e) {
             if (e.getMessage().contains("Unauthorized")) {
                 log.info("Received a 401 - Unauthorized in response to a discovery request. This indicates bad Basic Auth credentials.");
@@ -433,8 +434,8 @@ public class ServerService {
             throw new ServerDiscoveryException();
         }
 
-        Taxii20Server taxii20Server = refreshServer(server, discovery);
-        return taxii20Server;
+        Taxii21Server taxii21Server = refreshServer(server, discovery);
+        return taxii21Server;
     }
 
     /**
@@ -444,7 +445,7 @@ public class ServerService {
      * @param discovery - discovery endpoint information for the server
      * @return the updated server
      */
-    private Taxii20Server refreshServer(Taxii20Server server, Discovery discovery) {
+    private Taxii21Server refreshServer(Taxii21Server server, Discovery discovery) {
         log.info("Updating information for server '{}'", server.getLabel());
 
         updateServerInformation(server, discovery);
@@ -478,7 +479,7 @@ public class ServerService {
 
         log.info("Trying 2.0 discovery against '{}'...", serverDTO.getUrl());
         try {
-            discoveryObject = taxiiService.getTaxii20RestTemplate().discovery(serverDTO);
+            discoveryObject = taxiiService.getTaxii21RestTemplate().discovery(serverDTO);
         } catch (RequestException e) {
             log.info("Encountered request exception: {}", e.getMessage());
             if (StringUtils.containsIgnoreCase(e.getMessage(),"UNAUTHORIZED")) {
@@ -528,9 +529,9 @@ public class ServerService {
         TaxiiServer server = null;
         if (response instanceof Discovery) {
             log.info("Got TAXII 2.0 Discovery response!");
-            server = new Taxii20Server(serverDTO);
+            server = new Taxii21Server(serverDTO);
             server = serverRepository.save(server);
-            server = refreshServer((Taxii20Server) server, (Discovery) response);
+            server = refreshServer((Taxii21Server) server, (Discovery) response);
         } else if (response instanceof DiscoveryResponse) {
             log.info("Got TAXII 1.1 Discovery response!");
             server = new Taxii11Server(serverDTO);
@@ -662,7 +663,7 @@ public class ServerService {
 
     /**
      * Convenience method to call a specific version of {@link #refreshServer(Taxii11Server)} or
-     * {@link #refreshServer(Taxii20Server)}
+     * {@link #refreshServer(Taxii21Server)}
      *
      * @param server a TaxiiServer object that should have a specific version
      * @return the updated server
@@ -671,7 +672,7 @@ public class ServerService {
     private TaxiiServer refreshServer(TaxiiServer server) {
         switch (server.getVersion()) {
             case TAXII21:
-                return refreshServer((Taxii20Server) server);
+                return refreshServer((Taxii21Server) server);
             case TAXII11:
                 return refreshServer((Taxii11Server) server);
             default:
@@ -681,7 +682,7 @@ public class ServerService {
 
     /**
      * Convenience method to call a specific version of {@link #refreshServer(Taxii11Server)} or
-     * {@link #refreshServer(Taxii20Server)}
+     * {@link #refreshServer(Taxii21Server)}
      *
      * @param serverLabel a TaxiiServer label to check
      * @return the updated server
@@ -701,7 +702,7 @@ public class ServerService {
      * Updates a server based on a ServerDTO
      *
      * Will only update the label, url, and serverDescription fields.
-     * Will call {@link #refreshServer(Taxii11Server)} or {@link #refreshServer(Taxii20Server)} depending on the version.
+     * Will call {@link #refreshServer(Taxii11Server)} or {@link #refreshServer(Taxii21Server)} depending on the version.
      *
      * If the provided ServerDTO (must have an 'id') does not already exist, will call {@link #createServer(ServerDTO)}
      *
@@ -741,7 +742,7 @@ public class ServerService {
 
             switch (taxiiServer.getVersion()) {
                 case TAXII21:
-                    refreshServer((Taxii20Server) taxiiServer);
+                    refreshServer((Taxii21Server) taxiiServer);
                     break;
                 case TAXII11:
                     refreshServer((Taxii11Server) taxiiServer);
@@ -794,8 +795,8 @@ public class ServerService {
             switch (server.getVersion()) {
                 case TAXII21:
                     log.info("Deleting API Roots for '{}'", label);
-                    if (((Taxii20Server) server).getApiRootObjects() != null && !((Taxii20Server) server).getApiRootObjects().isEmpty()) {
-                        apiRootService.deleteAll(((Taxii20Server) server).getApiRootObjects());
+                    if (((Taxii21Server) server).getApiRootObjects() != null && !((Taxii21Server) server).getApiRootObjects().isEmpty()) {
+                        apiRootService.deleteAll(((Taxii21Server) server).getApiRootObjects());
                     }
                 default:
                     log.info("Deleting Collections for '{}'", label);

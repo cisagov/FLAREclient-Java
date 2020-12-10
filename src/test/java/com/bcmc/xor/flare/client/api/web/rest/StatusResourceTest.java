@@ -42,7 +42,7 @@ public class StatusResourceTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        status = TestData.taxii20Status;
+        status = TestData.taxii21Status;
         statusDTO = new StatusDTO(status);
         statusDTOList = new ArrayList<>();
         statusDTOList.add(statusDTO);

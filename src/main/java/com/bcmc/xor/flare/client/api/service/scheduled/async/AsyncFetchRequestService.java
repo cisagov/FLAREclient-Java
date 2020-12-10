@@ -3,12 +3,12 @@ package com.bcmc.xor.flare.client.api.service.scheduled.async;
 import com.bcmc.xor.flare.client.api.domain.async.AsyncFetch;
 import com.bcmc.xor.flare.client.api.domain.async.FetchChunk;
 import com.bcmc.xor.flare.client.api.domain.async.Taxii11AsyncFetch;
-import com.bcmc.xor.flare.client.api.domain.async.Taxii20AsyncFetch;
+import com.bcmc.xor.flare.client.api.domain.async.Taxii21AsyncFetch;
 import com.bcmc.xor.flare.client.api.domain.audit.EventType;
 import com.bcmc.xor.flare.client.api.domain.content.CountResult;
 import com.bcmc.xor.flare.client.api.domain.parameters.ApiParameters;
 import com.bcmc.xor.flare.client.api.domain.parameters.Taxii11PollParameters;
-import com.bcmc.xor.flare.client.api.domain.parameters.Taxii20GetParameters;
+import com.bcmc.xor.flare.client.api.domain.parameters.Taxii21GetParameters;
 import com.bcmc.xor.flare.client.api.repository.AsyncFetchRequestRepository;
 import com.bcmc.xor.flare.client.api.security.ServerCredentialsUtils;
 import com.bcmc.xor.flare.client.api.service.CollectionService;
@@ -17,7 +17,7 @@ import com.bcmc.xor.flare.client.api.service.EventService;
 import com.bcmc.xor.flare.client.api.service.UserService;
 import com.bcmc.xor.flare.client.taxii.TaxiiAssociation;
 import com.bcmc.xor.flare.client.taxii.taxii11.Taxii11Association;
-import com.bcmc.xor.flare.client.taxii.taxii20.Taxii20Association;
+import com.bcmc.xor.flare.client.taxii.taxii21.Taxii21Association;
 import com.mongodb.DuplicateKeyException;
 import org.mitre.taxii.messages.xml11.PollResponse;
 import org.slf4j.Logger;
@@ -84,7 +84,7 @@ public class AsyncFetchRequestService {
     public <T extends ApiParameters> void startAsyncFetch(TaxiiAssociation association, T fetchParams) {
         switch (association.getServer().getVersion()) {
             case TAXII21:
-                startAsyncFetch(new Taxii20AsyncFetch((Taxii20GetParameters) fetchParams));
+                startAsyncFetch(new Taxii21AsyncFetch((Taxii21GetParameters) fetchParams));
                 break;
             case TAXII11:
                 startAsyncFetch(new Taxii11AsyncFetch((Taxii11PollParameters) fetchParams, fetchChunkWindow));
@@ -113,7 +113,7 @@ public class AsyncFetchRequestService {
         switch (request.getAssociation().getServer().getVersion()) {
             case TAXII21:
                 try {
-                    processAsyncFetch((Taxii20AsyncFetch) request);
+                    processAsyncFetch((Taxii21AsyncFetch) request);
                 } catch (Exception e) {
                     request.setStatus(AsyncFetch.Status.ERROR);
                 }
@@ -201,13 +201,13 @@ public class AsyncFetchRequestService {
         log.info("--- TAXII 1.1 Async fetch complete '{}' ---", asyncFetch.getId());
     }
 
-    public void processAsyncFetch(Taxii20AsyncFetch asyncFetch) {
+    public void processAsyncFetch(Taxii21AsyncFetch asyncFetch) {
         log.info("--- TAXII 2.0 Async fetch started: '{}' ---", asyncFetch.getId());
-        Taxii20GetParameters taxii20GetParameters = asyncFetch.getInitialFetchParams();
-        Taxii20Association taxiiAssociation = (Taxii20Association) asyncFetch.getAssociation();
+        Taxii21GetParameters taxii21GetParameters = asyncFetch.getInitialFetchParams();
+        Taxii21Association taxiiAssociation = (Taxii21Association) asyncFetch.getAssociation();
 
         CountResult countResult = new CountResult();
-        downloadService.fetchContent(taxiiAssociation, taxii20GetParameters, new FetchChunk<>(0, 0), countResult);
+        downloadService.fetchContent(taxiiAssociation, taxii21GetParameters, new FetchChunk<>(0, 0), countResult);
         collectionService.save(taxiiAssociation.getCollection());
         String feedback = String.format("Fetch complete. Retrieved and processed %d content blocks. Found %d duplicates. Saved %d.",
             countResult.getContentCount(), countResult.getContentDuplicate(), countResult.getContentSaved());

@@ -6,7 +6,7 @@ import com.bcmc.xor.flare.client.api.security.ServerCredentialsUtils;
 import com.bcmc.xor.flare.client.api.service.EventService;
 import com.bcmc.xor.flare.client.api.service.StatusService;
 import com.bcmc.xor.flare.client.api.service.TaxiiService;
-import com.bcmc.xor.flare.client.taxii.taxii20.Taxii20Association;
+import com.bcmc.xor.flare.client.taxii.taxii21.Taxii21Association;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
@@ -44,12 +44,12 @@ public class AsyncStatusUpdateService {
         if (!statuses.isEmpty()) {
             log.debug("Found {} status objects with 'pending' status", statuses.size());
             for (Status status : statuses) {
-                Taxii20Association association = status.getAssociation();
+                Taxii21Association association = status.getAssociation();
                 if (association.getUser() != null) {
                     ServerCredentialsUtils.getInstance().loadCredentialsForUser(association.getUser());
                 }
                 URI statusUrl = association.getServer().getStatusUrl(association.getCollection().getApiRootRef(), status.getId());
-                Status response = taxiiService.getTaxii20RestTemplate().getStatus(association.getServer(), statusUrl);
+                Status response = taxiiService.getTaxii21RestTemplate().getStatus(association.getServer(), statusUrl);
                 eventService.createEvent(EventType.STATUS_UPDATED, String.format("Updated status with ID '%s'. Status is now: %s, with %d pending.",
                     response.getId(), response.getStatus(), response.getPendingCount()), association);
                 response.setAssociation(association);

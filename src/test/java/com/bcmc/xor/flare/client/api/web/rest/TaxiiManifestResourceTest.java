@@ -1,7 +1,7 @@
 package com.bcmc.xor.flare.client.api.web.rest;
 
 import com.bcmc.xor.flare.client.TestData;
-import com.bcmc.xor.flare.client.api.domain.server.Taxii20Server;
+import com.bcmc.xor.flare.client.api.domain.server.Taxii21Server;
 import com.bcmc.xor.flare.client.api.service.CollectionService;
 import com.bcmc.xor.flare.client.api.service.ServerService;
 import com.bcmc.xor.flare.client.api.service.TaxiiService;
@@ -51,13 +51,13 @@ public class TaxiiManifestResourceTest {
     @MockBean(answer = Answers.RETURNS_DEEP_STUBS)
     private TaxiiService taxiiService;
 
-    private static Taxii20Server taxii20Server;
+    private static Taxii21Server taxii21Server;
     private static String collectionId;
 
     @BeforeClass
     public static void setUp() {
-        taxii20Server = TestData.taxii20Server;
-        collectionId = TestData.taxii20Collection.getId();
+        taxii21Server = TestData.taxii21Server;
+        collectionId = TestData.taxii21Collection.getId();
     }
 
     @Before
@@ -69,12 +69,12 @@ public class TaxiiManifestResourceTest {
     @Test
     public void fetchManifestResource_NoFiltering() {
 
-        when(serverService.getServerRepository().findOneByLabelIgnoreCase(any(String.class))).thenReturn(Optional.of(taxii20Server));
+        when(serverService.getServerRepository().findOneByLabelIgnoreCase(any(String.class))).thenReturn(Optional.of(taxii21Server));
         PowerMockito.mockStatic(TaxiiAssociation.class);
-        PowerMockito.when(TaxiiAssociation.from(any(String.class),any(String.class),any(ServerService.class), any(CollectionService.class))).thenReturn(TestData.taxii20Association);
-        when(taxiiService.getTaxii20RestTemplate().getManifest(any(Taxii20Server.class),any(URI.class))).thenReturn(TestData.manifest);
+        PowerMockito.when(TaxiiAssociation.from(any(String.class),any(String.class),any(ServerService.class), any(CollectionService.class))).thenReturn(TestData.taxii21Association);
+        when(taxiiService.getTaxii21RestTemplate().getManifest(any(Taxii21Server.class),any(URI.class))).thenReturn(TestData.manifest);
 
-        ResponseEntity<Map<String, String>> response = taxiiManifestResource.fetchManifestResource(taxii20Server.getLabel(),collectionId, null );
+        ResponseEntity<Map<String, String>> response = taxiiManifestResource.fetchManifestResource(taxii21Server.getLabel(),collectionId, null );
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(Objects.requireNonNull(response.getBody()).containsKey(collectionId));
@@ -85,12 +85,12 @@ public class TaxiiManifestResourceTest {
     public void fetchManifestResource_Filtering() {
         Map<String, String> filterMap = new HashMap<>();
         filterMap.put(TestData.filterStringKey, TestData.filterStringValue);
-        when(serverService.getServerRepository().findOneByLabelIgnoreCase(any(String.class))).thenReturn(Optional.of(taxii20Server));
+        when(serverService.getServerRepository().findOneByLabelIgnoreCase(any(String.class))).thenReturn(Optional.of(taxii21Server));
         PowerMockito.mockStatic(TaxiiAssociation.class);
-        PowerMockito.when(TaxiiAssociation.from(any(String.class),any(String.class),any(ServerService.class), any(CollectionService.class))).thenReturn(TestData.taxii20Association);
-        when(taxiiService.getTaxii20RestTemplate().getManifest(any(Taxii20Server.class),any(URI.class))).thenReturn(TestData.manifest);
+        PowerMockito.when(TaxiiAssociation.from(any(String.class),any(String.class),any(ServerService.class), any(CollectionService.class))).thenReturn(TestData.taxii21Association);
+        when(taxiiService.getTaxii21RestTemplate().getManifest(any(Taxii21Server.class),any(URI.class))).thenReturn(TestData.manifest);
 
-        ResponseEntity<Map<String, String>> response = taxiiManifestResource.fetchManifestResource(taxii20Server.getLabel(),collectionId, filterMap);
+        ResponseEntity<Map<String, String>> response = taxiiManifestResource.fetchManifestResource(taxii21Server.getLabel(),collectionId, filterMap);
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(Objects.requireNonNull(response.getBody()).containsKey(collectionId));
@@ -101,7 +101,7 @@ public class TaxiiManifestResourceTest {
     public void fetchManifestResourceUnsupported() {
         when(serverService.getServerRepository().findOneByLabelIgnoreCase(any(String.class))).thenReturn(Optional.of(TestData.taxii11Server));
 
-        ResponseEntity<Map<String, String>> response = taxiiManifestResource.fetchManifestResource(taxii20Server.getLabel(),collectionId, null);
+        ResponseEntity<Map<String, String>> response = taxiiManifestResource.fetchManifestResource(taxii21Server.getLabel(),collectionId, null);
         assertNotNull(response);
         assertEquals(response.getBody(), ErrorConstants.MANIFEST_NOT_SUPPORTED);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());

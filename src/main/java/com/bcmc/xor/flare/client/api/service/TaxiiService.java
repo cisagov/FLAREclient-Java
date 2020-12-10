@@ -1,7 +1,7 @@
 package com.bcmc.xor.flare.client.api.service;
 
 import com.bcmc.xor.flare.client.taxii.taxii11.Taxii11RestTemplate;
-import com.bcmc.xor.flare.client.taxii.taxii20.Taxii20RestTemplate;
+import com.bcmc.xor.flare.client.taxii.taxii21.Taxii21RestTemplate;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
@@ -11,11 +11,11 @@ public class TaxiiService {
 
     private Taxii11RestTemplate taxii11RestTemplate;
 
-    private Taxii20RestTemplate taxii20RestTemplate;
+    private Taxii21RestTemplate taxii21RestTemplate;
 
     public TaxiiService(Environment environment) {
         this.taxii11RestTemplate = new Taxii11RestTemplate(environment);
-        this.taxii20RestTemplate = new Taxii20RestTemplate(environment);
+        this.taxii21RestTemplate = new Taxii21RestTemplate(environment);
     }
 
     public Taxii11RestTemplate getTaxii11RestTemplate() {
@@ -26,11 +26,11 @@ public class TaxiiService {
         this.taxii11RestTemplate = taxii11RestTemplate;
     }
 
-    public Taxii20RestTemplate getTaxii20RestTemplate() {
-        return taxii20RestTemplate;
+    public Taxii21RestTemplate getTaxii21RestTemplate() {
+        return taxii21RestTemplate;
     }
 
-    public void setTaxii20RestTemplate(Taxii20RestTemplate taxii20RestTemplate) {
-        this.taxii20RestTemplate = taxii20RestTemplate;
+    public void setTaxii21RestTemplate(Taxii21RestTemplate taxii21RestTemplate) {
+        this.taxii21RestTemplate = taxii21RestTemplate;
     }
 }

@@ -3,7 +3,7 @@ package com.bcmc.xor.flare.client.api.domain.async;
 import com.bcmc.xor.flare.client.api.config.Constants;
 import com.bcmc.xor.flare.client.api.domain.parameters.ApiParameters;
 import com.bcmc.xor.flare.client.api.domain.parameters.Taxii11PollParameters;
-import com.bcmc.xor.flare.client.api.domain.parameters.Taxii20GetParameters;
+import com.bcmc.xor.flare.client.api.domain.parameters.Taxii21GetParameters;
 import com.bcmc.xor.flare.client.taxii.TaxiiAssociation;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -33,8 +33,8 @@ public class RecurringFetch<Params extends ApiParameters> {
 
     public RecurringFetch(Params apiParameters) {
         this.association = apiParameters.getAssociation();
-        if (apiParameters instanceof Taxii20GetParameters) {
-            this.begin = ((Taxii20GetParameters) apiParameters).getAddedAfter().toInstant();
+        if (apiParameters instanceof Taxii21GetParameters) {
+            this.begin = ((Taxii21GetParameters) apiParameters).getAddedAfter().toInstant();
         } else if (apiParameters instanceof Taxii11PollParameters) {
             this.begin = ((Taxii11PollParameters) apiParameters).getStartDate().toInstant();
         }

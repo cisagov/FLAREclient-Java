@@ -7,18 +7,18 @@ import com.bcmc.xor.flare.client.api.domain.audit.Event;
 import com.bcmc.xor.flare.client.api.domain.auth.Authority;
 import com.bcmc.xor.flare.client.api.domain.auth.User;
 import com.bcmc.xor.flare.client.api.domain.collection.Taxii11Collection;
-import com.bcmc.xor.flare.client.api.domain.collection.Taxii20Collection;
+import com.bcmc.xor.flare.client.api.domain.collection.Taxii21Collection;
 import com.bcmc.xor.flare.client.api.domain.parameters.Taxii11PollParameters;
-import com.bcmc.xor.flare.client.api.domain.parameters.Taxii20GetParameters;
+import com.bcmc.xor.flare.client.api.domain.parameters.Taxii21GetParameters;
 import com.bcmc.xor.flare.client.api.domain.server.ApiRoot;
 import com.bcmc.xor.flare.client.api.domain.server.Taxii11Server;
-import com.bcmc.xor.flare.client.api.domain.server.Taxii20Server;
+import com.bcmc.xor.flare.client.api.domain.server.Taxii21Server;
 import com.bcmc.xor.flare.client.api.domain.status.Status;
 import com.bcmc.xor.flare.client.api.security.AuthoritiesConstants;
 import com.bcmc.xor.flare.client.api.service.UserService;
 import com.bcmc.xor.flare.client.api.service.dto.UserDTO;
 import com.bcmc.xor.flare.client.taxii.taxii11.Taxii11Association;
-import com.bcmc.xor.flare.client.taxii.taxii20.Taxii20Association;
+import com.bcmc.xor.flare.client.taxii.taxii21.Taxii21Association;
 import com.google.common.collect.Sets;
 import com.google.gson.JsonElement;
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
@@ -48,12 +48,12 @@ public class TestData {
 
     public static User user;
     public static Taxii11Server taxii11Server;
-    public static Taxii20Server taxii20Server;
+    public static Taxii21Server taxii21Server;
     public static Taxii11Collection taxii11Collection;
-    public static Taxii20Collection taxii20Collection;
+    public static Taxii21Collection taxii21Collection;
     public static ApiRoot apiRoot;
     public static Taxii11Association taxii11Association;
-    public static Taxii20Association taxii20Association;
+    public static Taxii21Association taxii21Association;
     public static AsyncFetch taxii11TestRequest;
     public static CollectionRecordType collectionRecordType;
     public static ServiceContactInfoType pollingServices;
@@ -65,21 +65,21 @@ public class TestData {
     public static PollResponse pollResponse;
     public static String rawStix111;
     public static String rawStix111Invalid;
-    public static String rawStix20;
-    public static JsonElement jsonStix20;
+    public static String rawStix21;
+    public static JsonElement jsonStix21;
     public static ContentBlock contentBlock;
     public static Taxii11PollParameters pollParameters;
-    public static Taxii20GetParameters getParameters;
+    public static Taxii21GetParameters getParameters;
     public static StatusMessage failureStatusMessage;
     public static StatusMessage successStatusMessage;
-    public static ResponseEntity<String> taxii20GetResponse;
+    public static ResponseEntity<String> taxii21GetResponse;
     public static Event event;
     public static DiscoveryResponse discoveryResponse;
-    public static Discovery taxii20Discovery;
-    public static xor.bcmc.taxii2.resources.ApiRoot taxii20ApiRoot;
-    public static Collection taxii20CollectionObject;
+    public static Discovery taxii21Discovery;
+    public static xor.bcmc.taxii2.resources.ApiRoot taxii21ApiRoot;
+    public static Collection taxii21CollectionObject;
     public static CollectionInformationResponse collectionInformationResponse;
-    public static Status taxii20Status;
+    public static Status taxii21Status;
     public static String manifest;
     public static String filterStringKey;
     public static String filterStringValue;
@@ -165,11 +165,11 @@ public class TestData {
 
 
 
-        // Establish test data: Taxii20Server
-        taxii20Server = new Taxii20Server();
-        taxii20Server.setVersion(Constants.TaxiiVersion.TAXII21);
-        taxii20Server.setLabel("Test TAXII 2.0 Server");
-        taxii20Server.setUrl(URI.create("http://localhost:5000/taxii/"));
+        // Establish test data: Taxii21Server
+        taxii21Server = new Taxii21Server();
+        taxii21Server.setVersion(Constants.TaxiiVersion.TAXII21);
+        taxii21Server.setLabel("Test TAXII 2.1 Server");
+        taxii21Server.setUrl(URI.create("http://localhost:5000/taxii/"));
 
         // Manifest
         manifest = "{\"more\": false, \"objects\": [{\"date_added\": \"2020-10-21T20:09:10.331994Z\", " +
@@ -182,36 +182,36 @@ public class TestData {
         filterStringKey = "match[id]=";
         filterStringValue = "marking-definition--5e57c739-391a-4eb3-b6be-7d15ca92d5ed";
 
-        // Establish test data: Taxii20 ApiRoot
+        // Establish test data: Taxii21 ApiRoot
         xor.bcmc.taxii2.resources.ApiRoot apiRootObject = new xor.bcmc.taxii2.resources.ApiRoot()
                 .withTitle("Test Title")
                 .withDescription("Test Description")
                 .withMaxContentLength(10000000)
-                .withVersions(Collections.singletonList("taxii-2.0"))
+                .withVersions(Collections.singletonList("taxii-2.1"))
                 .withId("TestApi");
 
-        apiRoot = new ApiRoot(taxii20Server.getId());
+        apiRoot = new ApiRoot(taxii21Server.getId());
         String apiRootId = UUID.randomUUID().toString();
         apiRoot.setId(apiRootId);
         apiRoot.setObject(apiRootObject);
-        apiRoot.setCollections(Sets.newHashSet(taxii20Collection));
+        apiRoot.setCollections(Sets.newHashSet(taxii21Collection));
         apiRoot.setUrl(URI.create("http://localhost:5000/TestApi/"));
         apiRoot.setEndpoint("TestApi");
 
-        // Establish test data: Taxii20Collection
+        // Establish test data: Taxii21Collection
 
-        Collection collectionObject = new Collection(UUID.randomUUID().toString(), "Taxii20Collection", true, true);
-        taxii20Collection = new Taxii20Collection(collectionObject, taxii20Server.getId(), apiRoot.getEndpoint());
-        taxii20Collection.setTaxiiVersion(Constants.TaxiiVersion.TAXII21);
-        taxii20Collection.setId(UUID.randomUUID().toString());
-        taxii20Collection.setDisplayName("Taxii20Collection");
+        Collection collectionObject = new Collection(UUID.randomUUID().toString(), "Taxii21Collection", true, true);
+        taxii21Collection = new Taxii21Collection(collectionObject, taxii21Server.getId(), apiRoot.getEndpoint());
+        taxii21Collection.setTaxiiVersion(Constants.TaxiiVersion.TAXII21);
+        taxii21Collection.setId(UUID.randomUUID().toString());
+        taxii21Collection.setDisplayName("Taxii21Collection");
 
         taxii11Server.setServiceInstances(Sets.newHashSet(pollServiceInstance, inboxServiceInstance, discoveryServiceInstance, collectionManagementServiceInstance));
         taxii11Server.setCollections(Sets.newHashSet(taxii11Collection));
-        taxii20Server.setCollections(Sets.newHashSet(taxii20Collection));
+        taxii21Server.setCollections(Sets.newHashSet(taxii21Collection));
 
         taxii11Association = new Taxii11Association(taxii11Server, taxii11Collection, user);
-        taxii20Association = new Taxii20Association(taxii20Server, taxii20Collection, user);
+        taxii21Association = new Taxii21Association(taxii21Server, taxii21Collection, user);
 
         rawStix111 = "<stix:STIX_Package\n" +
                 "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
@@ -329,17 +329,17 @@ public class TestData {
                 .withMessageId(UUID.randomUUID().toString())
                 .withInResponseTo(UUID.randomUUID().toString());
 
-        getParameters = new Taxii20GetParameters();
-        getParameters.setAssociation(taxii20Association);
+        getParameters = new Taxii21GetParameters();
+        getParameters.setAssociation(taxii21Association);
         getParameters.setApiRootRef(apiRootId);
-        getParameters.setServerLabel(taxii20Server.getLabel());
+        getParameters.setServerLabel(taxii21Server.getLabel());
         getParameters.setAddedAfter(ZonedDateTime.now().minusDays(1));
         getParameters.setFetchUrl(URI.create("http://test.com"));
         getParameters.setRepeat(false);
         getParameters.setWindow(8000);
         //getParameters.setTypes(Constants.STIX20_TYPES.toArray(new String[]{}));
 
-        rawStix20 = "{\n" +
+        rawStix21 = "{\n" +
                 "  \"type\": \"bundle\",\n" +
                 "  \"id\": \"bundle--c6a895f2-849c-4d1b-aba4-4b45c2800374\",\n" +
                 "  \"spec_version\": \"2.0\",\n" +
@@ -405,9 +405,9 @@ public class TestData {
                 "  ]\n" +
                 "}";
 
-        taxii20GetResponse = ResponseEntity.ok(rawStix20);
+        taxii21GetResponse = ResponseEntity.ok(rawStix21);
 
-        jsonStix20 = JsonHandler.getInstance().getGson().fromJson(rawStix20, JsonElement.class);
+        jsonStix21 = JsonHandler.getInstance().getGson().fromJson(rawStix21, JsonElement.class);
 
 
         event = new Event();
@@ -426,44 +426,44 @@ public class TestData {
                 .withMessageId(UUID.randomUUID().toString())
                 .withInResponseTo(UUID.randomUUID().toString());
 
-        taxii20Discovery = new Discovery()
+        taxii21Discovery = new Discovery()
                 .withId(UUID.randomUUID().toString())
                 .withTitle("Test")
                 .withContact("Test")
                 .withDefaultApiRoot("test")
                 .withApiRoots(Collections.singletonList("test"))
                 .withDescription("Test");
-        taxii20Server.updateFromDiscovery(taxii20Discovery);
+        taxii21Server.updateFromDiscovery(taxii21Discovery);
 
-        taxii20ApiRoot = new xor.bcmc.taxii2.resources.ApiRoot()
+        taxii21ApiRoot = new xor.bcmc.taxii2.resources.ApiRoot()
                 .withId(UUID.randomUUID().toString())
                 .withTitle("Test")
                 .withDescription("Test")
                 .withMaxContentLength(1000000000)
-                .withVersions(Collections.singletonList(Constants.HEADER_TAXII20_JSON));
+                .withVersions(Collections.singletonList(Constants.HEADER_TAXII21_JSON));
         HashSet<ApiRoot> apiRootObjects = new HashSet<>();
         apiRootObjects.add(apiRoot);
-        taxii20Server.setApiRootObjects(apiRootObjects);
-        taxii20Collection.setApiRootRef(apiRoot.getEndpoint());
+        taxii21Server.setApiRootObjects(apiRootObjects);
+        taxii21Collection.setApiRootRef(apiRoot.getEndpoint());
 
-        taxii20CollectionObject = new Collection()
+        taxii21CollectionObject = new Collection()
                 .withId(UUID.randomUUID().toString())
                 .withTitle("Test")
                 .withDescription("Test")
-                .withMediaTypes(Collections.singletonList(Constants.HEADER_STIX20_JSON))
+                .withMediaTypes(Collections.singletonList(Constants.HEADER_STIX21_JSON))
                 .withCanRead(true)
                 .withCanWrite(true);
 
-        taxii20Status = new Status();
-        taxii20Status.setAssociation(taxii20Association);
-        taxii20Status.setFailureCount(0);
-        taxii20Status.setPendingCount(0);
-        taxii20Status.setSuccessCount(5);
-        taxii20Status.setTotalCount(5);
-        taxii20Status.setStatus("COMPLETE");
-        taxii20Status.setRequestTimestamp(ZonedDateTime.now().minusDays(1));
+        taxii21Status = new Status();
+        taxii21Status.setAssociation(taxii21Association);
+        taxii21Status.setFailureCount(0);
+        taxii21Status.setPendingCount(0);
+        taxii21Status.setSuccessCount(5);
+        taxii21Status.setTotalCount(5);
+        taxii21Status.setStatus("COMPLETE");
+        taxii21Status.setRequestTimestamp(ZonedDateTime.now().minusDays(1));
 
-        taxii20Association.setApiRoot(apiRoot);
+        taxii21Association.setApiRoot(apiRoot);
 
     }
 

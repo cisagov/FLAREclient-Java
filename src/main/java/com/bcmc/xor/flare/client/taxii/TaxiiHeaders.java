@@ -4,7 +4,7 @@ import com.bcmc.xor.flare.client.api.domain.server.TaxiiServer;
 import com.bcmc.xor.flare.client.api.security.SecurityUtils;
 import com.bcmc.xor.flare.client.api.security.ServerCredentialsUtils;
 import com.bcmc.xor.flare.client.taxii.taxii11.Taxii11Headers;
-import com.bcmc.xor.flare.client.taxii.taxii20.Taxii20Headers;
+import com.bcmc.xor.flare.client.taxii.taxii21.Taxii21Headers;
 import org.springframework.http.HttpHeaders;
 
 import java.util.Collections;
@@ -63,11 +63,11 @@ public class TaxiiHeaders extends HttpHeaders {
     public static TaxiiHeaders fromServer(TaxiiServer server) {
         switch (server.getVersion()) {
             case TAXII21:
-                Taxii20Headers taxii20Headers = new Taxii20Headers();
+                Taxii21Headers taxii21Headers = new Taxii21Headers();
                 if (server.getRequiresBasicAuth()) {
-                    taxii20Headers.withAuthorizationForServer(server.getLabel());
+                    taxii21Headers.withAuthorizationForServer(server.getLabel());
                 }
-                return taxii20Headers;
+                return taxii21Headers;
             case TAXII11:
                 Taxii11Headers taxii11Headers = new Taxii11Headers();
                 if (server.getRequiresBasicAuth()) {

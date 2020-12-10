@@ -70,8 +70,8 @@ public class ContentResourceTest {
         returnPage11 = new PageImpl<>(Collections.singletonList(content11), page11, 1);
 
         content20 = new ArrayList<>();
-        TestData.jsonStix20.getAsJsonObject().get("objects").getAsJsonArray().forEach(object -> {
-            Stix2ContentWrapper contentWrapper = new Stix2ContentWrapper(object.toString(), TestData.taxii20Association);
+        TestData.jsonStix21.getAsJsonObject().get("objects").getAsJsonArray().forEach(object -> {
+            Stix2ContentWrapper contentWrapper = new Stix2ContentWrapper(object.toString(), TestData.taxii21Association);
             contentWrapper.setValidationResult(new ValidationResult(ValidationResult.Status.PENDING, null));
             contentWrapper.setLastRetrieved(Instant.now());
             content20.add(contentWrapper);
@@ -85,8 +85,8 @@ public class ContentResourceTest {
         MockitoAnnotations.initMocks(this);
         when(serverService.findOneByLabel(TestData.taxii11Server.getLabel())).thenReturn(Optional.of(TestData.taxii11Server));
         when(collectionService.findOneById(TestData.taxii11Collection.getId())).thenReturn(Optional.of(TestData.taxii11Collection));
-        when(serverService.findOneByLabel(TestData.taxii20Server.getLabel())).thenReturn(Optional.of(TestData.taxii20Server));
-        when(collectionService.findOneById(TestData.taxii20Collection.getId())).thenReturn(Optional.of(TestData.taxii20Collection));
+        when(serverService.findOneByLabel(TestData.taxii21Server.getLabel())).thenReturn(Optional.of(TestData.taxii21Server));
+        when(collectionService.findOneById(TestData.taxii21Collection.getId())).thenReturn(Optional.of(TestData.taxii21Collection));
     }
 
     @Test
@@ -119,17 +119,17 @@ public class ContentResourceTest {
 
     @Test
     public void testGetContentWrapper20() {
-        when(contentRepository.findAllByAssociation(page20, TestData.taxii20Association)).thenReturn(returnPage20);
+        when(contentRepository.findAllByAssociation(page20, TestData.taxii21Association)).thenReturn(returnPage20);
         ResponseEntity<List<AbstractContentWrapper>> response =
             contentResource.getContentWrapper(
-                TestData.taxii20Server.getLabel(),
-                TestData.taxii20Collection.getId(),
+                TestData.taxii21Server.getLabel(),
+                TestData.taxii21Collection.getId(),
                 page20);
 
         assertTrue(response.getStatusCode().is2xxSuccessful());
         assertNotNull(response.getBody());
-        assertEquals(TestData.taxii20Server, response.getBody().get(0).getAssociation().getServer());
-        assertEquals(TestData.taxii20Collection, response.getBody().get(0).getAssociation().getCollection());
+        assertEquals(TestData.taxii21Server, response.getBody().get(0).getAssociation().getServer());
+        assertEquals(TestData.taxii21Collection, response.getBody().get(0).getAssociation().getCollection());
     }
 
     @Test
@@ -148,11 +148,11 @@ public class ContentResourceTest {
 
     @Test
     public void testGetContentWrapperById20() {
-        when(contentRepository.findByIdAndAssociation(content20.get(0).getId(), TestData.taxii20Association)).thenReturn(Optional.of(content20.get(0)));
+        when(contentRepository.findByIdAndAssociation(content20.get(0).getId(), TestData.taxii21Association)).thenReturn(Optional.of(content20.get(0)));
         ResponseEntity<AbstractContentWrapper> response =
             contentResource.getContentWrapperById(
-                TestData.taxii20Server.getLabel(),
-                TestData.taxii20Collection.getId(),
+                TestData.taxii21Server.getLabel(),
+                TestData.taxii21Collection.getId(),
                 content20.get(0).getId());
 
         assertTrue(response.getStatusCode().is2xxSuccessful());

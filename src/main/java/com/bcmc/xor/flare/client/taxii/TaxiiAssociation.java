@@ -2,10 +2,10 @@ package com.bcmc.xor.flare.client.taxii;
 
 import com.bcmc.xor.flare.client.api.domain.auth.User;
 import com.bcmc.xor.flare.client.api.domain.collection.Taxii11Collection;
-import com.bcmc.xor.flare.client.api.domain.collection.Taxii20Collection;
+import com.bcmc.xor.flare.client.api.domain.collection.Taxii21Collection;
 import com.bcmc.xor.flare.client.api.domain.collection.TaxiiCollection;
 import com.bcmc.xor.flare.client.api.domain.server.Taxii11Server;
-import com.bcmc.xor.flare.client.api.domain.server.Taxii20Server;
+import com.bcmc.xor.flare.client.api.domain.server.Taxii21Server;
 import com.bcmc.xor.flare.client.api.domain.server.TaxiiServer;
 import com.bcmc.xor.flare.client.api.service.CollectionService;
 import com.bcmc.xor.flare.client.api.service.ServerService;
@@ -14,7 +14,7 @@ import com.bcmc.xor.flare.client.error.CollectionNotFoundException;
 import com.bcmc.xor.flare.client.error.NotFoundException;
 import com.bcmc.xor.flare.client.error.ServerNotFoundException;
 import com.bcmc.xor.flare.client.taxii.taxii11.Taxii11Association;
-import com.bcmc.xor.flare.client.taxii.taxii20.Taxii20Association;
+import com.bcmc.xor.flare.client.taxii.taxii21.Taxii21Association;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import java.util.Objects;
@@ -49,7 +49,7 @@ public class TaxiiAssociation <Server extends TaxiiServer, Collection extends Ta
         User user = userService.getUserWithAuthoritiesByLogin(userRef).orElseThrow(NotFoundException::new);
         switch (server.getVersion()) {
             case TAXII21:
-                return new Taxii20Association((Taxii20Server) server, (Taxii20Collection) collection, user);
+                return new Taxii21Association((Taxii21Server) server, (Taxii21Collection) collection, user);
             case TAXII11:
                 return new Taxii11Association((Taxii11Server) server, (Taxii11Collection) collection, user);
             default:
@@ -62,7 +62,7 @@ public class TaxiiAssociation <Server extends TaxiiServer, Collection extends Ta
         TaxiiCollection collection = collectionService.findOneById(collectionId).orElseThrow(CollectionNotFoundException::new);
         switch (server.getVersion()) {
             case TAXII21:
-                return new Taxii20Association((Taxii20Server) server, (Taxii20Collection) collection, null);
+                return new Taxii21Association((Taxii21Server) server, (Taxii21Collection) collection, null);
             case TAXII11:
                 return new Taxii11Association((Taxii11Server) server, (Taxii11Collection) collection, null);
             default:

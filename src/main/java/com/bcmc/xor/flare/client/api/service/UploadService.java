@@ -7,7 +7,7 @@ import com.bcmc.xor.flare.client.api.domain.server.ApiRoot;
 import com.bcmc.xor.flare.client.api.domain.status.Status;
 import com.bcmc.xor.flare.client.taxii.TaxiiAssociation;
 import com.bcmc.xor.flare.client.taxii.taxii11.Taxii11Association;
-import com.bcmc.xor.flare.client.taxii.taxii20.Taxii20Association;
+import com.bcmc.xor.flare.client.taxii.taxii21.Taxii21Association;
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
 import org.mitre.taxii.messages.xml11.*;
 import org.slf4j.Logger;
@@ -54,7 +54,7 @@ public class UploadService {
     public String publish(TaxiiAssociation association, Map<String, UploadedFile> fileMap) {
         switch (association.getServer().getVersion()) {
             case TAXII21:
-                return publish((Taxii20Association) association, fileMap);
+                return publish((Taxii21Association) association, fileMap);
             case TAXII11:
                 return publish((Taxii11Association) association, fileMap);
             default:
@@ -118,12 +118,12 @@ public class UploadService {
         return response.getMessage();
     }
 
-    public String publish(Taxii20Association association, Map<String, UploadedFile> fileMap) {
+    public String publish(Taxii21Association association, Map<String, UploadedFile> fileMap) {
         URI url = getUploadUrl(association);
         for (Map.Entry<String, UploadedFile> uploadedFile: fileMap.entrySet()) {
             String bundle = uploadedFile.getValue().getContent();
             Status response;
-            response = taxiiService.getTaxii20RestTemplate().postBundle(association.getServer(), url, bundle);
+            response = taxiiService.getTaxii21RestTemplate().postBundle(association.getServer(), url, bundle);
             if (response == null) {
                 String feedback = String.format("Failed to published %d bundle(s).", fileMap.values().size());
                 eventService.createEvent(EventType.PUBLISH_FAILED, feedback, association);
@@ -176,7 +176,7 @@ public class UploadService {
         return URI.create(url.get());
     }
 
-    public URI getUploadUrl(Taxii20Association association) {
+    public URI getUploadUrl(Taxii21Association association) {
         ApiRoot apiRoot = association.getServer().getApiRootObjects().stream().filter(apiRootObj -> apiRootObj.getEndpoint().equals(association.getCollection().getApiRootRef())).findFirst()
             .orElseThrow(IllegalStateException::new);
         return association.getServer().getCollectionObjectsUrl(apiRoot.getEndpoint(), association.getCollection().getCollectionObject().getId());

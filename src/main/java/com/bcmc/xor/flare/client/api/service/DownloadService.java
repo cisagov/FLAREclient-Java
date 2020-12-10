@@ -7,15 +7,15 @@ import com.bcmc.xor.flare.client.api.domain.content.CountResult;
 import com.bcmc.xor.flare.client.api.domain.content.Stix1ContentWrapper;
 import com.bcmc.xor.flare.client.api.domain.content.Stix2ContentWrapper;
 import com.bcmc.xor.flare.client.api.domain.parameters.Taxii11PollParameters;
-import com.bcmc.xor.flare.client.api.domain.parameters.Taxii20GetParameters;
+import com.bcmc.xor.flare.client.api.domain.parameters.Taxii21GetParameters;
 import com.bcmc.xor.flare.client.error.InsufficientInformationException;
 import com.bcmc.xor.flare.client.error.InternalServerErrorException;
 import com.bcmc.xor.flare.client.error.RequestException;
 import com.bcmc.xor.flare.client.error.StatusMessageResponseException;
 import com.bcmc.xor.flare.client.taxii.TaxiiHeaders;
 import com.bcmc.xor.flare.client.taxii.taxii11.Taxii11Association;
-import com.bcmc.xor.flare.client.taxii.taxii20.Taxii20Association;
-import com.bcmc.xor.flare.client.taxii.taxii20.Taxii20Headers;
+import com.bcmc.xor.flare.client.taxii.taxii21.Taxii21Association;
+import com.bcmc.xor.flare.client.taxii.taxii21.Taxii21Headers;
 import com.google.gson.JsonElement;
 import com.mongodb.bulk.BulkWriteResult;
 import org.mitre.taxii.messages.xml11.*;
@@ -115,11 +115,11 @@ public class DownloadService {
         return response;
     }
 
-    public CountResult fetchContent(Taxii20Association association, Taxii20GetParameters parameters, FetchChunk<Integer> chunk, CountResult countResult) {
+    public CountResult fetchContent(Taxii21Association association, Taxii21GetParameters parameters, FetchChunk<Integer> chunk, CountResult countResult) {
 
         prepareRequest(association, parameters);
 
-        TaxiiHeaders headers = Taxii20Headers.fromServer(association.getServer()).withHeader("Accept", Arrays.asList(Constants.HEADER_STIX21_JSON, Constants.HEADER_TAXII21_JSON));
+        TaxiiHeaders headers = Taxii21Headers.fromServer(association.getServer()).withHeader("Accept", Arrays.asList(Constants.HEADER_STIX21_JSON, Constants.HEADER_TAXII21_JSON));
 
         if (chunk.getBegin() != 0 && chunk.getEnd() != 0) {
             headers.add("Range", String.format("items %d-%d", chunk.getBegin(), chunk.getEnd()));
@@ -127,7 +127,7 @@ public class DownloadService {
 
         ResponseEntity<String> responseEntity;
         try {
-            responseEntity = taxiiService.getTaxii20RestTemplate().executeGet(headers, parameters.getFetchUrl());
+            responseEntity = taxiiService.getTaxii21RestTemplate().executeGet(headers, parameters.getFetchUrl());
         } catch (RequestException e) {
             eventService.createEvent(EventType.ASYNC_FETCH_ERROR, e.getMessage(), association);
             log.error("Encountered RequestException when fetching content: {}", e.getMessage());
@@ -142,7 +142,7 @@ public class DownloadService {
             throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "Bundle is null");
         }
 
-        CountResult thisCount = processTaxii20Content(jsonContent, association);
+        CountResult thisCount = processTaxii21Content(jsonContent, association);
         countResult.add(thisCount);
 
         eventService.createEvent(EventType.ASYNC_FETCH_UPDATE, String.format("Fetch retrieved and processed %d content blocks. Found %d duplicates. Saved %d.",
@@ -188,12 +188,12 @@ public class DownloadService {
         return nextChunk;
     }
 
-    private void prepareRequest(Taxii20Association taxii20Association, Taxii20GetParameters parameters) {
+    private void prepareRequest(Taxii21Association taxii21Association, Taxii21GetParameters parameters) {
         UriComponentsBuilder fetchUrl;
         // Establish a fetch URL so that query parameters can be added
-        fetchUrl = UriComponentsBuilder.fromUri(taxii20Association.getServer().getCollectionObjectsUrl(
-            ((Taxii20Association) parameters.getAssociation()).getApiRoot().getEndpoint(),
-            ((Taxii20Association) parameters.getAssociation()).getCollection().getCollectionObject().getId()));
+        fetchUrl = UriComponentsBuilder.fromUri(taxii21Association.getServer().getCollectionObjectsUrl(
+            ((Taxii21Association) parameters.getAssociation()).getApiRoot().getEndpoint(),
+            ((Taxii21Association) parameters.getAssociation()).getCollection().getCollectionObject().getId()));
 
         if (parameters.getQueryString() != null)
             fetchUrl = fetchUrl.query(parameters.getQueryString().substring(1));
@@ -259,7 +259,7 @@ public class DownloadService {
         return results;
     }
 
-    public CountResult processTaxii20Content(Object response, Taxii20Association association) {
+    public CountResult processTaxii21Content(Object response, Taxii21Association association) {
         JsonElement bundle = (JsonElement) response;
 
         if (bundle.isJsonNull() || !bundle.getAsJsonObject().has("objects")) {

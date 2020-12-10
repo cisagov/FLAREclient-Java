@@ -4,7 +4,7 @@ import com.bcmc.xor.flare.client.api.config.Constants;
 import com.bcmc.xor.flare.client.api.domain.content.CountResult;
 import com.bcmc.xor.flare.client.api.domain.parameters.ApiParameters;
 import com.bcmc.xor.flare.client.api.domain.parameters.Taxii11PollParameters;
-import com.bcmc.xor.flare.client.api.domain.parameters.Taxii20GetParameters;
+import com.bcmc.xor.flare.client.api.domain.parameters.Taxii21GetParameters;
 import com.bcmc.xor.flare.client.taxii.TaxiiAssociation;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -51,8 +51,8 @@ public abstract class AsyncFetch<T extends ApiParameters> implements Iterator<Fe
         this.status = Status.PENDING;
         this.window = window;
         this.requestedAt = Instant.now();
-        if (fetchParams instanceof Taxii20GetParameters) {
-            this.begin = ((Taxii20GetParameters) fetchParams).getAddedAfter().toInstant();
+        if (fetchParams instanceof Taxii21GetParameters) {
+            this.begin = ((Taxii21GetParameters) fetchParams).getAddedAfter().toInstant();
             this.end = null;
         } else if (fetchParams instanceof Taxii11PollParameters) {
             this.begin = ((Taxii11PollParameters) fetchParams).getStartDate().toInstant();
