@@ -99,7 +99,7 @@ public class UploadServiceTaxii21Test {
     @Test
     public void publish() {
 
-        when(taxiiService.getTaxii21RestTemplate().postBundle(eq(TestData.taxii21Server), any(), any()))
+        when(taxiiService.getTaxii21RestTemplate().postEnvelope(eq(TestData.taxii21Server), any(), any()))
             .thenReturn(TestData.taxii21Status);
 
         UploadedFile uploadedFile = new UploadedFile();
@@ -119,7 +119,7 @@ public class UploadServiceTaxii21Test {
     @Test
     public void publishFailure() {
 
-        when(taxiiService.getTaxii21RestTemplate().postBundle(eq(TestData.taxii21Server), any(), any()))
+        when(taxiiService.getTaxii21RestTemplate().postEnvelope(eq(TestData.taxii21Server), any(), any()))
             .thenReturn(null);
 
         UploadedFile uploadedFile = new UploadedFile();

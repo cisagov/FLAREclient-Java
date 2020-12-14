@@ -121,9 +121,9 @@ public class UploadService {
     public String publish(Taxii21Association association, Map<String, UploadedFile> fileMap) {
         URI url = getUploadUrl(association);
         for (Map.Entry<String, UploadedFile> uploadedFile: fileMap.entrySet()) {
-            String bundle = uploadedFile.getValue().getContent();
+            String envelope = uploadedFile.getValue().getContent();
             Status response;
-            response = taxiiService.getTaxii21RestTemplate().postBundle(association.getServer(), url, bundle);
+            response = taxiiService.getTaxii21RestTemplate().postEnvelope(association.getServer(), url, envelope);
             if (response == null) {
                 String feedback = String.format("Failed to published %d bundle(s).", fileMap.values().size());
                 eventService.createEvent(EventType.PUBLISH_FAILED, feedback, association);

@@ -136,10 +136,10 @@ public class DownloadService {
 
         JsonElement jsonContent = JsonHandler.getInstance().getGson().fromJson(responseEntity.getBody(), JsonElement.class);
         if (jsonContent == null) {
-            eventService.createEvent(EventType.ASYNC_FETCH_ERROR, "Got a null bundle in response to a GET request", association);
+            eventService.createEvent(EventType.ASYNC_FETCH_ERROR, "Got a null envelope in response to a GET request", association);
             log.error("Encountered a null response when fetching content for server '{}' and collection '{}'",
                 association.getServer().getLabel(), association.getCollection().getDisplayName());
-            throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "Bundle is null");
+            throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "Envelope is null");
         }
 
         CountResult thisCount = processTaxii21Content(jsonContent, association);
@@ -260,18 +260,18 @@ public class DownloadService {
     }
 
     public CountResult processTaxii21Content(Object response, Taxii21Association association) {
-        JsonElement bundle = (JsonElement) response;
+        JsonElement envelope = (JsonElement) response;
 
-        if (bundle.isJsonNull() || !bundle.getAsJsonObject().has("objects")) {
+        if (envelope.isJsonNull() || !envelope.getAsJsonObject().has("objects")) {
             return new CountResult();
         }
 
         CountResult countResult = new CountResult();
 
-        // For each object in the bundle, create a content wrapper
+        // For each object in the envelope, create a content wrapper
         List<Stix2ContentWrapper> content = new ArrayList<>();
 
-        bundle.getAsJsonObject().get("objects").getAsJsonArray().forEach(object -> {
+        envelope.getAsJsonObject().get("objects").getAsJsonArray().forEach(object -> {
             Stix2ContentWrapper contentWrapper = new Stix2ContentWrapper(object.toString(), association);
             contentWrapper.setLastRetrieved(Instant.now());
             content.add(contentWrapper);
@@ -293,7 +293,7 @@ public class DownloadService {
                     e.getWriteErrors().forEach(error -> log.trace(error.getMessage()));
                 }
                 writeResult = e.getWriteResult();
-                log.warn("Duplicate content encountered when parsing a STIX 2.X bundle. Will ignore.");
+                log.warn("Duplicate content encountered when parsing a STIX 2.X envelope. Will ignore.");
             }
             // Respond with feedback to the front-end regarding how much content was processed, saved, and if there were any duplicates
             countResult.setContentCount(content.size());
