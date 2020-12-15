@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -36,20 +37,6 @@ public class AuditResource {
     }
 
     /**
-     * GET /audits : get a page of AuditEvents.
-     *
-     * @param pageable the pagination information
-     * @return the ResponseEntity with status 200 (OK) and the list of AuditEvents in body
-     */
-    @GetMapping
-    public ResponseEntity<List<AuditEvent>> getAll(Pageable pageable) {
-        log.debug("REST request to get all AuditEvents with pageable set to {}", pageable);
-        Page<AuditEvent> page = auditEventService.findAll(pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/management/audits");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
-    }
-
-    /**
      * GET  /audits : get a page of AuditEvents between the fromDate and toDate.
      *
      * @param fromDate the start of the time period of AuditEvents to get
@@ -57,17 +44,14 @@ public class AuditResource {
      * @param pageable the pagination information
      * @return the ResponseEntity with status 200 (OK) and the list of AuditEvents in body
      */
-    @GetMapping(params = {"fromDate", "toDate"})
+    @GetMapping
     public ResponseEntity<List<AuditEvent>> getByDates(
-            @RequestParam @NotNull LocalDate fromDate,
-            @RequestParam @NotNull LocalDate toDate,
+            @RequestParam(required = false) LocalDate fromDate,
+            @RequestParam(required = false) LocalDate toDate,
             Pageable pageable) {
         log.debug("REST request to get AuditEvents between {} and {}", fromDate, toDate);
 
-        Page<AuditEvent> page = auditEventService.findByDates(
-            fromDate.atStartOfDay(ZoneId.systemDefault()).toInstant(),
-            toDate.atStartOfDay(ZoneId.systemDefault()).plusDays(1).toInstant(),
-            pageable);
+        Page<AuditEvent> page = auditEventService.findByDates(fromDate, toDate, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/management/audits");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
@@ -76,7 +60,7 @@ public class AuditResource {
      * GET  /audits/:id : get an AuditEvent by id.
      *
      * @param id the id of the entity to get
-     * @return the ResponseEntity with status 200 (OK) and the AuditEvent in body, or status 404 (Not Found)
+     * @return the ResponseEntity with status 200 (OK) and the AuditEvent in body, or status 200 with an empty body
      */
     @GetMapping("/{id:.+}")
     public ResponseEntity<AuditEvent> get(@PathVariable String id) {

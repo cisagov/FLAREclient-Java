@@ -8,6 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Optional;
 
 /**
@@ -23,8 +25,8 @@ public class AuditEventService {
     private final AuditEventConverter auditEventConverter;
 
     public AuditEventService(
-        PersistenceAuditEventRepository persistenceAuditEventRepository,
-        AuditEventConverter auditEventConverter) {
+            PersistenceAuditEventRepository persistenceAuditEventRepository,
+            AuditEventConverter auditEventConverter) {
 
         this.persistenceAuditEventRepository = persistenceAuditEventRepository;
         this.auditEventConverter = auditEventConverter;
@@ -32,18 +34,31 @@ public class AuditEventService {
 
     public Page<AuditEvent> findAll(Pageable pageable) {
         return persistenceAuditEventRepository.findAll(pageable)
-            .map(auditEventConverter::convertToAuditEvent);
+                .map(auditEventConverter::convertToAuditEvent);
     }
 
-    public Page<AuditEvent> findByDates(Instant fromDate, Instant toDate, Pageable pageable) {
-        return persistenceAuditEventRepository.findAllByAuditEventDateBetween(fromDate, toDate, pageable)
-            .map(auditEventConverter::convertToAuditEvent);
+    public Page<AuditEvent> findByDates(LocalDate fromDate, LocalDate toDate, Pageable pageable) {
+        if (fromDate == null && toDate == null) {
+            return persistenceAuditEventRepository.findAll(pageable)
+                    .map(auditEventConverter::convertToAuditEvent);
+        } else if (fromDate == null && toDate != null) {
+            return persistenceAuditEventRepository.findAllByAuditEventDateBefore(toDate.atStartOfDay(ZoneId.systemDefault()).plusDays(1).toInstant(), pageable)
+                    .map(auditEventConverter::convertToAuditEvent);
+        } else if (fromDate != null && toDate == null) {
+            return persistenceAuditEventRepository.findAllByAuditEventDateBetween(fromDate.atStartOfDay(ZoneId.systemDefault()).toInstant(),
+                    Instant.now(), pageable)
+                    .map(auditEventConverter::convertToAuditEvent);
+        } else {
+            return persistenceAuditEventRepository.findAllByAuditEventDateBetween(fromDate.atStartOfDay(ZoneId.systemDefault()).toInstant(),
+                    toDate.atStartOfDay(ZoneId.systemDefault()).plusDays(1).toInstant(), pageable)
+                    .map(auditEventConverter::convertToAuditEvent);
+        }
     }
 
     public Optional<AuditEvent> find(String id) {
         return Optional.ofNullable(persistenceAuditEventRepository.findById(id))
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .map(auditEventConverter::convertToAuditEvent);
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(auditEventConverter::convertToAuditEvent);
     }
 }

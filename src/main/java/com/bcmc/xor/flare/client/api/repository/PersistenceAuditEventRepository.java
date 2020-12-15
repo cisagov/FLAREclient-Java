@@ -26,4 +26,6 @@ public interface PersistenceAuditEventRepository extends MongoRepository<Persist
     List<PersistentAuditEvent> findByPrincipalAndAuditEventDateAfterAndAuditEventType(String principal, Instant after, String type);
 
     Page<PersistentAuditEvent> findAllByAuditEventDateBetween(Instant fromDate, Instant toDate, Pageable pageable);
+
+    Page<PersistentAuditEvent> findAllByAuditEventDateBefore(Instant toDate, Pageable pageable);
 }
