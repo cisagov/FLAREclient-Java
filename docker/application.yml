@@ -93,13 +93,12 @@ spring:
 server:
     port: 8083
     ssl:
-        key-store: demouser_ks.jks
+        key-store: devKeystore.p12
         key-store-password: 12qwaszx@#WESDXC
-        key-store-provider: SUN
-        key-store-type: JKS
-        trust-store: ca.jks
+        key-store-type: PKCS12
+        trust-store: keystore.p12
         trust-store-password: 12qwaszx@#WESDXC
-        keyAlias: demouser
+        key-alias: localhost
 
 # ===================================================================
 # Application specific properties
