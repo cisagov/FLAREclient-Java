@@ -13,6 +13,8 @@ ADD src/main/resources/templates/   /opt/app/templates/
 ADD src/main/resources/*            /opt/app/
 ADD docker/*                        /opt/app/
 
+RUN rm -Rf /opt/app/client-user-rsa.key /opt/app/demoUser.key
+
 USER root
 
 RUN chmod 755 /opt/app/entrypoint.sh
