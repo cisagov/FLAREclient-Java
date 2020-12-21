@@ -98,8 +98,9 @@ public class Taxii21Server extends TaxiiServer {
         return title;
     }
 
-    private void setTitle(String title) {
+    public void setTitle(String title) {
         this.title = title;
+        super.title = title;
     }
 
     public String getDescription() {

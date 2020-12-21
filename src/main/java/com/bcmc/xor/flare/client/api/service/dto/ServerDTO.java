@@ -37,6 +37,8 @@ public class ServerDTO {
 
     private Constants.TaxiiVersion version;
 
+    private String title;
+
     private boolean isAvailable = false;
 
     private boolean hasReceivedServerInformation = false;
@@ -69,6 +71,7 @@ public class ServerDTO {
         this.label = server.getLabel();
         this.url = server.getUrl() == null ? null : server.getUrl().toString();
         this.version = server.getVersion();
+        this.title = server.getTitle();
         this.serverDescription = server.getServerDescription();
         this.isAvailable = server.isAvailable();
         this.hasReceivedServerInformation = server.hasReceivedServerInformation();
@@ -84,7 +87,6 @@ public class ServerDTO {
         this.defaultApiRoot = server.getDefaultApiRoot();
         this.apiRoots = server.getApiRoots();
     }
-
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
@@ -121,6 +123,15 @@ public class ServerDTO {
 
     public void setVersion(Constants.TaxiiVersion version) {
         this.version = version;
+    }
+
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getServerDescription() {
@@ -227,4 +238,5 @@ public class ServerDTO {
     public void setApiRoots(HashSet<String> apiRoots) {
         this.apiRoots = apiRoots;
     }
+
 }
