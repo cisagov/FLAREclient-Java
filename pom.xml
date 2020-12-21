@@ -377,9 +377,8 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-data</artifactId>
-        </dependency>
+        </dependency>       
     </dependencies>
-
     <build>
         <testResources>
             <testResource>
