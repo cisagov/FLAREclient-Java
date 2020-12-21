@@ -13,13 +13,12 @@ ADD src/main/resources/templates/   /opt/app/templates/
 ADD src/main/resources/*            /opt/app/
 ADD docker/*                        /opt/app/
 
-RUN rm -Rf /opt/app/client-user-rsa.key /opt/app/demoUser.key
-
 USER root
 
 RUN chmod 755 /opt/app/entrypoint.sh
 
-RUN rm -Rf /usr/share/java/prometheus-jmx-exporter/jmx_prometheus_javaagent.jar
+RUN rm -Rf /usr/share/java/prometheus-jmx-exporter/jmx_prometheus_javaagent.jar \
+           /opt/app/client-user-rsa.key /opt/app/demoUser.key
 
 # Remove dev certs if not running locally
 #RUN if [ "${USE_DEV_CERTS}" = "false" ] ; then rm /opt/app/wso2carbon.jks-unique_file_must_exist_for_icam; rm /opt/app/*.jks; fi
