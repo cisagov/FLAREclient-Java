@@ -1,5 +1,5 @@
 library(
-        identifier: "jenkins-pipeline-java"
+        identifier: "jenkins-pipeline-java@develop"
 )
 
 javaPipeline(
