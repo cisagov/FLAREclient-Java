@@ -75,28 +75,28 @@ public class AccountResource {
 		return user;
 	}
 
-	/**
-	 * GET /activate : activate the registered user.
-	 *
-	 * @param key the activation key
-	 * @throws AccountActivationException if the user couldn't be activated
-	 */
-	@GetMapping("/activate")
-	@Timed
-	@ResponseStatus(HttpStatus.CREATED)
-	@ResponseBody
-	public Object activateAccount(@RequestParam(value = "key") String key) {
-		
-		log.debug("REST request to activate a user account");
-		
-		Optional<User> user = userService.activateRegistration(key);
-		if (!user.isPresent()) {
-			log.error("REST API AccountResource activate: Exception: AccountActivationException ");
-			throw new AccountActivationException();
-		}
-
-		return user;
-	}
+//	/**
+//	 * GET /activate : activate the registered user.
+//	 *
+//	 * @param key the activation key
+//	 * @throws AccountActivationException if the user couldn't be activated
+//	 */
+//	@GetMapping("/activate")
+//	@Timed
+//	@ResponseStatus(HttpStatus.CREATED)
+//	@ResponseBody
+//	public Object activateAccount(@RequestParam(value = "key") String key) {
+//
+//		log.debug("REST request to activate a user account");
+//
+//		Optional<User> user = userService.activateRegistration(key);
+//		if (!user.isPresent()) {
+//			log.error("REST API AccountResource activate: Exception: AccountActivationException ");
+//			throw new AccountActivationException();
+//		}
+//
+//		return user;
+//	}
 
     /**
      * GET  /authenticate : check if the user is authenticated, and return its login.
