@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.HtmlUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -74,28 +75,28 @@ public class AccountResource {
 		return user;
 	}
 
-	/**
-	 * GET /activate : activate the registered user.
-	 *
-	 * @param key the activation key
-	 * @throws AccountActivationException if the user couldn't be activated
-	 */
-	@GetMapping("/activate")
-	@Timed
-	@ResponseStatus(HttpStatus.CREATED)
-	@ResponseBody
-	public Object activateAccount(@RequestParam(value = "key") String key) {
-		
-		log.debug("REST request to activate a user account");
-		
-		Optional<User> user = userService.activateRegistration(key);
-		if (!user.isPresent()) {
-			log.error("REST API AccountResource activate: Exception: AccountActivationException ");
-			throw new AccountActivationException();
-		}
-
-		return user;
-	}
+//	/**
+//	 * GET /activate : activate the registered user.
+//	 *
+//	 * @param key the activation key
+//	 * @throws AccountActivationException if the user couldn't be activated
+//	 */
+//	@GetMapping("/activate")
+//	@Timed
+//	@ResponseStatus(HttpStatus.CREATED)
+//	@ResponseBody
+//	public Object activateAccount(@RequestParam(value = "key") String key) {
+//
+//		log.debug("REST request to activate a user account");
+//
+//		Optional<User> user = userService.activateRegistration(key);
+//		if (!user.isPresent()) {
+//			log.error("REST API AccountResource activate: Exception: AccountActivationException ");
+//			throw new AccountActivationException();
+//		}
+//
+//		return user;
+//	}
 
     /**
      * GET  /authenticate : check if the user is authenticated, and return its login.
@@ -111,8 +112,12 @@ public class AccountResource {
         log.debug("REST request to check if the current user {} is authenticated", request.getRemoteUser());
     	
 		String login = request.getRemoteUser();
+		log.debug("{}", login);
 		ArrayList<String> alist = new ArrayList<>();
-		alist.add(login);
+
+		if (login != null) {
+			alist.add(HtmlUtils.htmlEscape(login));
+		}
         return alist;
     }
 	
