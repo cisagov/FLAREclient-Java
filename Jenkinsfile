@@ -6,7 +6,7 @@ javaPipeline(
         applicationName: 'flarecloud',
         serviceName: 'flareclient',
         baseDirectory: '.',
-        namespacePostfix: '',
+        namespacePostfix: 'tmai',
         useFeatureVersionBuild: true,
         integrateParent: false,
         integrateDependencies: []
