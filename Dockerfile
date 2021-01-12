@@ -1,4 +1,4 @@
-FROM docker.artifactory.apps.ecicd.dso.ncps.us-cert.gov/openjdk/openjdk-8-rhel8:1.3-2
+FROM docker.artifactory.apps.ecicd.dso.ncps.us-cert.gov/redhat-openjdk-18/openjdk18-openshift:1.8-7.1594897657
 
 # USE_DEV_CERTS - when set to true, it is used to
 # load certificates for images created locally,
@@ -26,5 +26,5 @@ WORKDIR /opt/app/
 RUN chmod g+w /opt/app/
 RUN chown -R jboss:jboss /opt/app/*
 USER jboss
-ENTRYPOINT [ "./entrypoint.sh" ]
+ENTRYPOINT [ "/bin/bash", "-c", "/opt/app/entrypoint.sh" ]
 
