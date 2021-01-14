@@ -128,6 +128,11 @@
                 <artifactId>spring-web</artifactId>
                 <version>5.0.20.RELEASE</version>
             </dependency>
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>1.27</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -180,6 +185,10 @@
                 <exclusion>
                     <groupId>org.apache.logging.log4j</groupId>
                     <artifactId>log4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.santuario</groupId>
+                    <artifactId>xmlsec</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
