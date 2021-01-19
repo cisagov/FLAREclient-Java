@@ -5,14 +5,37 @@ import com.bcmc.xor.flare.client.api.security.SecurityUtils;
 import com.bcmc.xor.flare.client.api.security.ServerCredentialsUtils;
 import com.bcmc.xor.flare.client.taxii.taxii11.Taxii11Headers;
 import com.bcmc.xor.flare.client.taxii.taxii21.Taxii21Headers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.EnvironmentAware;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
+import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("WeakerAccess")
-public class TaxiiHeaders extends HttpHeaders {
+@Component
+public class TaxiiHeaders extends HttpHeaders implements EnvironmentAware {
+
+    private static final Logger log = LoggerFactory.getLogger(TaxiiHeaders.class);
+    private static String applicationName;
+    private static String applicationVersion;
+
+    public static String getApplicationName() {
+        return applicationName;
+    }
+
+    public static String getApplicationVersion() {
+        return applicationVersion;
+    }
+
+    @Override
+    public void setEnvironment(Environment environment) {
+        applicationName = environment.getProperty("flare.application-name");
+        applicationVersion = environment.getProperty("flare.application-version");
+    }
 
     protected TaxiiHeaders() {
     }
@@ -41,6 +64,11 @@ public class TaxiiHeaders extends HttpHeaders {
         this.add("Authorization", authHeader);
     }
 
+    public TaxiiHeaders withUserAgent() {
+        this.add("User-Agent", getApplicationName() + "/" + getApplicationVersion());
+        return this;
+    }
+
     public TaxiiHeaders withHeader(String key, List<String> value) {
         this.put(key, value);
         return this;
@@ -67,12 +95,16 @@ public class TaxiiHeaders extends HttpHeaders {
                 if (server.getRequiresBasicAuth()) {
                     taxii21Headers.withAuthorizationForServer(server.getLabel());
                 }
+                taxii21Headers.withUserAgent();
+                log.debug("Taxii21Headers: {}", taxii21Headers.toString());
                 return taxii21Headers;
             case TAXII11:
                 Taxii11Headers taxii11Headers = new Taxii11Headers();
                 if (server.getRequiresBasicAuth()) {
                     taxii11Headers.withAuthorizationForServer(server.getLabel());
                 }
+                taxii11Headers.withUserAgent();
+                log.debug("Taxii11Headers: {}", taxii11Headers.toString());
                 return taxii11Headers;
             default:
                 return new TaxiiHeaders();
