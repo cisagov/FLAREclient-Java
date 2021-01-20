@@ -55,7 +55,7 @@ public class TaxiiHeaders extends HttpHeaders implements EnvironmentAware {
             }
         } else {
             Map<String, String> credentials = ServerCredentialsUtils.getInstance().getServerCredentialsMap().values()
-                .stream().filter(map -> map.keySet().contains(label)).findAny()
+                .stream().filter(map -> map.containsKey(label)).findAny()
                 .orElseThrow(() -> new IllegalStateException("No credentials available to provide authorization to server " + label));
             this.withAuthorization(credentials.get(label));
         }
