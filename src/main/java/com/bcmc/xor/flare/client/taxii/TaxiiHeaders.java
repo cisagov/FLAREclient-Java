@@ -38,6 +38,7 @@ public class TaxiiHeaders extends HttpHeaders implements EnvironmentAware {
     }
 
     protected TaxiiHeaders() {
+        this.add("User-Agent", getApplicationName() + "/" + getApplicationVersion());
     }
 
     /**
@@ -62,11 +63,6 @@ public class TaxiiHeaders extends HttpHeaders implements EnvironmentAware {
 
     private void withAuthorization(String authHeader) {
         this.add("Authorization", authHeader);
-    }
-
-    public TaxiiHeaders withUserAgent() {
-        this.add("User-Agent", getApplicationName() + "/" + getApplicationVersion());
-        return this;
     }
 
     public TaxiiHeaders withHeader(String key, List<String> value) {
@@ -95,7 +91,6 @@ public class TaxiiHeaders extends HttpHeaders implements EnvironmentAware {
                 if (server.getRequiresBasicAuth()) {
                     taxii21Headers.withAuthorizationForServer(server.getLabel());
                 }
-                taxii21Headers.withUserAgent();
                 log.debug("Taxii21Headers: {}", taxii21Headers.toString());
                 return taxii21Headers;
             case TAXII11:
@@ -103,7 +98,6 @@ public class TaxiiHeaders extends HttpHeaders implements EnvironmentAware {
                 if (server.getRequiresBasicAuth()) {
                     taxii11Headers.withAuthorizationForServer(server.getLabel());
                 }
-                taxii11Headers.withUserAgent();
                 log.debug("Taxii11Headers: {}", taxii11Headers.toString());
                 return taxii11Headers;
             default:
