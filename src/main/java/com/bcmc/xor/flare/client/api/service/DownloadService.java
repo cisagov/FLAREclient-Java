@@ -196,7 +196,7 @@ public class DownloadService {
             ((Taxii21Association) parameters.getAssociation()).getCollection().getCollectionObject().getId()));
 
         if (parameters.getQueryString() != null)
-            fetchUrl = fetchUrl.query(parameters.getQueryString().substring(1));
+            fetchUrl = fetchUrl.query(parameters.getQueryString());
 
         log.debug("Query string: {}", parameters.getQueryString());
         parameters.setFetchUrl(fetchUrl.build().toUri());
