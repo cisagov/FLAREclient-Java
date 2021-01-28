@@ -1,7 +1,7 @@
 package com.bcmc.xor.flare.client.api.config;
 
-import com.codahale.metrics.jmx.JmxReporter;
-import com.codahale.metrics.jvm.JvmAttributeGaugeSet;
+import com.codahale.metrics.JmxReporter;
+import com.codahale.metrics.JvmAttributeGaugeSet;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Slf4jReporter;
 import com.codahale.metrics.health.HealthCheckRegistry;
@@ -16,43 +16,48 @@ import org.slf4j.MarkerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 import javax.annotation.PostConstruct;
 import java.lang.management.ManagementFactory;
 import java.util.concurrent.TimeUnit;
+
 @SuppressWarnings("CanBeFinal")
 @Configuration
 @EnableMetrics(proxyTargetClass = true)
 public class MetricsConfiguration extends MetricsConfigurerAdapter {
+
     private static final String PROP_METRIC_REG_JVM_MEMORY = "jvm.memory";
     private static final String PROP_METRIC_REG_JVM_GARBAGE = "jvm.garbage";
     private static final String PROP_METRIC_REG_JVM_THREADS = "jvm.threads";
     private static final String PROP_METRIC_REG_JVM_FILES = "jvm.files";
     private static final String PROP_METRIC_REG_JVM_BUFFERS = "jvm.buffers";
     private static final String PROP_METRIC_REG_JVM_ATTRIBUTE_SET = "jvm.attributes";
+
     private static final String PROP_METRIC_REG_JCACHE_STATISTICS = "jcache.statistics";
+
     private static final Logger log = LoggerFactory.getLogger(MetricsConfiguration.class);
-    //private MetricRegistry metricRegistry = new MetricRegistry();
+
+    private MetricRegistry metricRegistry = new MetricRegistry();
+
     private HealthCheckRegistry healthCheckRegistry = new HealthCheckRegistry();
     private Boolean jmxEnabled;
     private Boolean metricsLogsEnabled;
     private Long reportFrequency;
 
-    public MetricsConfiguration(@Value("${spring.metrics.jmx.enabled:true}") Boolean jmxEnabled,
-                                @Value("${spring.metrics.logs.enabled:true}") Boolean metricsLogsEnabled,
-                                @Value("${spring.metrics.logs.report-frequency:50}") Long reportFrequency) {
+
+    public MetricsConfiguration(@Value("${spring.metrics.jmx.enabled}") Boolean jmxEnabled,
+                                @Value("${spring.metrics.logs.enabled}") Boolean metricsLogsEnabled,
+                                @Value("${spring.metrics.logs.report-frequency}") Long reportFrequency) {
+
         this.jmxEnabled = jmxEnabled;
         this.metricsLogsEnabled = metricsLogsEnabled;
         this.reportFrequency = reportFrequency;
     }
 
-    private void registerMetrics(MetricRegistry metricRegistry) {
-        metricRegistry.register(PROP_METRIC_REG_JVM_MEMORY, new MemoryUsageGaugeSet());
-        metricRegistry.register(PROP_METRIC_REG_JVM_GARBAGE, new GarbageCollectorMetricSet());
-        metricRegistry.register(PROP_METRIC_REG_JVM_THREADS, new ThreadStatesGaugeSet());
-        metricRegistry.register(PROP_METRIC_REG_JVM_FILES, new FileDescriptorRatioGauge());
-        metricRegistry.register(PROP_METRIC_REG_JVM_BUFFERS, new BufferPoolMetricSet(ManagementFactory.getPlatformMBeanServer()));
-        metricRegistry.register(PROP_METRIC_REG_JVM_ATTRIBUTE_SET, new JvmAttributeGaugeSet());
-        metricRegistry.register(PROP_METRIC_REG_JCACHE_STATISTICS, new JCacheGaugeSet());
+    @Override
+    @Bean
+    public MetricRegistry getMetricRegistry() {
+        return metricRegistry;
     }
 
     @Override
@@ -61,10 +66,17 @@ public class MetricsConfiguration extends MetricsConfigurerAdapter {
         return healthCheckRegistry;
     }
 
-    @Override
-    public void configureReporters(MetricRegistry metricRegistry) {
-        registerMetrics(metricRegistry);
+    @SuppressWarnings("unused")
+    @PostConstruct
+    public void init() {
         log.debug("Registering JVM gauges");
+        metricRegistry.register(PROP_METRIC_REG_JVM_MEMORY, new MemoryUsageGaugeSet());
+        metricRegistry.register(PROP_METRIC_REG_JVM_GARBAGE, new GarbageCollectorMetricSet());
+        metricRegistry.register(PROP_METRIC_REG_JVM_THREADS, new ThreadStatesGaugeSet());
+        metricRegistry.register(PROP_METRIC_REG_JVM_FILES, new FileDescriptorRatioGauge());
+        metricRegistry.register(PROP_METRIC_REG_JVM_BUFFERS, new BufferPoolMetricSet(ManagementFactory.getPlatformMBeanServer()));
+        metricRegistry.register(PROP_METRIC_REG_JVM_ATTRIBUTE_SET, new JvmAttributeGaugeSet());
+        metricRegistry.register(PROP_METRIC_REG_JCACHE_STATISTICS, new JCacheGaugeSet());
         if (jmxEnabled) {
             log.debug("Initializing Metrics JMX reporting");
             JmxReporter jmxReporter = JmxReporter.forRegistry(metricRegistry).build();
@@ -74,11 +86,11 @@ public class MetricsConfiguration extends MetricsConfigurerAdapter {
             log.info("Initializing Metrics Log reporting");
             Marker metricsMarker = MarkerFactory.getMarker("metrics");
             final Slf4jReporter reporter = Slf4jReporter.forRegistry(metricRegistry)
-                    .outputTo(LoggerFactory.getLogger("metrics"))
-                    .markWith(metricsMarker)
-                    .convertRatesTo(TimeUnit.SECONDS)
-                    .convertDurationsTo(TimeUnit.MILLISECONDS)
-                    .build();
+                .outputTo(LoggerFactory.getLogger("metrics"))
+                .markWith(metricsMarker)
+                .convertRatesTo(TimeUnit.SECONDS)
+                .convertDurationsTo(TimeUnit.MILLISECONDS)
+                .build();
             reporter.start(reportFrequency, TimeUnit.SECONDS);
         }
     }

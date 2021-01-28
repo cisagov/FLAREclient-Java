@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.data.mongodb.MongoDatabaseFactory;
+import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.DbRefResolver;
@@ -37,7 +37,7 @@ public class DatabaseConfiguration {
     private static final Logger log = LoggerFactory.getLogger(DatabaseConfiguration.class);
 
     @Autowired
-    private MongoDatabaseFactory mongoDatabaseFactoryFactory;
+    MongoDbFactory mongoDbFactory;
 
     @Autowired
     MongoMappingContext mappingContext;
@@ -66,7 +66,7 @@ public class DatabaseConfiguration {
 
     @Bean
     public MappingMongoConverter mappingMongoConverter() throws Exception {
-        DbRefResolver dbRefResolver = new DefaultDbRefResolver(mongoDatabaseFactoryFactory);
+        DbRefResolver dbRefResolver = new DefaultDbRefResolver(mongoDbFactory);
         MappingMongoConverter converter = new MappingMongoConverter(dbRefResolver, mappingContext);
         converter.setCustomConversions(customConversions());
         converter.setMapKeyDotReplacement(",");
