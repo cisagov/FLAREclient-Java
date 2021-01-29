@@ -16,6 +16,8 @@ logging:
         com.bcmc.xor.flare: DEBUG
 
 spring:
+    main:
+        allow-bean-definition-overriding: true
     application:
         name: flareclient
     profiles:
