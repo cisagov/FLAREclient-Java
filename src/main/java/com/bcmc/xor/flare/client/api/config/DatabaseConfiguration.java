@@ -25,7 +25,6 @@ import java.util.List;
 
 @Configuration
 @EnableMongoRepositories("com.bcmc.xor.flare.client.api.repository")
-//@Profile("!" + JHipsterConstants.SPRING_PROFILE_CLOUD)
 @Import(value = MongoAutoConfiguration.class)
 @EnableMongoAuditing(auditorAwareRef = "springSecurityAuditorAware")
 public class DatabaseConfiguration {
@@ -59,11 +58,12 @@ public class DatabaseConfiguration {
         return MongockSpring5
                 .builder()
                 .setDriver(driver)
-                .addChangeLogsScanPackage("io.github.jhipster.sample.config.dbmigrations")
+                .addChangeLogsScanPackage("com.bcmc.xor.flare.client.api.config.dbmigrations")
                 .setSpringContext(springContext)
                 .buildInitializingBeanRunner();
     }
 
+    @Bean
     public MongoCustomConversions customConversions() {
         List<Converter<?, ?>> converters = new ArrayList<>();
         converters.add(JSR310DateConverters.DateToZonedDateTimeConverter.INSTANCE);
