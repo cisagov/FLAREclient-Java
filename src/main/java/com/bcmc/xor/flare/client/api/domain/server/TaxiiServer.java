@@ -31,7 +31,6 @@ public abstract class TaxiiServer extends AbstractAuditingEntity implements Seri
 
     @Id
     @Indexed
-    @Field("id")
     private String id;
 
     @NotNull
