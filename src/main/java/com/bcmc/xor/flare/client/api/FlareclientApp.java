@@ -3,6 +3,7 @@ package com.bcmc.xor.flare.client.api;
 import com.bcmc.xor.flare.client.api.config.ApplicationProperties;
 import com.bcmc.xor.flare.client.api.config.DefaultProfileUtil;
 import com.bcmc.xor.flare.client.taxii.Validation;
+import com.github.cloudyrock.spring.v5.EnableMongock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

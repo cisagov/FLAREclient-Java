@@ -17,11 +17,13 @@ import com.bcmc.xor.flare.client.taxii.taxii11.Taxii11Association;
 import com.bcmc.xor.flare.client.taxii.taxii21.Taxii21Association;
 import com.bcmc.xor.flare.client.taxii.taxii21.Taxii21Headers;
 import com.google.gson.JsonElement;
+import com.mongodb.MongoBulkWriteException;
 import com.mongodb.bulk.BulkWriteResult;
 import org.mitre.taxii.messages.xml11.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpStatus;
@@ -240,14 +242,19 @@ public class DownloadService {
 
             try {
                 writeResult = bulkOperations.execute();
-            } catch (com.mongodb.MongoBulkWriteException e) {
-                if (e.getWriteErrors().stream().anyMatch(error -> error.getCode() != 11000)) {
-                    throw new InternalServerErrorException(e.getMessage());
+            } catch (DuplicateKeyException dke)  {
+                log.warn("dke="+dke.getCause());
+                MongoBulkWriteException mbwe = null;
+                mbwe = (MongoBulkWriteException) dke.getCause();
+
+                if (mbwe.getWriteErrors().stream().anyMatch(error -> error.getCode() != 11000)) {
+                    // Re-throw any errors that were not 11000 (duplicate key exceptions)
+                    throw new InternalServerErrorException(mbwe.getMessage());
                 }
                 if (log.isTraceEnabled()) {
-                    e.getWriteErrors().forEach(error -> log.trace(error.getMessage()));
+                    mbwe.getWriteErrors().forEach(error -> log.trace(error.getMessage()));
                 }
-                writeResult = e.getWriteResult();
+                writeResult = mbwe.getWriteResult();
                 log.warn("Duplicate content encountered when parsing a STIX 1.X package. Will ignore.");
             }
 
@@ -284,15 +291,19 @@ public class DownloadService {
             @SuppressWarnings("UnusedAssignment") BulkWriteResult writeResult = null;
             try {
                 writeResult = bulkOperations.execute();
-            } catch (com.mongodb.MongoBulkWriteException e) {
-                if (e.getWriteErrors().stream().anyMatch(error -> error.getCode() != 11000)) {
+            } catch (DuplicateKeyException dke)  {
+                log.warn("dke="+dke.getCause());
+                MongoBulkWriteException mbwe = null;
+                mbwe = (MongoBulkWriteException) dke.getCause();
+
+                if (mbwe.getWriteErrors().stream().anyMatch(error -> error.getCode() != 11000)) {
                     // Re-throw any errors that were not 11000 (duplicate key exceptions)
-                    throw new InternalServerErrorException(e.getMessage());
+                    throw new InternalServerErrorException(mbwe.getMessage());
                 }
                 if (log.isTraceEnabled()) {
-                    e.getWriteErrors().forEach(error -> log.trace(error.getMessage()));
+                    mbwe.getWriteErrors().forEach(error -> log.trace(error.getMessage()));
                 }
-                writeResult = e.getWriteResult();
+                writeResult = mbwe.getWriteResult();
                 log.warn("Duplicate content encountered when parsing a STIX 2.X envelope. Will ignore.");
             }
             // Respond with feedback to the front-end regarding how much content was processed, saved, and if there were any duplicates
