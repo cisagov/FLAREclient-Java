@@ -6,6 +6,7 @@ import com.github.cloudyrock.spring.v5.MongockSpring5;
 import com.github.cloudyrock.spring.v5.MongockSpring5.MongockInitializingBeanRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.context.ApplicationContext;
@@ -15,6 +16,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import org.springframework.data.mongodb.core.mapping.event.ValidatingMongoEventListener;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
@@ -30,6 +32,11 @@ import java.util.List;
 public class DatabaseConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(DatabaseConfiguration.class);
+
+    @Autowired
+    void setMapKeyDotReplacement(MappingMongoConverter mappingMongoConverter) {
+        mappingMongoConverter.setMapKeyDotReplacement("_");
+    }
 
     @Bean
     public ValidatingMongoEventListener validatingMongoEventListener() {
