@@ -22,6 +22,7 @@ import org.springframework.data.mongodb.core.mapping.event.ValidatingMongoEventL
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +35,11 @@ public class DatabaseConfiguration {
     private static final Logger log = LoggerFactory.getLogger(DatabaseConfiguration.class);
 
     @Autowired
-    void setMapKeyDotReplacement(MappingMongoConverter mappingMongoConverter) {
+    private MappingMongoConverter mappingMongoConverter;
+
+    // Converts . into a mongo friendly char
+    @PostConstruct
+    public void setMapKeyDotReplacement() {
         mappingMongoConverter.setMapKeyDotReplacement("_");
     }
 
