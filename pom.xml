@@ -79,7 +79,7 @@
         <springfox.version>2.9.2</springfox.version>
         <xmemcached.version>2.4.5</xmemcached.version>
         <xmemcached-provider.version>4.0.0</xmemcached-provider.version>
-        <mongock.version>4.1.17</mongock.version>
+        <mongock.version>4.1.19</mongock.version>
 
         <dropwizard-metrics.version>3.2.6</dropwizard-metrics.version>
     </properties>
