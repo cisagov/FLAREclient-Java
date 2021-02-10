@@ -37,14 +37,11 @@ public class DatabaseConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(DatabaseConfiguration.class);
 
-    final MongoDatabaseFactory mongoDatabaseFactory;
+    @Autowired
+    MongoDatabaseFactory mongoDatabaseFactory;
 
     @Autowired
     MongoMappingContext mappingContext;
-
-    public DatabaseConfiguration(MongoDatabaseFactory mongoDatabaseFactory) {
-        this.mongoDatabaseFactory = mongoDatabaseFactory;
-    }
 
     @Bean
     public ValidatingMongoEventListener validatingMongoEventListener() {
