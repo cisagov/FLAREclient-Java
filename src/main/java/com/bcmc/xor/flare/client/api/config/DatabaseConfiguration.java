@@ -15,14 +15,17 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
+import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.convert.DbRefResolver;
+import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
+import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.data.mongodb.core.mapping.event.ValidatingMongoEventListener;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,17 +38,23 @@ public class DatabaseConfiguration {
     private static final Logger log = LoggerFactory.getLogger(DatabaseConfiguration.class);
 
     @Autowired
-    private MappingMongoConverter mappingMongoConverter;
+    MongoDatabaseFactory mongoDatabaseFactory;
 
-    // Converts . into a mongo friendly char
-    @PostConstruct
-    public void setMapKeyDotReplacement() {
-        mappingMongoConverter.setMapKeyDotReplacement("_");
-    }
+    @Autowired
+    MongoMappingContext mappingContext;
 
     @Bean
     public ValidatingMongoEventListener validatingMongoEventListener() {
         return new ValidatingMongoEventListener(validator());
+    }
+
+    @Bean
+    public MappingMongoConverter mappingMongoConverter() throws Exception {
+        DbRefResolver dbRefResolver = new DefaultDbRefResolver(mongoDatabaseFactory);
+        MappingMongoConverter converter = new MappingMongoConverter(dbRefResolver, mappingContext);
+        converter.setCustomConversions(customConversions());
+        converter.setMapKeyDotReplacement(",");
+        return converter;
     }
 
     @Bean
