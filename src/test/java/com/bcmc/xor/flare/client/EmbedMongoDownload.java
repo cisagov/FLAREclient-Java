@@ -13,7 +13,8 @@ public class EmbedMongoDownload {
 
     private static final String srcDirectoryPath = "src/test/resources/";
 
-    private static final String linuxDistFile = "mongodb-linux-x86_64-3.2.2.tgz";
+    //private static final String linuxDistFile = "mongodb-linux-x86_64-3.2.2.tgz";
+    private static final String linuxDistFile = "mongodb-linux-x86_64-3.5.5.tgz";
     private static final String win32DistFile = "mongodb-win32-x86_64-3.2.2.zip";
     private static final String osxDistFile = "mongodb-osx-x86_64-3.2.2.tgz";
 
