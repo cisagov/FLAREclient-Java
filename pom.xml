@@ -30,7 +30,7 @@
         <profile.swagger />
 
         <!-- Dependency versions -->
-        <spring-boot.version>2.3.8.RELEASE</spring-boot.version>
+        <spring-boot.version>2.4.2</spring-boot.version>
         <mapstruct.version>1.2.0.Final</mapstruct.version>
 
         <!-- Plugin versions -->
@@ -415,25 +415,7 @@
                     <groupId>org.apache.tomcat.embed</groupId>
                     <artifactId>tomcat-embed-websocket</artifactId>
                 </exclusion>
-                <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-web</artifactId>
-                </exclusion>
-                <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-webmvc</artifactId>
-                </exclusion>
             </exclusions>
-        </dependency>
-	<dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-	    <version>5.3.3</version>
-	</dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <version>5.3.3</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
