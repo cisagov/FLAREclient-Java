@@ -3,9 +3,9 @@ package com.bcmc.xor.flare.client.api.config.dbmigrations;
 import com.bcmc.xor.flare.client.api.domain.auth.Authority;
 import com.bcmc.xor.flare.client.api.domain.auth.User;
 import com.bcmc.xor.flare.client.api.security.AuthoritiesConstants;
-import com.github.mongobee.changeset.ChangeLog;
-import com.github.mongobee.changeset.ChangeSet;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import com.github.cloudyrock.mongock.ChangeLog;
+import com.github.cloudyrock.mongock.ChangeSet;
+import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.Instant;
@@ -18,17 +18,17 @@ import java.time.Instant;
 public class InitialSetupMigration {
 
     @ChangeSet(order = "01", author = "initiator", id = "01-addAuthorities")
-    public void addAuthorities(MongoTemplate mongoTemplate) {
+    public void addAuthorities(MongockTemplate mongockTemplate) {
         Authority adminAuthority = new Authority();
         adminAuthority.setName(AuthoritiesConstants.ADMIN);
         Authority userAuthority = new Authority();
         userAuthority.setName(AuthoritiesConstants.USER);
-        mongoTemplate.save(adminAuthority);
-        mongoTemplate.save(userAuthority);
+        mongockTemplate.save(adminAuthority);
+        mongockTemplate.save(userAuthority);
     }
 
     @ChangeSet(order = "02", author = "initiator", id = "02-addUsers")
-    public void addUsers(MongoTemplate mongoTemplate) {
+    public void addUsers(MongockTemplate mongoTemplate) {
         Authority adminAuthority = new Authority();
         adminAuthority.setName(AuthoritiesConstants.ADMIN);
         Authority userAuthority = new Authority();

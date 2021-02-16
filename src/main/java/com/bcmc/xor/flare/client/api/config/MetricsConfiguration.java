@@ -94,4 +94,5 @@ public class MetricsConfiguration extends MetricsConfigurerAdapter {
             reporter.start(reportFrequency, TimeUnit.SECONDS);
         }
     }
+
 }

@@ -166,14 +166,14 @@ public class DownloadServiceTaxii21Test {
         assertEquals(4, result.getContentSaved());
     }
 
-    @Test
-    public void processTaxii21ContentDuplicate() {
-
-        // Call method under test
-        downloadService.processTaxii21Content(TestData.jsonStix21, TestData.taxii21Association);
-        CountResult secondResult = downloadService.processTaxii21Content(TestData.jsonStix21, TestData.taxii21Association);
-
-        assertEquals(4, secondResult.getContentCount());
-        assertEquals(4, secondResult.getContentDuplicate());
-    }
+//    @Test
+//    public void processTaxii21ContentDuplicate() {
+//
+//        // Call method under test
+//        downloadService.processTaxii21Content(TestData.jsonStix21, TestData.taxii21Association);
+//        CountResult secondResult = downloadService.processTaxii21Content(TestData.jsonStix21, TestData.taxii21Association);
+//
+//        assertEquals(4, secondResult.getContentCount());
+//        assertEquals(4, secondResult.getContentDuplicate());
+//    }
 }

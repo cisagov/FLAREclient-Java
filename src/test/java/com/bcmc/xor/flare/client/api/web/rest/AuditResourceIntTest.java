@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.format.support.FormattingConversionService;
@@ -39,6 +40,8 @@ public class AuditResourceIntTest {
     private static final Instant SAMPLE_TIMESTAMP = Instant.parse("2015-08-04T10:11:30Z");
     private static final long SECONDS_PER_DAY = 60 * 60 * 24;
 
+
+    @Qualifier("audit")
     @Autowired
     private PersistenceAuditEventRepository auditEventRepository;
 
@@ -87,7 +90,7 @@ public class AuditResourceIntTest {
         // Get all the audits
         restAuditMockMvc.perform(get("/management/audits"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].principal").value(hasItem(SAMPLE_PRINCIPAL)));
     }
 
@@ -99,7 +102,7 @@ public class AuditResourceIntTest {
         // Get the audit
         restAuditMockMvc.perform(get("/management/audits/{id}", auditEvent.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.principal").value(SAMPLE_PRINCIPAL));
     }
 
@@ -115,7 +118,7 @@ public class AuditResourceIntTest {
         // Get the audit
         restAuditMockMvc.perform(get("/management/audits?fromDate="+fromDate+"&toDate="+toDate))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].principal").value(hasItem(SAMPLE_PRINCIPAL)));
     }
 
@@ -131,7 +134,7 @@ public class AuditResourceIntTest {
         // Query audits but expect no results
         restAuditMockMvc.perform(get("/management/audits?fromDate=" + fromDate + "&toDate=" + toDate))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(header().string("X-Total-Count", "0"));
     }
 // TODO FIX THIS TEST

@@ -1,7 +1,6 @@
 package com.bcmc.xor.flare.client.api.config;
 
 import com.bcmc.xor.flare.client.util.JSR310DateConverters;
-import com.github.mongobee.Mongobee;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.Cloud;

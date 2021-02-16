@@ -611,10 +611,10 @@ public class ServerService {
             User user = userService.getUserWithAuthoritiesByLogin(login).orElseThrow(NotFoundException::new);
             Map<String, String> serverCredentialsForUser = ServerCredentialsUtils.getInstance().getServerCredentialsMap().get(user.getLogin());
             if (serverCredentialsForUser == null || !serverCredentialsForUser.containsKey(serverDTO.getLabel())) {
-//                attemptVersionDiscovery(serverDTO);
                 addServerCredential(user, serverDTO.getLabel(), serverDTO.getUsername(), serverDTO.getPassword());
+                serverCredentialsForUser = new HashMap<>();
             }
-            if (Objects.requireNonNull(serverCredentialsForUser).containsKey(serverDTO.getLabel())) {
+            if (serverCredentialsForUser.containsKey(serverDTO.getLabel())) {
                 removeServerCredential(serverDTO.getLabel());
                 addServerCredential(user, serverDTO.getLabel(), serverDTO.getUsername(), serverDTO.getPassword());
             }
