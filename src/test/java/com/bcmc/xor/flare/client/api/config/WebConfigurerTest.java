@@ -56,7 +56,7 @@ public class WebConfigurerTest {
 
         env = new MockEnvironment();
 
-        webConfigurer = new WebConfigurer(env, "","",true, 6000, "");
+        webConfigurer = new WebConfigurer(env, "","", "",true, 6000, "");
         metricRegistry = new MetricRegistry();
         webConfigurer.setMetricRegistry(metricRegistry);
     }

@@ -43,7 +43,8 @@ spring:
         cache: # Used by the CachingHttpHeadersFilter
             timeToLiveInDays: 1461
         cors:
-            allowed-origins: "*"
+            allowed-origins: ""
+            allowed-origin-patterns: "*"
             allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
             allowed-headers: "*"
             exposed-headers: "Authorization,Link,X-Total-Count"

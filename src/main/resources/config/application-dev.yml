@@ -54,7 +54,8 @@ jhipster:
             time-to-live-seconds: 3600 # By default objects stay 1 hour in the cache
             max-entries: 100 # Number of objects in each cache entry
     cors:
-        allowed-origins: "*"
+        allowed-origins: ""
+        allowed-origin-patterns: "*"
         allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
         allowed-headers: "*"
         exposed-headers: "Authorization,Link,X-Total-Count"
