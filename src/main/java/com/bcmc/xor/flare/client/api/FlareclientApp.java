@@ -69,13 +69,18 @@ public class FlareclientApp {
                 "Application '{}' is running! Access URLs:\n\t" +
                 "Local: \t\t{}://localhost:{}\n\t" +
                 "External: \t{}://{}:{}\n\t" +
-                "Profile(s): \t{}\n----------------------------------------------------------",
+                "Profile(s): \t{}  \n\t" +
+                "Application Name: \t{}  \n\t" +
+                "Application Version: \t{}  \n" +
+                "----------------------------------------------------------",
             env.getProperty("spring.application.name"),
             protocol,
             env.getProperty("server.port"),
             protocol,
             hostAddress,
             env.getProperty("server.port"),
-            env.getActiveProfiles());
+            env.getActiveProfiles(),
+            env.getProperty("flare.application-name"),
+            env.getProperty("flare.application-version"));
     }
 }

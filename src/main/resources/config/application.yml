@@ -108,6 +108,8 @@ server:
 
 # application:
 flare:
+    application-name: FLAREclient
+    application-version: 4.0
     status-update-interval: 15000
     validation-interval: 5000
     server-info-update-interval: 3600000 # every hour
