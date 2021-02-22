@@ -51,6 +51,7 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
     private final Environment env;
     private String httpVersion;
     private String allowedOrigins;
+    private String allowedOriginPattern;
     private boolean allowCredentials;
     private long maxAge;
     private String exposedHeaders;
@@ -61,6 +62,7 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
     public WebConfigurer(Environment env,
                          @Value("${spring.http.version}") String httpVersion,
                          @Value("${spring.http.cors.allowed-origins}") String allowedOrigins,
+                         @Value("${spring.http.cors.allowed-origin-patterns}") String allowedOriginPattern,
                          @Value("${spring.http.cors.allow-credentials}") boolean allowCredentials,
                          @Value("${spring.http.cors.max-age}") int maxAge,
                          @Value("${spring.http.cors.exposed-headers}") String exposedHeaders
@@ -69,6 +71,7 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
         this.env = env;
         this.httpVersion = httpVersion;
         this.allowedOrigins = allowedOrigins;
+        this.allowedOriginPattern = allowedOriginPattern;
         this.allowCredentials = allowCredentials;
         this.maxAge = maxAge;
         this.exposedHeaders = exposedHeaders;
@@ -206,11 +209,13 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
         config.addAllowedMethod("OPTIONS");
         // config values from application.yml file
         config.setAllowedOrigins(Collections.singletonList(allowedOrigins));
+        config.setAllowedOriginPatterns(Collections.singletonList(allowedOriginPattern));
         config.setAllowCredentials(allowCredentials);
         config.setMaxAge(maxAge);
         config.setExposedHeaders(Collections.singletonList(exposedHeaders));
 
-        if (config.getAllowedOrigins() != null && !config.getAllowedOrigins().isEmpty()) {
+        if ((config.getAllowedOrigins() != null || config.getAllowedOriginPatterns() != null) &&
+                !config.getAllowedOrigins().isEmpty()) {
             log.debug("Registering CORS filter");
             source.registerCorsConfiguration("/api/**", config);
             source.registerCorsConfiguration("/management/**", config);

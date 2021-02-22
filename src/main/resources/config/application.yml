@@ -51,7 +51,8 @@ spring:
         version: V_1_1 # To use HTTP/2 (V_2_0) you will need SSL support (see above the "server.ssl" configuration)
         # By default CORS is disabled. Uncomment to enable.
         cors:
-            allowed-origins: "*"
+            allowed-origins: ""
+            allowed-origin-patterns: "*"
             allowed-headers: "*"
             exposed-headers: "Authorization,Link,X-Total-Count"
             allow-credentials: true

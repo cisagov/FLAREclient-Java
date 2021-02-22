@@ -139,7 +139,6 @@
             <artifactId>mongock-bom</artifactId>
             <version>${mongock.version}</version>
             <type>pom</type>
-            <scope>import</scope>
         </dependency>
         <dependency>
             <groupId>com.github.cloudyrock.mongock</groupId>
