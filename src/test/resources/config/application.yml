@@ -47,6 +47,7 @@ spring:
         version: V_1_1
         cors:
             allowed-origins: "*"
+            allowed-origin-patterns: "*"
             allowed-methods: "*"
             allowed-headers: "*"
             exposed-headers: "Authorization,Link,X-Total-Count"
