@@ -606,8 +606,11 @@ public class ServerService {
     private void checkNewServerCredentials(ServerDTO serverDTO) {
         log.debug("Checking new server credentials for '{}'", serverDTO.getLabel());
         String login = SecurityUtils.getCurrentUserLogin().orElseThrow(IllegalStateException::new);
-        if (serverDTO.getRequiresBasicAuth() && StringUtils.isNotBlank(serverDTO.getUsername()) && StringUtils.isNotBlank(serverDTO.getUsername())) {
-            // Check new server credentials
+		if (serverDTO.getRequiresBasicAuth() && StringUtils.isNotBlank(serverDTO.getUsername())
+				&& StringUtils.isNotBlank(serverDTO.getPassword())) {
+	        // Note: Verify that blank password is not allowed.
+
+			// Check new server credentials
             User user = userService.getUserWithAuthoritiesByLogin(login).orElseThrow(NotFoundException::new);
             Map<String, String> serverCredentialsForUser = ServerCredentialsUtils.getInstance().getServerCredentialsMap().get(user.getLogin());
             if (serverCredentialsForUser == null || !serverCredentialsForUser.containsKey(serverDTO.getLabel())) {
@@ -619,7 +622,10 @@ public class ServerService {
                 addServerCredential(user, serverDTO.getLabel(), serverDTO.getUsername(), serverDTO.getPassword());
             }
             attemptVersionDiscovery(serverDTO);
-        } else if (serverDTO.getRequiresBasicAuth() && (StringUtils.isBlank(serverDTO.getUsername()) || StringUtils.isBlank(serverDTO.getUsername()))) {
+        } else if (serverDTO.getRequiresBasicAuth() && 
+        		(StringUtils.isBlank(serverDTO.getUsername()) || StringUtils.isBlank(serverDTO.getPassword()))) {
+            // Note: Verify that blank password is a cause to enter here.
+            log.debug("Checking new server credentials for '{}'.  The serverDTO requiresBasicAuth and has blank username or blank password.", serverDTO.getLabel());
             throw new IllegalStateException("checkNewServerCredentials was called with missing information in serverDTO");
         }
     }
