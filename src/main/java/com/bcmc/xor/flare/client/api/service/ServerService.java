@@ -5,6 +5,7 @@ import com.bcmc.xor.flare.client.api.domain.audit.EventType;
 import com.bcmc.xor.flare.client.api.domain.auth.User;
 import com.bcmc.xor.flare.client.api.domain.collection.Taxii11Collection;
 import com.bcmc.xor.flare.client.api.domain.collection.Taxii21Collection;
+import com.bcmc.xor.flare.client.api.domain.collection.TaxiiCollection;
 import com.bcmc.xor.flare.client.api.domain.server.*;
 import com.bcmc.xor.flare.client.api.repository.ServerRepository;
 import com.bcmc.xor.flare.client.api.security.SecurityUtils;
@@ -801,6 +802,17 @@ public class ServerService {
                 default:
                     log.info("Deleting Collections for '{}'", label);
                     if (server.getCollections() != null && !server.getCollections().isEmpty()) {
+						if (log.isDebugEnabled()) {
+							StringBuffer idBuffer = new StringBuffer();
+							idBuffer.append("[ ");
+							for (TaxiiCollection tc : server.getCollections()) {
+								String colId = "" + tc.getDisplayName() + " (" + tc.getId() + ")";
+								idBuffer.append(colId);
+							}
+							idBuffer.append(" ]");
+
+							log.debug("Deleting Server's collections {}", idBuffer.toString());
+						}
                         collectionService.deleteAll(server.getCollections());
                     }
                     log.info("Deleting Server '{}'", label);
