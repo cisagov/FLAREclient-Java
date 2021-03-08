@@ -5,20 +5,30 @@ import com.bcmc.xor.flare.client.api.domain.audit.EventType;
 import com.bcmc.xor.flare.client.api.domain.auth.User;
 import com.bcmc.xor.flare.client.api.domain.collection.Taxii11Collection;
 import com.bcmc.xor.flare.client.api.domain.collection.Taxii21Collection;
+import com.bcmc.xor.flare.client.api.domain.collection.TaxiiCollection;
 import com.bcmc.xor.flare.client.api.domain.server.*;
+import com.bcmc.xor.flare.client.api.repository.ContentRepository;
 import com.bcmc.xor.flare.client.api.repository.ServerRepository;
 import com.bcmc.xor.flare.client.api.security.SecurityUtils;
 import com.bcmc.xor.flare.client.api.security.ServerCredentialsUtils;
 import com.bcmc.xor.flare.client.api.service.dto.ServerDTO;
 import com.bcmc.xor.flare.client.api.service.dto.ServersDTO;
 import com.bcmc.xor.flare.client.api.service.dto.UserDTO;
+import com.bcmc.xor.flare.client.api.service.scheduled.RecurringFetchService;
+import com.bcmc.xor.flare.client.api.service.scheduled.async.AsyncFetchRequestService;
 import com.bcmc.xor.flare.client.error.*;
+import com.bcmc.xor.flare.client.taxii.TaxiiAssociation;
 import com.bcmc.xor.flare.client.taxii.taxii21.Taxii21RestTemplate;
+import com.mongodb.client.result.DeleteResult;
+
 import org.apache.commons.lang3.StringUtils;
 import org.mitre.taxii.messages.xml11.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -40,6 +50,9 @@ public class ServerService {
     private static final Logger log = LoggerFactory.getLogger(ServerService.class);
 
     private ServerRepository serverRepository;
+    
+    @Autowired
+    private ContentRepository contentRepository;
 
     private UserService userService;
 
@@ -53,14 +66,27 @@ public class ServerService {
 
     private EventService eventService;
 
-    public ServerService(ServerRepository serverRepository, UserService userService, TaxiiService taxiiService, ApiRootService apiRootService, CollectionService collectionService, CacheManager cacheManager, EventService eventService) {
-        this.serverRepository = serverRepository;
+    @Autowired
+    private RecurringFetchService recurringFetchService;
+
+    @Autowired
+    private AsyncFetchRequestService asyncFetchRequestService;
+
+	private MongoTemplate mongoTemplate;
+
+    public ServerService(ServerRepository serverRepository, UserService userService,
+                         TaxiiService taxiiService, ApiRootService apiRootService,
+                         CollectionService collectionService, CacheManager cacheManager,
+                         EventService eventService, MongoTemplate mongoTemplate) {        
+    	this.serverRepository = serverRepository;
         this.userService = userService;
         this.taxiiService = taxiiService;
         this.apiRootService = apiRootService;
         this.collectionService = collectionService;
         this.cacheManager = cacheManager;
         this.eventService = eventService;
+        this.mongoTemplate = mongoTemplate;
+
     }
 
     // TAXII 1.1 ---------
@@ -781,38 +807,83 @@ public class ServerService {
     // -------------------
 
 
-    // DELETE ------------
-    /**
-     * Deletes a server and any associated ApiRoot or TaxiiCollection objects
-     *
-     * @param label the server's label to delete
-     */
-    public void deleteServer(String label) {
-        serverRepository.findOneByLabelIgnoreCase(label).ifPresent(server -> {
-            if (server.getRequiresBasicAuth()) {
-                removeServerCredential(label);
-            }
-            switch (server.getVersion()) {
-                case TAXII21:
-                    log.info("Deleting API Roots for '{}'", label);
-                    if (((Taxii21Server) server).getApiRootObjects() != null && !((Taxii21Server) server).getApiRootObjects().isEmpty()) {
-                        apiRootService.deleteAll(((Taxii21Server) server).getApiRootObjects());
-                    }
-                default:
-                    log.info("Deleting Collections for '{}'", label);
-                    if (server.getCollections() != null && !server.getCollections().isEmpty()) {
-                        collectionService.deleteAll(server.getCollections());
-                    }
-                    log.info("Deleting Server '{}'", label);
-                    serverRepository.delete(server);
-                    this.clearServerCaches(server);
-                    log.info("Delete server credentials for Server '{}'", label);
-                    this.removeServerCredential(label);
-                    eventService.createEvent(EventType.SERVER_DELETED, String.format("Deleted the '%s' server", label), label);
-            }
-        });
-    }
+	// DELETE ------------
+	/**
+	 * Deletes a server and any associated ApiRoot or TaxiiCollection objects
+	 *
+	 * @param label the server's label to delete
+	 */
+	public void deleteServer(String label) {
+		recurringFetchService.deleteAllRecurringFetchesByServerLabel(label);  // consider         mongoTemplate.remove(new Query(), "content");
+		asyncFetchRequestService.deleteAllAsyncFetchesByServerLabel(label);
+		serverRepository.findOneByLabelIgnoreCase(label).ifPresent(server -> {
+			if (server.getRequiresBasicAuth()) {
+				removeServerCredential(label);
+			}
+			switch (server.getVersion()) {
+			case TAXII21:
+				log.info("Deleting API Roots for '{}'", label);
+				if (((Taxii21Server) server).getApiRootObjects() != null
+						&& !((Taxii21Server) server).getApiRootObjects().isEmpty()) {
+					apiRootService.deleteAll(((Taxii21Server) server).getApiRootObjects());
+				}
+			default:
+				log.info("Deleting Collections for '{}'", label);
+				if (server.getCollections() != null && !server.getCollections().isEmpty()) {
+					server.getCollections().forEach( taxiiCollection -> {
+						log.debug("Deleting Server in foreach taxiiCollection ");
+	                	String serverLabel = server.getLabel();
+	                	log.debug("compare s sl '{}'", serverLabel);
+	                	log.debug("compare s sl '{}'", label);
+	                	log.debug("taxiiCollection '{}'", taxiiCollection.getDisplayName());
 
+	                    TaxiiAssociation association = TaxiiAssociation.from(serverLabel, taxiiCollection.getId(), this, collectionService);
+	                	log.debug("TaxiiAssociation '{}'", association.toString());
+	                    contentRepository.deleteByAssociation(association);
+	                	log.debug("Completed contentRepository.deleteByAssociation(association);");
+
+					});
+//	                for (TaxiiCollection taxiiCollection : server.getCollections()) {
+//	                	String serverLabel = server.getLabel();
+//	                    TaxiiAssociation association = TaxiiAssociation.from(serverLabel, taxiiCollection.getId(), this, collectionService);
+//	                    contentRepository.deleteByAssociation(association);
+//	                }
+
+					collectionService.deleteAll(server.getCollections());
+				}
+				log.info("Use hammer_delete_method_1 for '{}'", label);
+				hammer_delete_method_1(server);
+				log.info("Deleting Server '{}'", label);
+				serverRepository.delete(server);
+				this.clearServerCaches(server);
+				log.info("Delete server credentials for Server '{}'", label);
+				this.removeServerCredential(label);
+				eventService.createEvent(EventType.SERVER_DELETED, String.format("Deleted the '%s' server", label),
+						label);
+			}
+		});
+	}
+
+	private void hammer_delete_method_1(TaxiiServer server) {
+		Boolean debuggerbool = true;
+		if (debuggerbool) {
+			log.debug("in hammer_delete_method_1'{}'", server.getLabel());
+			DeleteResult result = mongoTemplate.remove(new Query(), "content");
+			Boolean debuggerbool2 = true;
+			if (debuggerbool2) {
+				if (result.wasAcknowledged())
+					log.debug("result deleted count" + result.getDeletedCount());
+
+				log.debug("result acked" + result.wasAcknowledged());
+			}
+			log.debug("out hammer_delete_method_1'{}'", server.getLabel());
+		}
+	}
+
+	private void method_1() {
+		
+	}
+	
     /**
      * Clears repository caches for the given server
      *
@@ -865,6 +936,13 @@ public class ServerService {
         this.userService = userService;
     }
 
+    public MongoTemplate getMongoTemplate() {
+        return mongoTemplate;
+    }
+
+    public void setMongoTemplate(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
     private TaxiiService getTaxiiService() {
         return taxiiService;
     }

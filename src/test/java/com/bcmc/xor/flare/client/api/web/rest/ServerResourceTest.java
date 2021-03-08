@@ -10,6 +10,7 @@ import com.bcmc.xor.flare.client.api.service.UserService;
 import com.bcmc.xor.flare.client.api.service.dto.ServerCredentialDTO;
 import com.bcmc.xor.flare.client.api.service.dto.ServerDTO;
 import com.bcmc.xor.flare.client.api.service.dto.ServersDTO;
+import com.bcmc.xor.flare.client.api.service.scheduled.RecurringFetchService;
 import com.bcmc.xor.flare.client.error.ErrorConstants;
 import com.bcmc.xor.flare.client.error.ServerNotFoundException;
 import org.junit.Before;
@@ -53,10 +54,14 @@ public class ServerResourceTest {
     private ServerService serverService;
     @MockBean
     private UserService userService;
+    @MockBean
+   private RecurringFetchService recurringFetchService;
+
+
 
     @Before
     public void init() {
-        serverResource = new ServerResource(serverService, userService);
+        serverResource = new ServerResource(serverService, userService, recurringFetchService);
         MockitoAnnotations.initMocks(this);
     }
 

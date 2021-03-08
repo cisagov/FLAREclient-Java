@@ -8,6 +8,7 @@ import com.bcmc.xor.flare.client.api.service.UserService;
 import com.bcmc.xor.flare.client.api.service.dto.ServerCredentialDTO;
 import com.bcmc.xor.flare.client.api.service.dto.ServerDTO;
 import com.bcmc.xor.flare.client.api.service.dto.ServersDTO;
+import com.bcmc.xor.flare.client.api.service.scheduled.RecurringFetchService;
 import com.bcmc.xor.flare.client.error.*;
 import com.bcmc.xor.flare.client.util.HeaderUtil;
 import com.bcmc.xor.flare.client.util.ResponseUtil;
@@ -32,12 +33,15 @@ class ServerResource {
     private static final Logger log = LoggerFactory.getLogger(ServerResource.class);
     private final ServerService serverService;
     private final UserService userService;
+	private final RecurringFetchService recurringFetchService;
 
-    public ServerResource(ServerService serverService, UserService userService) {
+    public ServerResource(ServerService serverService, UserService userService, RecurringFetchService recurringFetchService) {
         this.serverService = serverService;
         this.userService = userService;
+        this.recurringFetchService = recurringFetchService;
     }
-
+    
+    
     @PostMapping("/servers")
     public ResponseEntity<TaxiiServer> createOrUpdateServer(@Valid @RequestBody ServerDTO serverDTO) throws URISyntaxException, InternalServerErrorException {
         log.debug("REST Request to create or update server for {}", serverDTO.getLabel());
@@ -91,6 +95,7 @@ class ServerResource {
             throw new ServerNotFoundException();
         }
         serverService.deleteServer(label);
+        recurringFetchService.deleteAllRecurringFetchesByServerLabel(label); 
         return new ResponseEntity<>("Successfully deleted server '" + label + "'", HttpStatus.OK);
     }
 
@@ -138,5 +143,13 @@ class ServerResource {
         serverService.removeServerCredential(label);
 //        serverService.refreshServer(label);
         return getServer(label);
+    }
+    
+
+    // for testing
+    @DeleteMapping("/servers/{label}/recurrings")
+    public ResponseEntity getAllRecurringFetchesForServer(@PathVariable String label) {
+        recurringFetchService.deleteAllRecurringFetchesByServerLabel(label);
+        return new ResponseEntity(HttpStatus.OK);
     }
 }

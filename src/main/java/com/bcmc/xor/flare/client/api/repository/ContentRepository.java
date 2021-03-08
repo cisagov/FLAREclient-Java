@@ -32,5 +32,7 @@ public interface ContentRepository extends MongoRepository<AbstractContentWrappe
     @Query(value = "{ 'validation_result.status' : \"PENDING\", '_class': \"com.bcmc.xor.flare.client.api.domain.content.Stix1ContentWrapper\"}")
     List<Stix1ContentWrapper> findAllPending11Content();
 
+    void deleteByAssociation(TaxiiAssociation association);
+
 
 }
