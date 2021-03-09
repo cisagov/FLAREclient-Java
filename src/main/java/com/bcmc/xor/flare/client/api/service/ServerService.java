@@ -811,79 +811,49 @@ public class ServerService {
 	/**
 	 * Deletes a server and any associated ApiRoot or TaxiiCollection objects
 	 *
-	 * @param label the server's label to delete
+	 * @param serverLabel the server's label to delete
 	 */
-	public void deleteServer(String label) {
-		recurringFetchService.deleteAllRecurringFetchesByServerLabel(label);  // consider         mongoTemplate.remove(new Query(), "content");
-		asyncFetchRequestService.deleteAllAsyncFetchesByServerLabel(label);
-		serverRepository.findOneByLabelIgnoreCase(label).ifPresent(server -> {
+	public void deleteServer(String serverLabel) {
+		recurringFetchService.deleteAllRecurringFetchesByServerLabel(serverLabel);  
+		asyncFetchRequestService.deleteAllAsyncFetchesByServerLabel(serverLabel);
+		serverRepository.findOneByLabelIgnoreCase(serverLabel).ifPresent(server -> {
 			if (server.getRequiresBasicAuth()) {
-				removeServerCredential(label);
+				removeServerCredential(serverLabel);
 			}
 			switch (server.getVersion()) {
 			case TAXII21:
-				log.info("Deleting API Roots for '{}'", label);
+				log.info("Deleting API Roots for '{}'", serverLabel);
 				if (((Taxii21Server) server).getApiRootObjects() != null
 						&& !((Taxii21Server) server).getApiRootObjects().isEmpty()) {
 					apiRootService.deleteAll(((Taxii21Server) server).getApiRootObjects());
 				}
 			default:
-				log.info("Deleting Collections for '{}'", label);
+				log.info("Deleting Collections for '{}'", serverLabel);
 				if (server.getCollections() != null && !server.getCollections().isEmpty()) {
 					server.getCollections().forEach( taxiiCollection -> {
 						log.debug("Deleting Server in foreach taxiiCollection ");
-	                	String serverLabel = server.getLabel();
-	                	log.debug("compare s sl '{}'", serverLabel);
-	                	log.debug("compare s sl '{}'", label);
 	                	log.debug("taxiiCollection '{}'", taxiiCollection.getDisplayName());
 
 	                    TaxiiAssociation association = TaxiiAssociation.from(serverLabel, taxiiCollection.getId(), this, collectionService);
 	                	log.debug("TaxiiAssociation '{}'", association.toString());
 	                    contentRepository.deleteByAssociation(association);
 	                	log.debug("Completed contentRepository.deleteByAssociation(association);");
-
 					});
-//	                for (TaxiiCollection taxiiCollection : server.getCollections()) {
-//	                	String serverLabel = server.getLabel();
-//	                    TaxiiAssociation association = TaxiiAssociation.from(serverLabel, taxiiCollection.getId(), this, collectionService);
-//	                    contentRepository.deleteByAssociation(association);
-//	                }
 
 					collectionService.deleteAll(server.getCollections());
 				}
-				log.info("Use hammer_delete_method_1 for '{}'", label);
-				hammer_delete_method_1(server);
-				log.info("Deleting Server '{}'", label);
+				log.info("Deleting Server '{}'", serverLabel);
 				serverRepository.delete(server);
 				this.clearServerCaches(server);
-				log.info("Delete server credentials for Server '{}'", label);
-				this.removeServerCredential(label);
-				eventService.createEvent(EventType.SERVER_DELETED, String.format("Deleted the '%s' server", label),
-						label);
+				log.info("Delete server credentials for Server '{}'", serverLabel);
+				this.removeServerCredential(serverLabel);
+				eventService.createEvent(EventType.SERVER_DELETED, String.format("Deleted the '%s' server", serverLabel),
+						serverLabel);
 			}
 		});
 	}
 
-	private void hammer_delete_method_1(TaxiiServer server) {
-		Boolean debuggerbool = true;
-		if (debuggerbool) {
-			log.debug("in hammer_delete_method_1'{}'", server.getLabel());
-			DeleteResult result = mongoTemplate.remove(new Query(), "content");
-			Boolean debuggerbool2 = true;
-			if (debuggerbool2) {
-				if (result.wasAcknowledged())
-					log.debug("result deleted count" + result.getDeletedCount());
 
-				log.debug("result acked" + result.wasAcknowledged());
-			}
-			log.debug("out hammer_delete_method_1'{}'", server.getLabel());
-		}
-	}
-
-	private void method_1() {
-		
-	}
-	
     /**
      * Clears repository caches for the given server
      *
