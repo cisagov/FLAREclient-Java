@@ -54,14 +54,12 @@ public class ServerResourceTest {
     private ServerService serverService;
     @MockBean
     private UserService userService;
-    @MockBean
-   private RecurringFetchService recurringFetchService;
 
 
 
     @Before
     public void init() {
-        serverResource = new ServerResource(serverService, userService, recurringFetchService);
+        serverResource = new ServerResource(serverService, userService);
         MockitoAnnotations.initMocks(this);
     }
 

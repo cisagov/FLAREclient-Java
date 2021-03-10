@@ -8,7 +8,6 @@ import com.bcmc.xor.flare.client.api.service.UserService;
 import com.bcmc.xor.flare.client.api.service.dto.ServerCredentialDTO;
 import com.bcmc.xor.flare.client.api.service.dto.ServerDTO;
 import com.bcmc.xor.flare.client.api.service.dto.ServersDTO;
-import com.bcmc.xor.flare.client.api.service.scheduled.RecurringFetchService;
 import com.bcmc.xor.flare.client.error.*;
 import com.bcmc.xor.flare.client.util.HeaderUtil;
 import com.bcmc.xor.flare.client.util.ResponseUtil;
@@ -33,12 +32,10 @@ class ServerResource {
     private static final Logger log = LoggerFactory.getLogger(ServerResource.class);
     private final ServerService serverService;
     private final UserService userService;
-	private final RecurringFetchService recurringFetchService;
 
-    public ServerResource(ServerService serverService, UserService userService, RecurringFetchService recurringFetchService) {
+    public ServerResource(ServerService serverService, UserService userService) {
         this.serverService = serverService;
         this.userService = userService;
-        this.recurringFetchService = recurringFetchService;
     }
     
     
@@ -95,7 +92,6 @@ class ServerResource {
             throw new ServerNotFoundException();
         }
         serverService.deleteServer(label);
-        recurringFetchService.deleteAllRecurringFetchesByServerLabel(label); 
         return new ResponseEntity<>("Successfully deleted server '" + label + "'", HttpStatus.OK);
     }
 
@@ -141,15 +137,9 @@ class ServerResource {
             throw new ServerCredentialsNotFoundException();
         }
         serverService.removeServerCredential(label);
-//        serverService.refreshServer(label);
         return getServer(label);
     }
     
 
-    // for testing
-    @DeleteMapping("/servers/{label}/recurrings")
-    public ResponseEntity getAllRecurringFetchesForServer(@PathVariable String label) {
-        recurringFetchService.deleteAllRecurringFetchesByServerLabel(label);
-        return new ResponseEntity(HttpStatus.OK);
-    }
+
 }
