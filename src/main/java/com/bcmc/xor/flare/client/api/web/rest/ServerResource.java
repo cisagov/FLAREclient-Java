@@ -37,7 +37,8 @@ class ServerResource {
         this.serverService = serverService;
         this.userService = userService;
     }
-
+    
+    
     @PostMapping("/servers")
     public ResponseEntity<TaxiiServer> createOrUpdateServer(@Valid @RequestBody ServerDTO serverDTO) throws URISyntaxException, InternalServerErrorException {
         log.debug("REST Request to create or update server for {}", serverDTO.getLabel());
@@ -136,7 +137,9 @@ class ServerResource {
             throw new ServerCredentialsNotFoundException();
         }
         serverService.removeServerCredential(label);
-//        serverService.refreshServer(label);
         return getServer(label);
     }
+    
+
+
 }

@@ -11,4 +11,6 @@ import java.util.Optional;
 @Repository(Constants.RepositoryLabels.RECURRING_FETCH)
 public interface RecurringFetchRepository extends MongoRepository<RecurringFetch, String> {
     Optional<RecurringFetch> findByAssociation(TaxiiAssociation association);
+    
+    void deleteAllByApiParametersServerLabelEquals(String serverLabel); 
 }

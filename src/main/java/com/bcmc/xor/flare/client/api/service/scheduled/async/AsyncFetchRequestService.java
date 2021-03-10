@@ -219,7 +219,13 @@ public class AsyncFetchRequestService {
         return repository.findOneByAssociationAndStatus(taxiiAssociation, AsyncFetch.Status.FETCHING);
     }
 
-
+    /**
+     * Delete all Async fetches by the server label
+     */
+    public void deleteAllAsyncFetchesByServerLabel(String serverLabel) {
+        log.info("Deleting all recurring fetches for server '{}'", serverLabel);
+        getRepository().deleteAllByInitialFetchParamsServerLabelEquals(serverLabel);
+    }
 
     // Dependencies
     public AsyncFetchRequestRepository getRepository() {

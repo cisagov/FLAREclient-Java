@@ -13,10 +13,13 @@ import java.util.Optional;
 @Repository(Constants.RepositoryLabels.ASYNC_FETCH)
 public interface AsyncFetchRequestRepository extends MongoRepository<AsyncFetch, String> {
 
+	// FIND Methods
     Optional<AsyncFetch> findOneById(String id);
 
     Optional<AsyncFetch> findOneByAssociationAndStatus(TaxiiAssociation association, AsyncFetch.Status status);
 
     List<AsyncFetch> findAllByStatus(AsyncFetch.Status status);
 
+	// DELETE Method
+    void deleteAllByInitialFetchParamsServerLabelEquals(String serverLabel); 
 }
