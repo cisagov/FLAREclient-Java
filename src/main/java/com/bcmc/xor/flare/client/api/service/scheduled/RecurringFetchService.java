@@ -129,6 +129,14 @@ public class RecurringFetchService {
             for (RecurringFetch recurringFetch : listOfRecurringFetches) {
                 TaxiiAssociation taxiiAssociation = recurringFetch.getAssociation();
 
+                if (taxiiAssociation.getServer()==null) {
+                    log.error("Recurring fetch is for an unknown server.  Deleting...");
+                    repository.delete(recurringFetch);
+                    continue;
+                } 
+                
+                // TODO: Also Consider the need for this if (taxiiAssociation.getCollection()==null) {
+                
                 Instant now = Instant.now();
                 boolean shouldFetch = taxiiAssociation.getCollection().getLatestFetch() == null || now.minus(Duration.ofMinutes(recurringFetch.getWindow())).isAfter
                     (taxiiAssociation.getCollection().getLatestFetch());
