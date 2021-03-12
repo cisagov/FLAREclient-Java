@@ -7,19 +7,28 @@ import com.bcmc.xor.flare.client.api.domain.collection.Taxii11Collection;
 import com.bcmc.xor.flare.client.api.domain.collection.Taxii21Collection;
 import com.bcmc.xor.flare.client.api.domain.collection.TaxiiCollection;
 import com.bcmc.xor.flare.client.api.domain.server.*;
+import com.bcmc.xor.flare.client.api.repository.ContentRepository;
 import com.bcmc.xor.flare.client.api.repository.ServerRepository;
 import com.bcmc.xor.flare.client.api.security.SecurityUtils;
 import com.bcmc.xor.flare.client.api.security.ServerCredentialsUtils;
 import com.bcmc.xor.flare.client.api.service.dto.ServerDTO;
 import com.bcmc.xor.flare.client.api.service.dto.ServersDTO;
 import com.bcmc.xor.flare.client.api.service.dto.UserDTO;
+import com.bcmc.xor.flare.client.api.service.scheduled.RecurringFetchService;
+import com.bcmc.xor.flare.client.api.service.scheduled.async.AsyncFetchRequestService;
 import com.bcmc.xor.flare.client.error.*;
+import com.bcmc.xor.flare.client.taxii.TaxiiAssociation;
 import com.bcmc.xor.flare.client.taxii.taxii21.Taxii21RestTemplate;
+import com.mongodb.client.result.DeleteResult;
+
 import org.apache.commons.lang3.StringUtils;
 import org.mitre.taxii.messages.xml11.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -41,6 +50,9 @@ public class ServerService {
     private static final Logger log = LoggerFactory.getLogger(ServerService.class);
 
     private ServerRepository serverRepository;
+    
+    @Autowired
+    private ContentRepository contentRepository;
 
     private UserService userService;
 
@@ -54,14 +66,27 @@ public class ServerService {
 
     private EventService eventService;
 
-    public ServerService(ServerRepository serverRepository, UserService userService, TaxiiService taxiiService, ApiRootService apiRootService, CollectionService collectionService, CacheManager cacheManager, EventService eventService) {
-        this.serverRepository = serverRepository;
+    @Autowired
+    private RecurringFetchService recurringFetchService;
+
+    @Autowired
+    private AsyncFetchRequestService asyncFetchRequestService;
+
+	private MongoTemplate mongoTemplate;
+
+    public ServerService(ServerRepository serverRepository, UserService userService,
+                         TaxiiService taxiiService, ApiRootService apiRootService,
+                         CollectionService collectionService, CacheManager cacheManager,
+                         EventService eventService, MongoTemplate mongoTemplate) {        
+    	this.serverRepository = serverRepository;
         this.userService = userService;
         this.taxiiService = taxiiService;
         this.apiRootService = apiRootService;
         this.collectionService = collectionService;
         this.cacheManager = cacheManager;
         this.eventService = eventService;
+        this.mongoTemplate = mongoTemplate;
+
     }
 
     // TAXII 1.1 ---------
@@ -607,8 +632,11 @@ public class ServerService {
     private void checkNewServerCredentials(ServerDTO serverDTO) {
         log.debug("Checking new server credentials for '{}'", serverDTO.getLabel());
         String login = SecurityUtils.getCurrentUserLogin().orElseThrow(IllegalStateException::new);
-        if (serverDTO.getRequiresBasicAuth() && StringUtils.isNotBlank(serverDTO.getUsername()) && StringUtils.isNotBlank(serverDTO.getUsername())) {
-            // Check new server credentials
+		if (serverDTO.getRequiresBasicAuth() && StringUtils.isNotBlank(serverDTO.getUsername())
+				&& StringUtils.isNotBlank(serverDTO.getPassword())) {
+	        // Note: Verify that blank password is not allowed.
+
+			// Check new server credentials
             User user = userService.getUserWithAuthoritiesByLogin(login).orElseThrow(NotFoundException::new);
             Map<String, String> serverCredentialsForUser = ServerCredentialsUtils.getInstance().getServerCredentialsMap().get(user.getLogin());
             if (serverCredentialsForUser == null || !serverCredentialsForUser.containsKey(serverDTO.getLabel())) {
@@ -620,7 +648,10 @@ public class ServerService {
                 addServerCredential(user, serverDTO.getLabel(), serverDTO.getUsername(), serverDTO.getPassword());
             }
             attemptVersionDiscovery(serverDTO);
-        } else if (serverDTO.getRequiresBasicAuth() && (StringUtils.isBlank(serverDTO.getUsername()) || StringUtils.isBlank(serverDTO.getUsername()))) {
+        } else if (serverDTO.getRequiresBasicAuth() && 
+        		(StringUtils.isBlank(serverDTO.getUsername()) || StringUtils.isBlank(serverDTO.getPassword()))) {
+            // Note: Verify that blank password is a cause to enter here.
+            log.debug("Checking new server credentials for '{}'.  The serverDTO requiresBasicAuth and has blank username or blank password.", serverDTO.getLabel());
             throw new IllegalStateException("checkNewServerCredentials was called with missing information in serverDTO");
         }
     }
@@ -786,43 +817,55 @@ public class ServerService {
     /**
      * Deletes a server and any associated ApiRoot or TaxiiCollection objects
      *
-     * @param label the server's label to delete
+     * @param serverLabel the server's label to delete
      */
-    public void deleteServer(String label) {
-        serverRepository.findOneByLabelIgnoreCase(label).ifPresent(server -> {
-            if (server.getRequiresBasicAuth()) {
-                removeServerCredential(label);
-            }
-            switch (server.getVersion()) {
-                case TAXII21:
-                    log.info("Deleting API Roots for '{}'", label);
-                    if (((Taxii21Server) server).getApiRootObjects() != null && !((Taxii21Server) server).getApiRootObjects().isEmpty()) {
-                        apiRootService.deleteAll(((Taxii21Server) server).getApiRootObjects());
-                    }
-                default:
-                    log.info("Deleting Collections for '{}'", label);
-                    if (server.getCollections() != null && !server.getCollections().isEmpty()) {
-						if (log.isDebugEnabled()) {
-							StringBuffer idBuffer = new StringBuffer();
-							idBuffer.append("[ ");
-							for (TaxiiCollection tc : server.getCollections()) {
-								String colId = "" + tc.getDisplayName() + " (" + tc.getId() + ")";
-								idBuffer.append(colId);
-							}
-							idBuffer.append(" ]");
-
-							log.debug("Deleting Server's collections {}", idBuffer.toString());
-						}
-                        collectionService.deleteAll(server.getCollections());
-                    }
-                    log.info("Deleting Server '{}'", label);
-                    serverRepository.delete(server);
-                    this.clearServerCaches(server);
-                    log.info("Delete server credentials for Server '{}'", label);
-                    this.removeServerCredential(label);
-                    eventService.createEvent(EventType.SERVER_DELETED, String.format("Deleted the '%s' server", label), label);
-            }
-        });
+    public void deleteServer(String serverLabel) {
+	recurringFetchService.deleteAllRecurringFetchesByServerLabel(serverLabel);  
+	asyncFetchRequestService.deleteAllAsyncFetchesByServerLabel(serverLabel);
+	serverRepository.findOneByLabelIgnoreCase(serverLabel).ifPresent(server -> {
+		if (server.getRequiresBasicAuth()) {
+		    removeServerCredential(serverLabel);
+		}
+		switch (server.getVersion()) {
+		case TAXII21:
+		    log.info("Deleting API Roots for '{}'", serverLabel);
+		    if (((Taxii21Server) server).getApiRootObjects() != null
+			&& !((Taxii21Server) server).getApiRootObjects().isEmpty()) {
+			apiRootService.deleteAll(((Taxii21Server) server).getApiRootObjects());
+		    }
+		default:
+		    log.info("Deleting Collections for '{}'", serverLabel);
+		    if (log.isDebugEnabled()) {
+			StringBuffer idBuffer = new StringBuffer();
+			idBuffer.append("[ ");
+			for (TaxiiCollection tc : server.getCollections()) {
+			    String colId = "" + tc.getDisplayName() + " (" + tc.getId() + ")";
+			    idBuffer.append(colId);
+			}
+			idBuffer.append(" ]");
+			log.debug("Deleting Server's collections {}", idBuffer.toString());
+		    }
+		    if (server.getCollections() != null && !server.getCollections().isEmpty()) {
+			server.getCollections().forEach( taxiiCollection -> { 
+				log.debug("Deleting Server processing content for taxiiCollection '{}'", taxiiCollection.getDisplayName());
+				TaxiiAssociation association = TaxiiAssociation.from(serverLabel, taxiiCollection.getId(), this, collectionService);
+				log.trace("TaxiiAssociation '{}'", association.toString());
+				
+				contentRepository.deleteByAssociation(association);
+				log.debug("Completed contentRepository.deleteByAssociation(association);");
+			    });
+			
+			collectionService.deleteAll(server.getCollections());
+		    }
+		    log.info("Deleting Server '{}'", serverLabel);
+		    serverRepository.delete(server);
+		    this.clearServerCaches(server);
+		    log.info("Delete server credentials for Server '{}'", serverLabel);
+		    this.removeServerCredential(serverLabel);
+		    eventService.createEvent(EventType.SERVER_DELETED, String.format("Deleted the '%s' server", serverLabel),
+					     serverLabel);
+		}
+	    });
     }
 
     /**
@@ -877,6 +920,13 @@ public class ServerService {
         this.userService = userService;
     }
 
+    public MongoTemplate getMongoTemplate() {
+        return mongoTemplate;
+    }
+
+    public void setMongoTemplate(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
     private TaxiiService getTaxiiService() {
         return taxiiService;
     }

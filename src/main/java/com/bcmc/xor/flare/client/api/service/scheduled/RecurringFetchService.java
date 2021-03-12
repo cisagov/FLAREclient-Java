@@ -206,6 +206,15 @@ public class RecurringFetchService {
         }
     }
 
+    /**
+     * Delete all recurring fetches by the server label
+     */
+    public void deleteAllRecurringFetchesByServerLabel(String serverLabel) {
+        log.info("Deleting all recurring fetches for server '{}'", serverLabel);
+        repository.deleteAllByApiParametersServerLabelEquals(serverLabel);
+    }
+
+
     public RecurringFetchRepository getRepository() {
         return repository;
     }
