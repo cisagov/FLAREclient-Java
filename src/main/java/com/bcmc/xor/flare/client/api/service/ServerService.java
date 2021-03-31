@@ -812,61 +812,62 @@ public class ServerService {
     }
     // -------------------
 
+	// DELETE ------------
+	/**
+	 * Deletes a server and any associated ApiRoot or TaxiiCollection objects
+	 *
+	 * @param serverLabel the server's label to delete
+	 */
+	public void deleteServer(String serverLabel) {
+		recurringFetchService.deleteAllRecurringFetchesByServerLabel(serverLabel);
+		asyncFetchRequestService.deleteAllAsyncFetchesByServerLabel(serverLabel);
 
-    // DELETE ------------
-    /**
-     * Deletes a server and any associated ApiRoot or TaxiiCollection objects
-     *
-     * @param serverLabel the server's label to delete
-     */
-    public void deleteServer(String serverLabel) {
-	recurringFetchService.deleteAllRecurringFetchesByServerLabel(serverLabel);  
-	asyncFetchRequestService.deleteAllAsyncFetchesByServerLabel(serverLabel);
-	serverRepository.findOneByLabelIgnoreCase(serverLabel).ifPresent(server -> {
-		if (server.getRequiresBasicAuth()) {
-		    removeServerCredential(serverLabel);
-		}
-		switch (server.getVersion()) {
-		case TAXII21:
-		    log.info("Deleting API Roots for '{}'", serverLabel);
-		    if (((Taxii21Server) server).getApiRootObjects() != null
-			&& !((Taxii21Server) server).getApiRootObjects().isEmpty()) {
-			apiRootService.deleteAll(((Taxii21Server) server).getApiRootObjects());
-		    }
-		default:
-		    log.info("Deleting Collections for '{}'", serverLabel);
-		    if (log.isDebugEnabled()) {
-			StringBuffer idBuffer = new StringBuffer();
-			idBuffer.append("[ ");
-			for (TaxiiCollection tc : server.getCollections()) {
-			    String colId = "" + tc.getDisplayName() + " (" + tc.getId() + ")";
-			    idBuffer.append(colId);
+		serverRepository.findOneByLabelIgnoreCase(serverLabel).ifPresent(server -> {
+			if (server.getRequiresBasicAuth()) {
+				removeServerCredential(serverLabel);
 			}
-			idBuffer.append(" ]");
-			log.debug("Deleting Server's collections {}", idBuffer.toString());
-		    }
-		    if (server.getCollections() != null && !server.getCollections().isEmpty()) {
-			server.getCollections().forEach( taxiiCollection -> { 
-				log.debug("Deleting Server processing content for taxiiCollection '{}'", taxiiCollection.getDisplayName());
-				TaxiiAssociation association = TaxiiAssociation.from(serverLabel, taxiiCollection.getId(), this, collectionService);
-				log.trace("TaxiiAssociation '{}'", association.toString());
-				
-				contentRepository.deleteByAssociation(association);
-				log.debug("Completed contentRepository.deleteByAssociation(association);");
-			    });
-			
-			collectionService.deleteAll(server.getCollections());
-		    }
-		    log.info("Deleting Server '{}'", serverLabel);
-		    serverRepository.delete(server);
-		    this.clearServerCaches(server);
-		    log.info("Delete server credentials for Server '{}'", serverLabel);
-		    this.removeServerCredential(serverLabel);
-		    eventService.createEvent(EventType.SERVER_DELETED, String.format("Deleted the '%s' server", serverLabel),
-					     serverLabel);
-		}
-	    });
-    }
+			switch (server.getVersion()) {
+			case TAXII21:
+				log.info("Deleting API Roots for '{}'", serverLabel);
+				if (((Taxii21Server) server).getApiRootObjects() != null
+						&& !((Taxii21Server) server).getApiRootObjects().isEmpty()) {
+					apiRootService.deleteAll(((Taxii21Server) server).getApiRootObjects());
+				}
+			default:
+				log.info("Deleting Collections for '{}'", serverLabel);
+				if (log.isDebugEnabled()) {
+					StringBuffer idBuffer = new StringBuffer();
+					idBuffer.append("[ ");
+					for (TaxiiCollection tc : server.getCollections()) {
+						String colId = "" + tc.getDisplayName() + " (" + tc.getId() + ")";
+						idBuffer.append(colId);
+					}
+					idBuffer.append(" ]");
+					log.debug("Deleting Server's collections {}", idBuffer.toString());
+				}
+				if (server.getCollections() != null && !server.getCollections().isEmpty()) {
+					server.getCollections().forEach(taxiiCollection -> {
+						log.debug("Deleting Server processing content for taxiiCollection '{}'",
+								taxiiCollection.getDisplayName());
+						TaxiiAssociation association = TaxiiAssociation.from(serverLabel, taxiiCollection.getId(), this,
+								collectionService);
+						log.trace("TaxiiAssociation '{}'", association.toString());
+
+						contentRepository.deleteByAssociation(association);
+						log.debug("Completed contentRepository.deleteByAssociation(association);");
+					});
+
+					collectionService.deleteAll(server.getCollections());
+				}
+				log.info("Deleting Server '{}'", serverLabel);
+				serverRepository.delete(server);
+				this.clearServerCaches(server);
+				log.info("Delete server credentials for Server '{}'", serverLabel);
+				this.removeServerCredential(serverLabel);
+				eventService.deleteByServer(serverLabel);
+			}
+		});
+	}
 
     /**
      * Clears repository caches for the given server
