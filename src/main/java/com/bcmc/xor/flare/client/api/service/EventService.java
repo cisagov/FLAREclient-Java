@@ -79,6 +79,15 @@ public class EventService {
         eventRepository.deleteAll(serverEvents);
     }
 
+    /**
+     * Delete events associated with the specified server
+     * 
+     * @param server  the server label
+     */
+    public void deleteByServer(String server) {
+        eventRepository.deleteByServer(server);
+    }
+
     // Dependencies
     public EventRepository getEventRepository() {
         return eventRepository;
