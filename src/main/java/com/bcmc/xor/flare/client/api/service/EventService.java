@@ -85,7 +85,7 @@ public class EventService {
      * @param server  the server label
      */
     public void deleteByServer(String server) {
-        eventRepository.deleteByServer(server);;
+        eventRepository.deleteByServer(server);
     }
 
     // Dependencies
