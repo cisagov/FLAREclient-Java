@@ -91,14 +91,18 @@ public class TaxiiHeaders extends HttpHeaders implements EnvironmentAware {
                 if (server.getRequiresBasicAuth()) {
                     taxii21Headers.withAuthorizationForServer(server.getLabel());
                 }
-                log.debug("Taxii21Headers: {}", taxii21Headers.toString());
+                if (log.isTraceEnabled()){
+                    log.trace("Taxii21Headers: {}", taxii21Headers.toString());
+                }
                 return taxii21Headers;
             case TAXII11:
                 Taxii11Headers taxii11Headers = new Taxii11Headers();
                 if (server.getRequiresBasicAuth()) {
                     taxii11Headers.withAuthorizationForServer(server.getLabel());
                 }
-                log.debug("Taxii11Headers: {}", taxii11Headers.toString());
+                if (log.isTraceEnabled()){
+                    log.debug("Taxii11Headers: {}", taxii11Headers.toString());
+                }
                 return taxii11Headers;
             default:
                 return new TaxiiHeaders();
