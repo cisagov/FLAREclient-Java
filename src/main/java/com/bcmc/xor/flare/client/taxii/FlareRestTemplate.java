@@ -2,6 +2,7 @@ package com.bcmc.xor.flare.client.taxii;
 
 import com.bcmc.xor.flare.client.error.ErrorConstants;
 import com.bcmc.xor.flare.client.error.RequestException;
+import com.bcmc.xor.flare.client.util.ReqResUtil;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -55,8 +56,9 @@ public abstract class FlareRestTemplate extends RestTemplate {
         ResponseEntity<String> stringResponse = null;
         String feedback = "";
         try {
+            ReqResUtil.log(httpEntity);
             stringResponse = this.exchange(uri, HttpMethod.POST, httpEntity, String.class);
-            log.debug("POST Response: {} - {}: \n{}", stringResponse.getStatusCodeValue(), stringResponse.getStatusCode().getReasonPhrase(), stringResponse.getBody());
+            ReqResUtil.log(stringResponse);
         } catch (Exception e) {
             feedback = handleException(e, uri);
         }
@@ -68,7 +70,9 @@ public abstract class FlareRestTemplate extends RestTemplate {
         ResponseEntity<String> stringResponse = null;
         String feedback = "";
         try {
+            ReqResUtil.log(httpEntity);
             stringResponse = this.exchange(uri, HttpMethod.GET, httpEntity, String.class);
+            ReqResUtil.log(stringResponse);
         } catch (Exception e) {
             feedback = handleException(e, uri);
         }
