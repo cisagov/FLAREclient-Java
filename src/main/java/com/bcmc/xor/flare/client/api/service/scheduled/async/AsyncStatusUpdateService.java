@@ -6,6 +6,8 @@ import com.bcmc.xor.flare.client.api.security.ServerCredentialsUtils;
 import com.bcmc.xor.flare.client.api.service.EventService;
 import com.bcmc.xor.flare.client.api.service.StatusService;
 import com.bcmc.xor.flare.client.api.service.TaxiiService;
+import com.bcmc.xor.flare.client.error.RequestException;
+import com.bcmc.xor.flare.client.error.TaxiiErrorResponseException;
 import com.bcmc.xor.flare.client.taxii.taxii21.Taxii21Association;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,18 +44,34 @@ public class AsyncStatusUpdateService {
     public synchronized void checkStatus() {
         List<Status> statuses = statusService.getPending();
         if (!statuses.isEmpty()) {
-            log.debug("Found {} status objects with 'pending' status", statuses.size());
+            log.debug("[ ] Updating {} status objects with 'pending' status", statuses.size());
             for (Status status : statuses) {
                 Taxii21Association association = status.getAssociation();
                 if (association.getUser() != null) {
                     ServerCredentialsUtils.getInstance().loadCredentialsForUser(association.getUser());
                 }
                 URI statusUrl = association.getServer().getStatusUrl(association.getCollection().getApiRootRef(), status.getId());
-                Status response = taxiiService.getTaxii21RestTemplate().getStatus(association.getServer(), statusUrl);
-                eventService.createEvent(EventType.STATUS_UPDATED, String.format("Updated status with ID '%s'. Status is now: %s, with %d pending.",
-                    response.getId(), response.getStatus(), response.getPendingCount()), association);
-                response.setAssociation(association);
-                statusService.save(response);
+                try {
+                    Status response = taxiiService.getTaxii21RestTemplate().getStatus(association.getServer(), statusUrl);
+                    eventService.createEvent(EventType.STATUS_UPDATED,
+                            String.format("Updated status with ID '%s'. Status is now: %s, with %d pending.", response.getId(), response.getStatus(), response.getPendingCount()),
+                            association);
+                    response.setAssociation(association);
+                    statusService.save(response);
+                    log.info("[*] Updated status id='{}'", status.getId());
+
+                } catch (Exception ex) {
+                    String details = "";
+                    if (ex.getClass().equals(RequestException.class)){
+                        details = String.format("(status=%s, message=%s)",
+                                ((RequestException)ex).getStatus().getStatusCode(),
+                                ((RequestException)ex).getTitle());
+                    }
+                    eventService.createEvent(EventType.ASYNC_FETCH_ERROR,
+                            String.format("Error updating status with ID '%s' %s", status.getId(), details),
+                            association);
+                    log.error("[x] Updated error for status id='{}' (type={}).", status.getId(), ex.getClass(), ex);
+                }
             }
         }
     }
