@@ -72,6 +72,11 @@ public class Status extends AbstractAuditingEntity implements Serializable {
     @Expose
     private Taxii21Association association;
 
+    // A count of the number of times retrieving this status
+    // has resulted in some sort of error.
+    @Expose
+    private int errorCount;
+
     public Status() { this.id = UUID.randomUUID().toString(); }
 
     public Status(StatusDTO statusDTO) {
@@ -92,6 +97,8 @@ public class Status extends AbstractAuditingEntity implements Serializable {
         pendings = statusDTO.getPendings();
         successCount = statusDTO.getSuccessCount();
         successes = statusDTO.getSuccesses();
+
+        errorCount = 0;
     }
 
     public String getId() {
@@ -180,6 +187,18 @@ public class Status extends AbstractAuditingEntity implements Serializable {
 
     public void setAssociation(Taxii21Association association) {
         this.association = association;
+    }
+
+    public int getErrorCount() {
+        return errorCount;
+    }
+
+    public void setErrorCount(int errorCount){
+        this.errorCount = errorCount;
+    }
+
+    public void incrementErrorCount() {
+        this.errorCount+=1;
     }
 
     @Override

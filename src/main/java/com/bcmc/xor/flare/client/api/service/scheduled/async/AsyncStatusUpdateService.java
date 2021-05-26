@@ -70,6 +70,8 @@ public class AsyncStatusUpdateService {
                     eventService.createEvent(EventType.ASYNC_FETCH_ERROR,
                             String.format("Error updating status with ID '%s' %s", status.getId(), details),
                             association);
+                    status.incrementErrorCount();
+                    statusService.save(status);
                     log.error("[x] Updated error for status id='{}' (type={}).", status.getId(), ex.getClass(), ex);
                 }
             }
