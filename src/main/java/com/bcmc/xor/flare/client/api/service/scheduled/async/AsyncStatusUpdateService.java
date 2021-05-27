@@ -9,6 +9,8 @@ import com.bcmc.xor.flare.client.api.service.TaxiiService;
 import com.bcmc.xor.flare.client.error.RequestException;
 import com.bcmc.xor.flare.client.error.TaxiiErrorResponseException;
 import com.bcmc.xor.flare.client.taxii.taxii21.Taxii21Association;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
@@ -65,10 +67,27 @@ public class AsyncStatusUpdateService {
                     // that we have errors and (2) update the status to note how many times
                     // we encounter errors when fetching the status.
                     String details = "";
+                    String message = null;
                     if (ex.getClass().equals(RequestException.class)){
-                        details = String.format("(status=%s, message=%s)",
-                                ((RequestException)ex).getStatus().getStatusCode(),
-                                ((RequestException)ex).getTitle());
+                        String errorTitle = ((RequestException)ex).getTitle();
+                        if (errorTitle != null){
+                            try {
+                                JsonElement errorTitleJson = new JsonParser().parse(errorTitle);
+                                if (errorTitleJson.isJsonObject() && errorTitleJson.getAsJsonObject().has("description")){
+                                    message = errorTitleJson.getAsJsonObject().get("description").getAsString();
+                                }
+                            } catch (Exception jsonEx){
+                                // This may happen: error title is not json
+                            }
+
+                            if (message == null){
+                                message = errorTitle;
+                            }
+                        } else {
+                            message = "";
+                        }
+
+                        details = String.format("(status=%s, message=%s)", ((RequestException)ex).getStatus().getStatusCode(), message);
                     }
 
                     // Create a fetch error event that will show up in the ui. This way, the user
