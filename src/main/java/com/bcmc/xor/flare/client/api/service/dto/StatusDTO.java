@@ -48,6 +48,9 @@ public class StatusDTO {
     @Size(max = 255)
     private String url;
 
+    @Field
+    private Integer errorCount;
+
     public StatusDTO(Status status) {
         this.id = status.getId();
         this.status = status.getStatus();
@@ -60,7 +63,7 @@ public class StatusDTO {
         this.pendingCount = status.getPendingCount();
         this.pendings = status.getPendings();
         this.url = status.getUrl();
-
+        this.errorCount = status.getErrorCount();
     }
 
     public String getId() {
@@ -107,4 +110,7 @@ public class StatusDTO {
         return pendings;
     }
 
+    public Integer getErrorCount() {
+        return errorCount;
+    }
 }

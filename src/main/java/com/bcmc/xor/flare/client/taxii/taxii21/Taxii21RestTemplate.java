@@ -53,7 +53,7 @@ public class Taxii21RestTemplate extends FlareRestTemplate {
     }
 
     public Discovery discovery(ServerDTO serverDTO) {
-        this.setTimeouts(30000);
+        this.setTimeouts(20000);
         Discovery response = discovery(new Taxii21Server(serverDTO));
         this.setTimeouts(60000);
         return response;
