@@ -2,6 +2,8 @@ package com.bcmc.xor.flare.client.api.repository;
 
 import com.bcmc.xor.flare.client.api.config.Constants;
 import com.bcmc.xor.flare.client.api.domain.status.Status;
+import com.bcmc.xor.flare.client.taxii.TaxiiAssociation;
+
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
@@ -21,6 +23,9 @@ public interface StatusRepository extends MongoRepository<Status, String> {
     Optional<Status> findOneById(String id);
 
     List<Status> findAllByStatusIgnoreCase(String status);
+  
+    void deleteByAssociation(TaxiiAssociation association);
 
+	List<Status> findAll();
 
 }
