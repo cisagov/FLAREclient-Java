@@ -1,14 +1,51 @@
 package com.bcmc.xor.flare.client.api.service;
 
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+
+import org.apache.commons.lang3.StringUtils;
+import org.mitre.taxii.messages.xml11.CollectionInformationRequest;
+import org.mitre.taxii.messages.xml11.CollectionInformationResponse;
+import org.mitre.taxii.messages.xml11.DiscoveryResponse;
+import org.mitre.taxii.messages.xml11.MessageHelper;
+import org.mitre.taxii.messages.xml11.ServiceInstanceType;
+import org.mitre.taxii.messages.xml11.ServiceTypeEnum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestClientResponseException;
+
 import com.bcmc.xor.flare.client.api.config.Constants;
 import com.bcmc.xor.flare.client.api.domain.audit.EventType;
 import com.bcmc.xor.flare.client.api.domain.auth.User;
 import com.bcmc.xor.flare.client.api.domain.collection.Taxii11Collection;
 import com.bcmc.xor.flare.client.api.domain.collection.Taxii21Collection;
 import com.bcmc.xor.flare.client.api.domain.collection.TaxiiCollection;
-import com.bcmc.xor.flare.client.api.domain.server.*;
+import com.bcmc.xor.flare.client.api.domain.server.ApiRoot;
+import com.bcmc.xor.flare.client.api.domain.server.Taxii11Server;
+import com.bcmc.xor.flare.client.api.domain.server.Taxii21Server;
+import com.bcmc.xor.flare.client.api.domain.server.TaxiiServer;
 import com.bcmc.xor.flare.client.api.repository.ContentRepository;
 import com.bcmc.xor.flare.client.api.repository.ServerRepository;
+import com.bcmc.xor.flare.client.api.repository.StatusRepository;
 import com.bcmc.xor.flare.client.api.security.SecurityUtils;
 import com.bcmc.xor.flare.client.api.security.ServerCredentialsUtils;
 import com.bcmc.xor.flare.client.api.service.dto.ServerDTO;
@@ -16,33 +53,21 @@ import com.bcmc.xor.flare.client.api.service.dto.ServersDTO;
 import com.bcmc.xor.flare.client.api.service.dto.UserDTO;
 import com.bcmc.xor.flare.client.api.service.scheduled.RecurringFetchService;
 import com.bcmc.xor.flare.client.api.service.scheduled.async.AsyncFetchRequestService;
-import com.bcmc.xor.flare.client.error.*;
+import com.bcmc.xor.flare.client.error.AuthenticationFailureException;
+import com.bcmc.xor.flare.client.error.NotFoundException;
+import com.bcmc.xor.flare.client.error.RequestException;
+import com.bcmc.xor.flare.client.error.ServerCreationException;
+import com.bcmc.xor.flare.client.error.ServerCredentialsUnauthorizedException;
+import com.bcmc.xor.flare.client.error.ServerDiscoveryException;
+import com.bcmc.xor.flare.client.error.ServerLabelAlreadyExistsException;
+import com.bcmc.xor.flare.client.error.StatusMessageResponseException;
+import com.bcmc.xor.flare.client.error.UserNotFoundException;
 import com.bcmc.xor.flare.client.taxii.TaxiiAssociation;
 import com.bcmc.xor.flare.client.taxii.taxii21.Taxii21RestTemplate;
-import com.mongodb.client.result.DeleteResult;
 
-import org.apache.commons.lang3.StringUtils;
-import org.mitre.taxii.messages.xml11.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestClientResponseException;
 import xor.bcmc.taxii2.JsonHandler;
 import xor.bcmc.taxii2.resources.Collections;
 import xor.bcmc.taxii2.resources.Discovery;
-
-import javax.annotation.Nonnull;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.time.Instant;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class ServerService {
@@ -53,6 +78,9 @@ public class ServerService {
     
     @Autowired
     private ContentRepository contentRepository;
+
+    @Autowired
+    private StatusRepository statusRepository;
 
     private UserService userService;
 
@@ -68,6 +96,9 @@ public class ServerService {
 
     @Autowired
     private RecurringFetchService recurringFetchService;
+
+    @Autowired
+    private StatusService statusService;
 
     @Autowired
     private AsyncFetchRequestService asyncFetchRequestService;
@@ -819,6 +850,7 @@ public class ServerService {
 	 * @param serverLabel the server's label to delete
 	 */
 	public void deleteServer(String serverLabel) {
+		statusService.logCount("Initial status objects upon deleteServer");
 		recurringFetchService.deleteAllRecurringFetchesByServerLabel(serverLabel);
 		asyncFetchRequestService.deleteAllAsyncFetchesByServerLabel(serverLabel);
 
@@ -826,6 +858,7 @@ public class ServerService {
 			if (server.getRequiresBasicAuth()) {
 				removeServerCredential(serverLabel);
 			}
+
 			switch (server.getVersion()) {
 			case TAXII21:
 				log.info("Deleting API Roots for '{}'", serverLabel);
@@ -845,6 +878,7 @@ public class ServerService {
 					idBuffer.append(" ]");
 					log.debug("Deleting Server's collections {}", idBuffer.toString());
 				}
+
 				if (server.getCollections() != null && !server.getCollections().isEmpty()) {
 					server.getCollections().forEach(taxiiCollection -> {
 						log.debug("Deleting Server processing content for taxiiCollection '{}'",
@@ -855,10 +889,24 @@ public class ServerService {
 
 						contentRepository.deleteByAssociation(association);
 						log.debug("Completed contentRepository.deleteByAssociation(association);");
+
+						try {
+							log.debug("Deleting status via contentRepository Association ");
+							statusRepository.deleteByAssociation(association);
+							statusService.logCount("after statusRepository.deleteByAssociation");
+						} catch (Exception e) {
+							log.debug("Exception in statusRepository.deleteByAssociation", e);
+						}
+
 					});
 
 					collectionService.deleteAll(server.getCollections());
 				}
+
+				// Catch any stragglers in strange cases
+				log.info("Deleting status objects with statusService for '{}'", serverLabel);
+				statusService.deleteByServer(serverLabel);
+
 				log.info("Deleting Server '{}'", serverLabel);
 				serverRepository.delete(server);
 				this.clearServerCaches(server);
@@ -867,6 +915,8 @@ public class ServerService {
 				eventService.deleteByServer(serverLabel);
 			}
 		});
+
+		statusService.logCount("Final status objects after deleteServer");
 	}
 
     /**
