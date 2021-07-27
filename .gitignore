@@ -21,6 +21,10 @@
 *.tar.gz
 *.rar
 
+/src/test/resources/mongodb-win32-x86_64-3.2.2.zip
+/src/test/resources/mongodb-linux-x86_64-3.2.2.tgz
+/src/test/resources/mongodb-linux-x86_64-3.5.5.tgz
+/src/test/resources/mongodb-osx-x86_64-3.2.2.tgz
 /target/
 .factorypath
 .project
