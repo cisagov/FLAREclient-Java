@@ -17,6 +17,14 @@ Before you begin **development** on this project you will need to meet these pre
 
 - You will need our admin certificate to be able to hit the api endpoints within the client found [here](https://cybershare.atlassian.net/wiki/spaces/devspace/pages/172949587/FLAREcloud+-+Client+Certificate). Get the password from a teammate to unzip it.
 
+## Docker
+The containerization of FLAREclient-UI requires that you have the FLAREclient-Java
+repository locally.
+1. Make sure the `FLARECLIENT_JAVA_LOCATION` value is correct in `FLAREclient-UI/build.sh`.
+2. Build the docker image `./build-intergrated-image.sh`. This will build the `FLAREclient-Java` `jar` file,
+   as well as the `FLAREclient-UI` front end.
+3. Run the docker image with `./run.sh`.
+
 ## Running FLAREclient Locally
 
 After installing all of the prerequisites, you should be able to now run FLAREclient locally. To begin you will need to run the MongoDB instance in docker and expose port `27017`. If this is your first time setting up the client, run

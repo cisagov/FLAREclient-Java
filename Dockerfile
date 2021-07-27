@@ -1,4 +1,4 @@
-FROM docker.artifactory.apps.ecicd.dso.ncps.us-cert.gov/openjdk/openjdk-11-rhel7:latest
+FROM fabric8/java-centos-openjdk11-jdk:1.8.1
 
 # USE_DEV_CERTS - when set to true, it is used to
 # load certificates for images created locally,
@@ -28,11 +28,6 @@ RUN rm -Rf /usr/share/java/prometheus-jmx-exporter/jmx_prometheus_javaagent.jar 
 
 # Upgrade 'dbus' and 'freetype' library
 RUN if [ "${IS_DSO}" = "true" ] ; then yum install -y --setopt=tsflags=nodocs \
-    --disablerepo=* \
-    --enablerepo=rhel-server-rhscl-7-rpms \
-    --enablerepo=rhel-7-server-extras-rpms \
-    --enablerepo=rhel-7-server-optional-rpms \
-    --enablerepo=rhel-7-server-rpms \
     freetype; yum clean all; rm -rf /var/cache/yum; fi
 
 WORKDIR /opt/app/
