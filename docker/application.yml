@@ -13,7 +13,7 @@
 logging:
     level:
         ROOT: DEBUG
-        com.bcmc.xor.flare: DEBUG
+        gov.dhs.cisa.ctm.flare: DEBUG
 
 spring:
     application:
