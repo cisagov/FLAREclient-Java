@@ -35,75 +35,81 @@ import static org.junit.Assert.assertTrue;
 @SpringBootTest(classes = FlareclientApp.class)
 public class EventServiceTest {
 
-    //Repositories
-    @Autowired
-    EventRepository eventRepository;
+	// Repositories
+	@Autowired
+	EventRepository eventRepository;
 
-    //Services
-    @Autowired
-    EventService eventService;
+	// Services
+	@Autowired
+	EventService eventService;
 
-    @Autowired
-    CacheManager cacheManager;
+	@Autowired
+	CacheManager cacheManager;
 
-    @Before
-    public void init() {
-        eventService.setEventRepository(eventRepository);
-        eventRepository.deleteAll();
-        MockitoAnnotations.initMocks(this);
-    }
+	@Before
+	public void init() {
+		eventService.setEventRepository(eventRepository);
+		eventRepository.deleteAll();
+		MockitoAnnotations.initMocks(this);
+	}
 
-    /**
-     * Create Event and assert the event is saved to the repository
-     */
-    @Test
-    public void testCreateEvent() {
-        Event event = eventService.createEvent(EventType.SERVER_ADDED, TestData.event.getDetails(), TestData.taxii11Association);
+	/**
+	 * Create Event and assert the event is saved to the repository
+	 */
+	@Test
+	public void testCreateEvent() {
+		Event event = eventService.createEvent(EventType.SERVER_ADDED, TestData.event.getDetails(),
+				TestData.taxii11Association);
 
-        Optional<Event> maybeEvent = eventRepository.findOneById(event.getId());
+		Optional<Event> maybeEvent = eventRepository.findOneById(event.getId());
 
-        assertTrue(maybeEvent.isPresent());
-        assertEquals(EventType.SERVER_ADDED, maybeEvent.get().getType());
-        assertEquals(TestData.taxii11Association.getServer().getLabel(), maybeEvent.get().getServer());
-        assertEquals(TestData.taxii11Association.getCollection().getDisplayName(), maybeEvent.get().getTaxiiCollection());
-        assertEquals(TestData.event.getDetails(), maybeEvent.get().getDetails());
-    }
+		assertTrue(maybeEvent.isPresent());
+		assertEquals(EventType.SERVER_ADDED, maybeEvent.get().getType());
+		assertEquals(TestData.taxii11Association.getServer().getLabel(), maybeEvent.get().getServer());
+		assertEquals(TestData.taxii11Association.getCollection().getDisplayName(),
+				maybeEvent.get().getTaxiiCollection());
+		assertEquals(TestData.event.getDetails(), maybeEvent.get().getDetails());
+	}
 
-    @Test
-    public void testGetAllEvents() {
-        Event event = eventService.createEvent(EventType.SERVER_ADDED, TestData.event.getDetails(), TestData.taxii11Association);
-        Event event2 = eventService.createEvent(EventType.SERVER_DELETED, TestData.event.getDetails(), TestData.taxii11Association);
+	@Test
+	public void testGetAllEvents() {
+		Event event = eventService.createEvent(EventType.SERVER_ADDED, TestData.event.getDetails(),
+				TestData.taxii11Association);
+		Event event2 = eventService.createEvent(EventType.SERVER_DELETED, TestData.event.getDetails(),
+				TestData.taxii11Association);
 
-        Page<EventDTO> page = eventService.getAllEvents(PageRequest.of(0, 10, Sort.by("type")));
+		Page<EventDTO> page = eventService.getAllEvents(PageRequest.of(0, 10, Sort.by("type")));
 
-        assertEquals(event.getType(), page.getContent().get(0).getType());
-        assertEquals(event.getServer(), page.getContent().get(0).getServer());
-        assertEquals(event.getTaxiiCollection(), page.getContent().get(0).getTaxiiCollection());
-        assertEquals(event.getDetails(), page.getContent().get(0).getDetails());
-        assertEquals(event.getTime(), page.getContent().get(0).getTime());
+		assertEquals(event.getType(), page.getContent().get(0).getType());
+		assertEquals(event.getServer(), page.getContent().get(0).getServer());
+		assertEquals(event.getTaxiiCollection(), page.getContent().get(0).getTaxiiCollection());
+		assertEquals(event.getDetails(), page.getContent().get(0).getDetails());
+		assertEquals(event.getTime(), page.getContent().get(0).getTime());
 
-        assertEquals(event2.getType(), page.getContent().get(1).getType());
-        assertEquals(event2.getServer(), page.getContent().get(1).getServer());
-        assertEquals(event2.getTaxiiCollection(), page.getContent().get(1).getTaxiiCollection());
-        assertEquals(event2.getDetails(), page.getContent().get(1).getDetails());
-        assertEquals(event2.getTime(), page.getContent().get(1).getTime());
-    }
+		assertEquals(event2.getType(), page.getContent().get(1).getType());
+		assertEquals(event2.getServer(), page.getContent().get(1).getServer());
+		assertEquals(event2.getTaxiiCollection(), page.getContent().get(1).getTaxiiCollection());
+		assertEquals(event2.getDetails(), page.getContent().get(1).getDetails());
+		assertEquals(event2.getTime(), page.getContent().get(1).getTime());
+	}
 
-    /**
-     * Retrieve Event Object by Id and assert it is the expected Event Object
-     */
-    @Test
-    public void testGetEventById() {
-        Event event = eventService.createEvent(EventType.SERVER_ADDED, TestData.event.getDetails(), TestData.taxii11Association);
+	/**
+	 * Retrieve Event Object by Id and assert it is the expected Event Object
+	 */
+	@Test
+	public void testGetEventById() {
+		Event event = eventService.createEvent(EventType.SERVER_ADDED, TestData.event.getDetails(),
+				TestData.taxii11Association);
 
-        Optional<Event> maybeEvent = eventService.getEventById(event.getId());
+		Optional<Event> maybeEvent = eventService.getEventById(event.getId());
 
-        assertTrue(maybeEvent.isPresent());
-        assertEquals(EventType.SERVER_ADDED, maybeEvent.get().getType());
-        assertEquals(TestData.taxii11Association.getServer().getLabel(), maybeEvent.get().getServer());
-        assertEquals(TestData.taxii11Association.getCollection().getDisplayName(), maybeEvent.get().getTaxiiCollection());
-        assertEquals(TestData.event.getDetails(), maybeEvent.get().getDetails());
-    }
+		assertTrue(maybeEvent.isPresent());
+		assertEquals(EventType.SERVER_ADDED, maybeEvent.get().getType());
+		assertEquals(TestData.taxii11Association.getServer().getLabel(), maybeEvent.get().getServer());
+		assertEquals(TestData.taxii11Association.getCollection().getDisplayName(),
+				maybeEvent.get().getTaxiiCollection());
+		assertEquals(TestData.event.getDetails(), maybeEvent.get().getDetails());
+	}
 
 //    @Test
 //    public void testGetEventByCollection() {

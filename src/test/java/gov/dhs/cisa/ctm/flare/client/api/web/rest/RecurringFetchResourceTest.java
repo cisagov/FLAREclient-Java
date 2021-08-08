@@ -1,13 +1,12 @@
 package gov.dhs.cisa.ctm.flare.client.api.web.rest;
 
-import gov.dhs.cisa.ctm.flare.client.TestData;
-import gov.dhs.cisa.ctm.flare.client.api.domain.async.RecurringFetch;
-import gov.dhs.cisa.ctm.flare.client.api.domain.parameters.ApiParameters;
-import gov.dhs.cisa.ctm.flare.client.api.service.CollectionService;
-import gov.dhs.cisa.ctm.flare.client.api.service.ServerService;
-import gov.dhs.cisa.ctm.flare.client.api.service.scheduled.RecurringFetchService;
-import gov.dhs.cisa.ctm.flare.client.api.web.rest.RecurringFetchResource;
-import gov.dhs.cisa.ctm.flare.client.taxii.TaxiiAssociation;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+import java.time.Instant;
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,13 +21,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.Instant;
-import java.util.Optional;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import gov.dhs.cisa.ctm.flare.client.TestData;
+import gov.dhs.cisa.ctm.flare.client.api.domain.async.RecurringFetch;
+import gov.dhs.cisa.ctm.flare.client.api.domain.parameters.ApiParameters;
+import gov.dhs.cisa.ctm.flare.client.api.service.CollectionService;
+import gov.dhs.cisa.ctm.flare.client.api.service.ServerService;
+import gov.dhs.cisa.ctm.flare.client.api.service.scheduled.RecurringFetchService;
+import gov.dhs.cisa.ctm.flare.client.taxii.TaxiiAssociation;
 
 
 /**

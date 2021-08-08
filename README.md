@@ -6,6 +6,47 @@ MongoDB documentation can be found here: https://docs.mongodb.com/
 ## Getting Started
 Before you begin **development** on this project you will need to meet these prerequisites in your development environment.
 
+- You must have the latest JDK 1.8 installed (both at your command line as well as with your favorite Integrated Development Environment
+such as `Eclipse`, `IntelliJ`.
+
+- make sure to download this file `mongodb-linux-x86_64-3.5.5.tgz` from here `http://dl.mongodb.org/dl/linux/x86_64`. Store this JAR file under `src/test/resources`.
+
+- You will need these repositories from `https://github.com/cisagov`:
+	- javaTAXII2
+	- FLAREutils
+	- FLAREclient-UI
+	- FLAREclient-mongo
+
+- This is project is under `FLAREclient-Java` repository @ `https://github.com/cisagov`.
+
+- To build this project, `FLAREclient-Java`, you will need to run these in sequence:
+	- `javaTAXII2`: `mvn clean package`
+	- `FLAREutils`: `mvn clean package`
+	- `FLAREclient-Java`: `mvn clean package`
+
+
+- Run FLAREclient-Java project:
+
+```shell
+java -jar target/flareclient-0.0.2-SNAPSHOT.jar 
+```
+
+- Output should be like this
+	
+```
+2021-08-08 06:39:33.246  INFO 23039 --- [           main] g.d.c.c.flare.client.api.FlareclientApp  : 
+----------------------------------------------------------
+	Application 'flareclient' is running! Access URLs:
+	Local: 		https://localhost:8443
+	External: 	https://127.0.1.1:8443
+	Profile(s): 	[]  
+	Application Name: 	FLAREclient  
+	Application Version: 	4.0  
+----------------------------------------------------------
+
+```
+	
+**OLD**:
 - Install the listed FLARE projects as they are dependencies of the FLAREclient (Branches listed are as of December 17 2018. This will updated as branches are merged, and the application is closer to delivery.)
   - [javaTAXII2](https://git.ecicd.dso.ncps.us-cert.gov/fireteam/javaTAXII2/tree/develop/) - `develop` branch
     - To make sure this is properly installed as a dependency for the client run a `mvn install` or `mvn install -DskipTests` to save some time.

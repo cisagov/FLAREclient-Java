@@ -140,7 +140,27 @@
 			<groupId>gov.dhs.cisa.ctm</groupId>
 			<artifactId>FLAREutils</artifactId>
 			<version>1.0.5-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.logging.log4j</groupId>
+					<artifactId>log4j-slf4j-impl</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.logging.log4j</groupId>
+					<artifactId>log4j-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.logging.log4j</groupId>
+					<artifactId>log4j-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.santuario</groupId>
+					<artifactId>xmlsec</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
+
+
 		<dependency>
 			<groupId>gov.dhs.cisa.ctm</groupId>
 			<artifactId>taxii2</artifactId>
@@ -433,6 +453,12 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-data</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.ws.security</groupId>
+			<artifactId>wss4j</artifactId>
+			<version>1.6.19</version>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<testResources>
