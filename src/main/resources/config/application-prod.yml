@@ -13,7 +13,7 @@
 logging:
     level:
         ROOT: INFO
-        com.bcmc.xor.flare: INFO
+        gov.dhs.cisa.ctm.flare: INFO
 
 spring:
     devtools:
