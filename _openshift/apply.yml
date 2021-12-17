@@ -1,0 +1,10 @@
+---
+- name: Create Project
+  hosts: seed-hosts
+  tasks:
+    - name: Check if route.yaml exists
+      stat:
+        path: "{{ playbook_dir }}/../{{ service }}/_openshift/route.yaml"
+      register: route_file
+    - include_role:
+        name: openshift-applier/roles/openshift-applier
