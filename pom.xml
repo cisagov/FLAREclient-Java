@@ -26,8 +26,8 @@
         <m2e.apt.activation>jdt_apt</m2e.apt.activation>
         <run.addResources>false</run.addResources>
         <!-- These remain empty unless the corresponding profile is active -->
-        <profile.no-liquibase />
-        <profile.swagger />
+        <profile.no-liquibase/>
+        <profile.swagger/>
 
         <!-- Dependency versions -->
         <spring-boot.version>2.4.2</spring-boot.version>
@@ -79,7 +79,7 @@
         <springfox.version>2.9.2</springfox.version>
         <xmemcached.version>2.4.5</xmemcached.version>
         <xmemcached-provider.version>4.0.0</xmemcached-provider.version>
-        <mongock.version>4.1.19</mongock.version>
+        <mongock.version>4.3.8</mongock.version>
 
         <dropwizard-metrics.version>3.2.6</dropwizard-metrics.version>
     </properties>
