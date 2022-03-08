@@ -26,11 +26,11 @@
         <m2e.apt.activation>jdt_apt</m2e.apt.activation>
         <run.addResources>false</run.addResources>
         <!-- These remain empty unless the corresponding profile is active -->
-        <profile.no-liquibase />
-        <profile.swagger />
+        <profile.no-liquibase/>
+        <profile.swagger/>
 
         <!-- Dependency versions -->
-        <spring-boot.version>2.4.2</spring-boot.version>
+        <spring-boot.version>2.6.2</spring-boot.version>
         <mapstruct.version>1.2.0.Final</mapstruct.version>
 
         <!-- Plugin versions -->
