@@ -26,7 +26,7 @@
         <profile.no-liquibase/>
         <profile.swagger/>
         <!-- Dependency versions -->
-        <spring-boot.version>2.4.2</spring-boot.version>
+        <spring-boot.version>2.5.14</spring-boot.version>
         <mapstruct.version>1.2.0.Final</mapstruct.version>
         <!-- Plugin versions -->
         <maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
