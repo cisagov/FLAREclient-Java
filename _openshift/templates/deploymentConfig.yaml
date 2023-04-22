@@ -1,0 +1,95 @@
+---
+apiVersion: v1
+kind: Template
+metadata:
+  name: deployment-config-template
+objects:
+  - apiVersion: v1
+    kind: DeploymentConfig
+    metadata:
+      name: flareclient
+    spec:
+      replicas: 1
+      selector:
+        name: flareclient
+      strategy:
+        type: Rolling
+        rollingParams:
+      template:
+        metadata:
+          labels:
+            name: flareclient
+        spec:
+          containers:
+            - env:
+                - name: LOG_LEVEL
+                  value: "debug"
+                - name: LOG_LEVEL_SPRING
+                  value: "warn"
+                - name: LOG_LEVEL_HIBERNATE
+                  value: "warn"
+                - name: SECRETS_DIR
+                  value: "/mnt/secrets/"
+                - name: VERIFY_HOST
+                  value: "false"
+                - name: FLARECLIENT_DB_SVC_HOST
+                  value: flareclient-db.${NAMESPACE}.svc
+                - name: FLARECLIENT_DB_SVC_PORT
+                  value: "27017"
+                - name: FLARECLIENT_DB_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: flareclient-db
+                      key: username
+                - name: FLARECLIENT_DB_PASS
+                  valueFrom:
+                    secretKeyRef:
+                      name: flareclient-db
+                      key: password
+              imagePullPolicy: Always
+              name: flareclient
+              image: ${DOCKER_REPO_URL}/${IMAGE_NAMESPACE}/flareclient:${IMAGE_VERSION}
+              volumeMounts:
+                - name: secrets
+                  mountPath: /mnt/secrets
+                  readOnly: true
+          serviceAccountName: "jboss-sa"
+          initContainers:
+            - name: wait-flareclient-db
+              image: ${DOCKER_REPO_URL}/alpine/alpine:3.6
+              command: ["sh", "-c", "until nc -z -w 2 $(SVC_HOST) $(SVC_PORT) && echo host ready; do sleep 2; done"]
+              env:
+                - name: SVC_HOST
+                  value: "flareclient-db"
+                - name: SVC_PORT
+                  value: "27017"
+          volumes:
+            - name: secrets
+              secret:
+                secretName: flareclient
+                items:
+                  - key: flareclient_jks
+                    path: demouser_ks.jks
+                  - key: truststore_jks
+                    path: ca.jks
+          imagePullSecrets:
+            - name: artifactory-puller
+      triggers:
+        - type: ConfigChange
+parameters:
+  - name: NAMESPACE
+    displayName: Openshift namespace (project)
+    description: Openshift namespace (project) this application resides in
+    required: true
+  - name: IMAGE_NAMESPACE
+    displayName: Docker image namespace
+    description: The docker namespace that the image belongs to
+    required: true
+  - name: IMAGE_VERSION
+    displayName: Image Version
+    description: Docker image version
+    required: true
+  - name: DOCKER_REPO_URL
+    displayName: Docker Repo URL
+    description: Docker repository URL
+    required: true

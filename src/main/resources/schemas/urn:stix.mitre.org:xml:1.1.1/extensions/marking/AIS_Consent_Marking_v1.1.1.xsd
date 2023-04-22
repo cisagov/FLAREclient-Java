@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:marking="http://data-marking.mitre.org/Marking-1" xmlns:AISConsentMarking="http://www.us-cert.gov/STIXMarkingStructure#AISConsentMarking-1" targetNamespace="http://www.us-cert.gov/STIXMarkingStructure#AISConsentMarking-1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.1.1" xml:lang="English">
+	<xs:annotation>
+		<xs:documentation>...</xs:documentation>
+		<xs:appinfo>
+			<schema>AIS Consent Marking Extension</schema>
+			<version>1.1.1</version>
+			<date>05/15/2015 9:00:00 AM</date>
+			<short_description>...</short_description>
+			<terms_of_use>...</terms_of_use>
+		</xs:appinfo>
+	</xs:annotation>
+	<xs:import namespace="http://data-marking.mitre.org/Marking-1" schemaLocation="../../data_marking.xsd"/>
+	<xs:complexType name="AISConsentMarkingStructureType">
+		<xs:annotation>
+			<xs:documentation>Consent Marking Structure.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="marking:MarkingStructureType">
+				<xs:sequence minOccurs="1" maxOccurs="1">
+					<xs:element name="Share_Identity_With" type="AISConsentMarking:ShareWithEnumeration">
+						<xs:annotation>
+							<xs:documentation>...</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:simpleType name="ShareWithEnumeration">
+		<xs:annotation>
+			<xs:documentation>...</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="None">
+				<xs:annotation>
+					<xs:documentation>...</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="USG">
+				<xs:annotation>
+					<xs:documentation>...</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Everyone">
+				<xs:annotation>
+					<xs:documentation>...</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

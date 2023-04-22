@@ -1,0 +1,148 @@
+#
+# ! THIS APPLICATION.YML IS USED BY FLARECLIENT-UI !
+#
+
+# ===================================================================
+# Spring Boot configuration.
+#
+# More information on profiles: https://docs.spring.io/spring-boot/docs/1.2.0.M1/reference/html/boot-features-profiles.html
+# ===================================================================
+
+# ===================================================================
+# Standard Spring Boot properties.
+# Full reference is available at:
+# http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
+# ===================================================================
+
+logging:
+    level:
+        ROOT: DEBUG
+        com.bcmc.xor.flare: DEBUG
+
+spring:
+    application:
+        name: flareclient
+    profiles:
+        # The commented value for `active` can be replaced with valid Spring profiles to load.
+        # Otherwise, it will be filled in by maven when building the WAR file
+        # Either way, it can be overridden by `--spring.profiles.active` value passed in the commandline or `-Dspring.profiles.active` set in `JAVA_OPTS`
+        active: #spring.profiles.active#
+    messages:
+        basename: i18n/messages
+    mvc:
+        favicon:
+            enabled: false
+    data:
+        mongodb:
+            # uri: mongodb://admin:QWASZX23wesdxc@flareclient-db:27017
+            uri: mongodb://127.0.0.1:27017
+            database: flareclient
+    async:
+        core-pool-size: 8
+        max-pool-size: 64
+        queue-capacity: 10000
+    http:
+        version: V_1_1 # To use HTTP/2 (V_2_0) you will need SSL support (see above the "server.ssl" configuration)
+        # By default CORS is disabled. Uncomment to enable.
+        #cors:
+        #allowed-origins: "*"
+        #allowed-methods: "*"
+        #allowed-headers: "*"
+        #exposed-headers: "Authorization,Link,X-Total-Count"
+        #allow-credentials: true
+        #max-age: 1800
+    mail:
+        host: localhost
+        port: 25
+        username:
+        password:
+        from: temp@localhost
+        base-url: http://127.0.0.1:8080 # Modify according to your server's URL
+    thymeleaf:
+        mode: HTML
+    metrics: # DropWizard Metrics configuration, used by MetricsConfiguration
+        jmx:
+            enabled: true
+        logs: # Reports Dropwizard metrics in the logs
+            enabled: false
+            report-frequency: 60 # in seconds
+    swagger:
+        default-include-pattern: /api/.*
+        title: temp API
+        description: temp API documentation
+        version: 0.0.1
+        terms-of-service-url:
+        contact-name:
+        contact-url:
+        contact-email:
+        license:
+        license-url:
+    servlet:
+        multipart:
+            max-file-size: ${MAX_REQUEST_SIZE}B # Max file size. Values can use the suffixes "MB" or "KB" to indicate megabytes or kilobytes, respectively.
+            max-request-size: ${MAX_REQUEST_SIZE}B # Max request size. Values can use the suffixes "MB" or "KB" to indicate megabytes or kilobytes, respectively.
+
+# ===================================================================
+# To enable SSL, generate a certificate using:
+# keytool -genkey -alias flareclient -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12 -validity 3650
+#
+# You can also use Let's Encrypt:
+# https://maximilian-boehm.com/hp2121/Create-a-Java-Keystore-JKS-from-Let-s-Encrypt-Certificates.htm
+#
+# Then, modify the server.ssl properties so your "server" configuration looks like:
+#
+# server:
+#    port: 8443
+#    ssl:
+#        key-store: keystore.p12
+#        key-store-password: <your-password>
+#        key-store-type: PKCS12
+#        key-alias: flareclient
+# ===================================================================
+server:
+    connection-timeout: ${TIMEOUT_API}
+    port: 8083
+    ssl:
+        key-store: devKeystore.p12
+        key-store-password: ${CERT_KEYSTORE_PASS}
+        key-store-type: PKCS12
+        trust-store: keystore.p12
+        trust-store-password: ${CERT_TRUSTSTORE_PASS}
+        key-alias: ${CERT_ALIAS}
+
+# ===================================================================
+# Application specific properties
+# Add your own application properties here, see the ApplicationProperties class
+# ===================================================================
+
+# application:
+flare:
+    validation-interval: 5000
+    server-info-update-interval: 3600000 # every hour
+    fetch-chunk-window: 28800000 # every 8 hours
+    fetch-chunk-page-size: 100
+    schemas-directory: '/opt/app'
+    trace: false
+    supportedContentBindings: [
+        "urn:stix.mitre.org:xml:1.0",
+        "urn:stix.mitre.org:xml:1.0.1",
+        "urn:stix.mitre.org:xml:1.1",
+        "urn:stix.mitre.org:xml:1.1.1",
+        "urn:stix.mitre.org:xml:1.2"
+        ]
+    statuses:
+        error_fail_count: 10
+        update-interval: 15000
+    timeout:
+        default: ${TIMEOUT_DEFAULT}
+        taxii-21:
+            download: ${TIMEOUT_TAXII21_DOWNLOAD}
+            manifest: ${TIMEOUT_TAXII21_MANIFEST}
+            upload: ${TIMEOUT_TAXII21_UPLOAD}
+    security:
+        authentication:
+            jwt:
+                secret: EoP3UiBuHr
+                # Token is valid 24 hours
+                token-validity-in-seconds: 86400
+                token-validity-in-seconds-for-remember-me: 2592000

@@ -1,0 +1,28 @@
+env:
+- name: CERT_ALIAS
+  value: "localhost"
+- name: CERT_KEYSTORE_PASS
+  value: "12qwaszx@#WESDXC"
+- name: CERT_TRUSTSTORE_PASS
+  value: "12qwaszx@#WESDXC"
+- name: MAX_REQUEST_SIZE
+  value: "150M"
+- name: TIMEOUT_API
+  value: "68000"
+- name: TIMEOUT_DEFAULT
+  value: "60000"
+- name: TIMEOUT_TAXII21_DOWNLOAD
+  value: "60000"
+- name: TIMEOUT_TAXII21_MANIFEST
+  value: "60000"
+- name: TIMEOUT_TAXII21_UPLOAD
+  value: "60000"
+- name: FLARECLIENT_DB_SVC_HOST
+  value: "flareclient-db"
+- name: FLARECLIENT_DB_SVC_PORT
+  value: "27017"
+- name: VERIFY_HOST
+  value: "false"
+build_script: "build-docker-image.sh"
+run_script: "run.sh"
+ready_string: "Started FLAREclient"
